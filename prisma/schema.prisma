@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Enums ────────────────────────────────────────────────────────────
+
+enum UserRole {
+  MASTER_ADMIN
+  ADMIN
+}
+
+enum PackageCategory {
+  UMRAH
+  ZIARAH
+  GROUP_TOUR
+  DOMESTIC
+}
+
+enum PackageStatus {
+  PUBLISHED
+  DRAFT
+  COMING_SOON
+  FULL
+}
+
+enum InquiryStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum AnnouncementStatus {
+  ACTIVE
+  EXPIRED
+}
+
+// ── Models (PKG-MTT-009) ────────────────────────────────────────────
+
+model User {
+  id             String    @id @default(uuid()) @db.Uuid
+  email          String    @unique
+  name           String
+  role           UserRole  @default(ADMIN)
+  isActive       Boolean   @default(true) @map("is_active")
+  failedAttempts Int       @default(0) @map("failed_attempts")
+  lockedUntil    DateTime? @map("locked_until") @db.Timestamptz
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  packagesCreated Package[]
+  galleryUploads  GalleryImage[]
+  testimonials    Testimonial[]
+  siteConfigEdits SiteConfig[]
+  announcements   Announcement[]
+  auditLogs       AuditLog[]
+
+  @@map("users")
+}
+
+model Package {
+  id             String          @id @default(uuid()) @db.Uuid
+  title          String
+  category       PackageCategory
+  description    String
+  itinerary      String
+  pricePerPax    Decimal         @map("price_per_pax") @db.Decimal(10, 2)
+  status         PackageStatus   @default(DRAFT)
+  departureDates String[]        @map("departure_dates")
+  createdById    String?         @map("created_by") @db.Uuid
+  createdBy      User?           @relation(fields: [createdById], references: [id])
+  deletedAt      DateTime?       @map("deleted_at") @db.Timestamptz
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+
+  images PackageImage[]
+
+  @@map("packages")
+}
+
+model PackageImage {
+  id          String   @id @default(uuid()) @db.Uuid
+  packageId   String   @map("package_id") @db.Uuid
+  package     Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  storagePath String   @map("storage_path")
+  url         String
+  isPrimary   Boolean  @default(false) @map("is_primary")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("package_images")
+}
+
+model Inquiry {
+  id              String        @id @default(uuid()) @db.Uuid
+  fullName        String        @map("full_name")
+  phone           String
+  email           String
+  packageInterest String?       @map("package_interest")
+  message         String
+  status          InquiryStatus @default(NEW)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("inquiries")
+}
+
+model GalleryImage {
+  id           String   @id @default(uuid()) @db.Uuid
+  storagePath  String   @map("storage_path")
+  url          String
+  tag          String
+  uploadedById String?  @map("uploaded_by") @db.Uuid
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("gallery_images")
+}
+
+model Testimonial {
+  id           String    @id @default(uuid()) @db.Uuid
+  customerName String    @map("customer_name")
+  tripName     String    @map("trip_name")
+  reviewText   String    @map("review_text")
+  starRating   Int       @map("star_rating") @db.SmallInt
+  tripDate     DateTime? @map("trip_date") @db.Date
+  createdById  String?   @map("created_by") @db.Uuid
+  createdBy    User?     @relation(fields: [createdById], references: [id])
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("testimonials")
+}
+
+model SiteConfig {
+  key         String   @id
+  value       String
+  updatedById String?  @map("updated_by") @db.Uuid
+  updatedBy   User?    @relation(fields: [updatedById], references: [id])
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("site_config")
+}
+
+model Announcement {
+  id          String             @id @default(uuid()) @db.Uuid
+  title       String
+  body        String
+  status      AnnouncementStatus @default(ACTIVE)
+  expiresAt   DateTime?          @map("expires_at") @db.Timestamptz
+  createdById String?            @map("created_by") @db.Uuid
+  createdBy   User?              @relation(fields: [createdById], references: [id])
+  createdAt   DateTime           @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("announcements")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  target    String
+  detail    Json?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("audit_log")
+}
