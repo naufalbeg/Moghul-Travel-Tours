@@ -137,3 +137,13 @@ export function upcomingMonths(count = 12) {
     };
   });
 }
+
+/** Published packages as { slug, title } for the inquiry form dropdown. */
+export async function listPackageOptions() {
+  await connection();
+  return prisma.package.findMany({
+    where: PUBLIC,
+    orderBy: { title: "asc" },
+    select: { slug: true, title: true },
+  });
+}

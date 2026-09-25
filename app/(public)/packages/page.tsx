@@ -63,7 +63,7 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
         )}
 
         {packages.length > 0 ? (
-          <PackageGrid packages={packages} whatsapp={content.whatsapp} />
+          <PackageGrid packages={packages} />
         ) : (
           <div className="mx-auto max-w-[560px] rounded-xl border border-line bg-white px-6 py-10 text-center">
             <h2 className="mb-2 text-xl text-primary-dark">No packages found</h2>

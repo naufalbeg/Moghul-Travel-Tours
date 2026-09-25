@@ -22,6 +22,9 @@ export const SITE_CONTENT_DEFAULTS = {
   facebook_url: "",
   instagram_url: "",
   tiktok_url: "",
+  // Where new-inquiry alerts go. Must be the Resend account's own address
+  // until a sending domain is verified in Resend.
+  inquiry_notify_email: "moghultt@gmail.com",
 };
 
 export type SiteContentKey = keyof typeof SITE_CONTENT_DEFAULTS;
@@ -53,13 +56,8 @@ export function whatsappHref(content: Pick<SiteContent, "whatsapp">, text?: stri
   return `https://wa.me/${toIntlPhone(content.whatsapp)}${query}`;
 }
 
-/**
- * Where "Inquire" buttons point. Until the inquiry form (Module 3) exists,
- * this opens WhatsApp with the package name filled in.
- */
-export function inquireHref(content: Pick<SiteContent, "whatsapp">, packageTitle: string) {
-  return whatsappHref(content, `Hi Moghul Travel & Tours, I'd like to ask about the "${packageTitle}" package.`);
-}
+/** Where "Inquire" buttons point: the inquiry form with the package pre-selected. */
+export const inquireHref = (packageSlug: string) => `/inquire?package=${encodeURIComponent(packageSlug)}`;
 
 /** Non-empty lines of a multi-line field (address, office hours). */
 export const lines = (text: string) =>

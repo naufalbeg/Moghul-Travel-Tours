@@ -17,7 +17,15 @@ function initials(name: string) {
   return ((words[0]?.[0] ?? "") + (words[1]?.[0] ?? "")).toUpperCase();
 }
 
-export function AdminShell({ admin, children }: { admin: AdminUser; children: ReactNode }) {
+export function AdminShell({
+  admin,
+  newInquiries,
+  children,
+}: {
+  admin: AdminUser;
+  newInquiries: number;
+  children: ReactNode;
+}) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -74,6 +82,12 @@ export function AdminShell({ admin, children }: { admin: AdminUser; children: Re
                         >
                           <Icon className="size-[19px] shrink-0" />
                           {label}
+                          {href === "/admin/inquiries" && newInquiries > 0 && (
+                            <span className="ml-auto rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-white">
+                              {newInquiries}
+                              <span className="sr-only"> new</span>
+                            </span>
+                          )}
                         </Link>
                       </li>
                     );

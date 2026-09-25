@@ -157,6 +157,9 @@ model Inquiry {
   packageInterest String?       @map("package_interest")
   message         String
   status          InquiryStatus @default(NEW)
+  // When the admin email alert was sent; null = not sent (email failure
+  // never blocks saving the inquiry — SRS E2).
+  notifiedAt      DateTime?     @map("notified_at") @db.Timestamptz
   createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
 

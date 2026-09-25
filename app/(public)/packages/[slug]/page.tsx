@@ -117,14 +117,12 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
               </p>
             )}
 
-            <a
-              href={inquireHref(content, pkg.title)}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href={inquireHref(pkg.slug)}
               className="mb-3.5 flex min-h-14 items-center justify-center rounded-[10px] bg-accent px-5 text-[17px] font-bold text-white hover:bg-accent-dark"
             >
               {isBookable ? "Inquire now" : "Ask about the next trip"}
-            </a>
+            </Link>
             <a
               href={telHref(content.phone)}
               className="mb-[18px] flex items-center justify-center gap-2 text-[15px] font-semibold text-primary"

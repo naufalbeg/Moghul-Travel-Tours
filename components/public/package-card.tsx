@@ -5,7 +5,7 @@ import { CATEGORY_LABEL, PACKAGE_AVAILABILITY } from "@/lib/package-labels";
 import type { PackageCardData } from "@/lib/packages";
 import { inquireHref } from "@/lib/site-content";
 
-export function PackageCard({ pkg, whatsapp }: { pkg: PackageCardData; whatsapp: string }) {
+export function PackageCard({ pkg }: { pkg: PackageCardData }) {
   const href = `/packages/${pkg.slug}`;
   const availability = pkg.availability === "OPEN" ? null : PACKAGE_AVAILABILITY[pkg.availability];
 
@@ -62,25 +62,23 @@ export function PackageCard({ pkg, whatsapp }: { pkg: PackageCardData; whatsapp:
           >
             View details
           </Link>
-          <a
-            href={inquireHref({ whatsapp }, pkg.title)}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={inquireHref(pkg.slug)}
             className="flex min-h-12 flex-1 items-center justify-center rounded-lg bg-accent px-3 text-[15px] font-bold text-white hover:bg-accent-dark"
           >
             Inquire
-          </a>
+          </Link>
         </div>
       </div>
     </article>
   );
 }
 
-export function PackageGrid({ packages, whatsapp }: { packages: PackageCardData[]; whatsapp: string }) {
+export function PackageGrid({ packages }: { packages: PackageCardData[] }) {
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {packages.map((pkg) => (
-        <PackageCard key={pkg.id} pkg={pkg} whatsapp={whatsapp} />
+        <PackageCard key={pkg.id} pkg={pkg} />
       ))}
     </div>
   );

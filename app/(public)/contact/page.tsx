@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ComponentType, ReactNode, SVGProps } from "react";
+import { InquiryForm } from "@/components/public/inquiry-form";
 import { PageBanner } from "@/components/public/page-banner";
 import { ClockIcon, MailIcon, MapPinIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { listPackageOptions } from "@/lib/packages";
 import { getSiteContent } from "@/lib/site-config";
 import { lines, mapEmbedUrl, mapLinkUrl, telHref, whatsappHref } from "@/lib/site-content";
+import { GENERAL_INQUIRY } from "@/lib/validation/inquiry";
 
 export const metadata: Metadata = {
   title: "Contact us",
@@ -35,7 +38,7 @@ function Card({
 
 /** AboutContactPage [PKG-MTT-006-001] — Contact half. */
 export default async function ContactPage() {
-  const content = await getSiteContent();
+  const [content, packages] = await Promise.all([getSiteContent(), listPackageOptions()]);
   const address = lines(content.address);
 
   return (
@@ -134,6 +137,18 @@ export default async function ContactPage() {
           </p>
         </div>
       </div>
+
+      <section aria-labelledby="message-heading" className="mx-auto max-w-[860px] px-4 pb-16 sm:px-8">
+        <h2 id="message-heading" className="mb-2 text-center text-[26px] text-primary-dark">
+          Send us a message
+        </h2>
+        <p className="mb-6 text-center text-muted">We&apos;ll get back to you by phone or email.</p>
+        <InquiryForm
+          packages={packages.map((p) => p.title)}
+          initialPackage={GENERAL_INQUIRY}
+          whatsappUrl={whatsappHref(content, "Hi Moghul Travel & Tours, I just sent a message on your website.")}
+        />
+      </section>
     </>
   );
 }

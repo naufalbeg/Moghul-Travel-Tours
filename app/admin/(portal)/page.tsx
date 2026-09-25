@@ -9,18 +9,13 @@ import {
   PlusIcon,
   StarIcon,
 } from "@/components/ui/icons";
-import type { InquiryStatus } from "@/generated/prisma/enums";
 import { liveAnnouncementWhere } from "@/lib/announcements";
 import { requireAdmin } from "@/lib/auth";
+import { INQUIRY_STATUS } from "@/lib/inquiry-labels";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
-const statusPill: Record<InquiryStatus, { label: string; className: string }> = {
-  NEW: { label: "New", className: "bg-accent-pale text-accent-dark" },
-  IN_PROGRESS: { label: "In progress", className: "bg-primary-pale text-primary" },
-  RESOLVED: { label: "Resolved", className: "bg-success-pale text-success" },
-};
 
 const quickActions = [
   { href: "/admin/packages/new", label: "Add new package" },
@@ -94,11 +89,13 @@ export default async function DashboardPage() {
           ) : (
             <ul className="divide-y divide-line">
               {recent.map((inquiry) => {
-                const pill = statusPill[inquiry.status];
+                const pill = INQUIRY_STATUS[inquiry.status];
                 return (
                   <li key={inquiry.id} className="flex items-center justify-between gap-4 py-3">
                     <div>
-                      <div className="font-semibold">{inquiry.fullName}</div>
+                      <Link href={`/admin/inquiries/${inquiry.id}`} className="font-semibold hover:underline">
+                        {inquiry.fullName}
+                      </Link>
                       <div className="text-sm text-muted">
                         {inquiry.packageInterest ?? "General inquiry"}
                       </div>

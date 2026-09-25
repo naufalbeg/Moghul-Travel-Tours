@@ -244,14 +244,14 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 1. ~~Design system foundation~~ — done (tokens, header, footer, admin shell)
 2. ~~Supabase + Prisma client setup~~ — done
 3. ~~Master Admin seed + working login + change password~~ — done
-4. ~~Public homepage, package listing, package detail~~ — done. Inquiry form
-   still to do: until it exists, every "Inquire" button uses `inquireUrl()`
-   in lib/site.ts (WhatsApp with the package name) — switch it there.
+4. ~~Public homepage, package listing, package detail~~ — done.
 5. ~~Admin package CRUD~~ — done (/admin/packages, /new, /[id]/edit).
 6. ~~Module 6 content pages~~ — done: /about, /contact, /admin/content.
 7. ~~Testimonials, Gallery, Announcements (Modules 5, 4, 7)~~ — done.
-8. Remaining: inquiries (Module 3 — needs hCaptcha + Resend keys) and user
-   management invites (Module 1 — needs Resend).
+8. ~~Inquiries (Module 3)~~ — done.
+9. Remaining: user management invites (Module 1). Needs a verified sending
+   domain in Resend (moghultt.com DNS) to email anyone other than
+   moghultt@gmail.com.
 
 ## Editable content (Module 6)
 - All contact details, office hours, licence numbers, About text and social
@@ -283,6 +283,27 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   bound with .bind(null, id)).
 - "use server" files may only export async functions — keep constants in
   lib/ (e.g. MAX_GALLERY_BATCH in lib/storage-config.ts).
+
+## Inquiries (Module 3)
+- Public form: /inquire (?package=<slug> pre-selects) and on /contact. Every
+  "Inquire" button uses `inquireHref(slug)` in lib/site-content.ts.
+- submitInquiry (app/(public)/inquire/actions.ts): Zod → hCaptcha verify
+  (lib/captcha.ts) → save NEW → Resend alert (lib/email.ts) to site_config
+  `inquiry_notify_email`. Email failure never blocks: `notified_at` stays
+  null and the admin detail page shows "Not sent".
+- Resend has NO verified domain yet: sender is onboarding@resend.dev and it
+  can only deliver to the account owner, **moghultt@gmail.com**. After
+  verifying moghultt.com set EMAIL_FROM (e.g. "Moghul Travel & Tours
+  <noreply@moghultt.com>").
+- Env: NEXT_PUBLIC_HCAPTCHA_SITE_KEY (public by design), HCAPTCHA_SECRET_KEY,
+  RESEND_API_KEY — in .env and on Vercel (production + development).
+- Testing: build/start with hCaptcha test keys (site
+  10000000-ffff-ffff-ffff-000000000001, secret 0x000…000) so headless
+  browsers pass; point inquiry_notify_email at delivered@resend.dev to avoid
+  mailing the real inbox.
+- Admin: /admin/inquiries (status tabs, newest first), /admin/inquiries/[id]
+  (WhatsApp/call/email shortcuts, status New/In progress/Resolved, delete only
+  when resolved). Sidebar shows the count of NEW inquiries.
 
 ## Security model (important)
 - Migration `20260926000000_lock_down_public_data_api` enables RLS (no

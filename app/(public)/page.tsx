@@ -58,7 +58,7 @@ export default async function HomePage() {
 
         {featured.length > 0 ? (
           <>
-            <PackageGrid packages={featured} whatsapp={content.whatsapp} />
+            <PackageGrid packages={featured} />
             <Link
               href="/packages"
               className="mt-10 inline-flex min-h-12 items-center rounded-lg border-[1.5px] border-primary px-7 font-bold text-primary hover:bg-primary-pale"

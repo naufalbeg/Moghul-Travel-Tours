@@ -56,6 +56,18 @@ const SECTIONS: { title: string; hint: string; preview?: string; fields: Field[]
     ],
   },
   {
+    title: "Inquiry notifications",
+    hint: "Who gets an email when a visitor sends an inquiry.",
+    fields: [
+      {
+        key: "inquiry_notify_email",
+        label: "Send new-inquiry alerts to",
+        kind: "email",
+        hint: "For now this must stay moghultt@gmail.com (the email service account). Other addresses work once moghultt.com is set up in Resend.",
+      },
+    ],
+  },
+  {
     title: "Social media",
     hint: "Paste the full link to each page. Leave blank to hide that icon.",
     fields: [

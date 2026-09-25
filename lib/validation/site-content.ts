@@ -39,6 +39,7 @@ export const siteContentSchema = z.object({
   facebook_url: optionalUrl,
   instagram_url: optionalUrl,
   tiktok_url: optionalUrl,
+  inquiry_notify_email: z.email("Enter a valid email address.").max(120),
 }) satisfies z.ZodType<Record<SiteContentKey, string>>;
 
 export type ContentErrors = Partial<Record<SiteContentKey, string>>;
