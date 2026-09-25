@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moghul Travel & Tours — Admin Login (Figure 3.1.4)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1B5FA8;
+    --blue-dark: #123A66;
+    --blue-pale: #EAF2FA;
+    --orange: #F07C1E;
+    --orange-dark: #C7630F;
+    --bg: #F5F9FC;
+    --white: #FFFFFF;
+    --text: #1A2733;
+    --muted: #5B6B7A;
+    --border: #DCE6EF;
+    --danger: #C0392B;
+    --danger-bg: #FDEDEB;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue) 60%, #2E7BC4);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .back-link {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    color: rgba(255,255,255,0.85);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .login-card {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(18,58,102,0.28);
+    padding: 44px 40px 36px;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .brand-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .logo-mark {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--blue-pale);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+  }
+  .logo-mark svg { width: 30px; height: 30px; }
+
+  .brand-row h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--blue-dark);
+    margin-bottom: 4px;
+  }
+
+  .brand-row span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--orange-dark);
+  }
+
+  .form-heading {
+    text-align: center;
+    margin-bottom: 26px;
+  }
+  .form-heading h2 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .form-heading p {
+    font-size: 15px;
+    color: var(--muted);
+  }
+
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .field input {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--blue);
+  }
+
+  .password-row {
+    position: relative;
+  }
+  .password-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue);
+    cursor: pointer;
+  }
+
+  .field-meta {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  .field-meta a {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+
+  .btn-signin {
+    width: 100%;
+    background: var(--orange);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 6px;
+    margin-bottom: 22px;
+  }
+
+  .helper-note {
+    text-align: center;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .helper-note a { color: var(--blue); font-weight: 600; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0 20px;
+  }
+
+  .security-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .security-note svg { width: 15px; height: 15px; color: var(--muted); flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<a href="#" class="back-link">← Back to moghultt.com</a>
+
+<div class="login-card">
+  <div class="brand-row">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1B5FA8" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9z"/></svg>
+    </div>
+    <h1>Moghul Travel & Tours</h1>
+    <span>Admin portal</span>
+  </div>
+
+  <div class="form-heading">
+    <h2>Sign in to your dashboard</h2>
+    <p>Enter your credentials to continue.</p>
+  </div>
+
+  <form>
+    <div class="field">
+      <label for="email">Email address</label>
+      <input id="email" type="email" placeholder="you@moghultt.com" autocomplete="username">
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <div class="password-row">
+        <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password">
+        <span class="password-toggle">Show</span>
+      </div>
+      <div class="field-meta">
+        <a href="#">Forgot password?</a>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-signin">Sign in</button>
+  </form>
+
+  <p class="helper-note">New staff account? Ask your Master Admin to send you an invite.</p>
+
+  <hr class="divider">
+
+  <div class="security-note">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    Staff access only — sessions are encrypted and logged.
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moghul Travel & Tours — Login Error Screen (Figure 3.1.8)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1B5FA8;
+    --blue-dark: #123A66;
+    --blue-pale: #EAF2FA;
+    --orange: #F07C1E;
+    --orange-dark: #C7630F;
+    --bg: #F5F9FC;
+    --white: #FFFFFF;
+    --text: #1A2733;
+    --muted: #5B6B7A;
+    --border: #DCE6EF;
+    --danger: #C0392B;
+    --danger-bg: #FDEDEB;
+    --danger-border: #F3C9C2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue) 60%, #2E7BC4);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    padding: 44px 20px;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .page-label {
+    text-align: center;
+    color: rgba(255,255,255,0.85);
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 32px;
+  }
+
+  .states-row {
+    display: flex;
+    gap: 32px;
+    max-width: 900px;
+    margin: 0 auto;
+    align-items: flex-start;
+  }
+
+  .state-col { flex: 1 1 0; min-width: 0; }
+
+  .state-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+
+  .login-card {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(18,58,102,0.28);
+    padding: 36px 32px 30px;
+  }
+
+  .brand-row { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 20px; }
+  .logo-mark { width: 48px; height: 48px; border-radius: 50%; background: var(--blue-pale); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+  .logo-mark svg { width: 26px; height: 26px; }
+  .brand-row h1 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 17px; color: var(--blue-dark); }
+
+  /* ── Error banners ── */
+  .error-banner {
+    display: flex;
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+  .error-banner svg { width: 19px; height: 19px; color: var(--danger); flex-shrink: 0; margin-right: 12px; margin-top: 1px; }
+  .error-banner-text p { font-size: 14px; color: var(--danger); font-weight: 600; line-height: 1.45; }
+  .error-banner-text span { display: block; font-size: 13px; font-weight: 400; color: #8B3226; margin-top: 4px; }
+
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .field input {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 15.5px;
+    padding: 13px 15px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+  }
+  .field input.err { border-color: var(--danger); background: var(--danger-bg); }
+  .field input:disabled { background: #F1F3F5; color: var(--muted); border-color: var(--border); }
+
+  .field-meta { display: flex; justify-content: flex-end; margin-top: 8px; }
+  .field-meta a { font-size: 13.5px; font-weight: 600; color: var(--blue); }
+
+  .btn-signin {
+    width: 100%;
+    background: var(--orange);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 16px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    margin-top: 4px;
+  }
+  .btn-signin:disabled {
+    background: var(--border);
+    color: var(--muted);
+  }
+
+  .lockout-meta {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+  .lockout-meta a { color: var(--blue); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<p class="page-label">Figure 3.1.8 — Login Error Screen: two states from Exception Flow E1</p>
+
+<div class="states-row">
+
+  <!-- State A: Invalid credentials -->
+  <div class="state-col">
+    <span class="state-tag">State A — Invalid credentials</span>
+    <div class="login-card">
+      <div class="brand-row">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1B5FA8" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9z"/></svg>
+        </div>
+        <h1>Sign in to your dashboard</h1>
+      </div>
+
+      <div class="error-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <div class="error-banner-text">
+          <p>Invalid email or password. Please try again.</p>
+          <span>2 attempts remaining before your account is temporarily locked.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email-a">Email address</label>
+        <input id="email-a" type="email" class="err" value="ahmad@moghultt.com">
+      </div>
+      <div class="field">
+        <label for="password-a">Password</label>
+        <input id="password-a" type="password" class="err" value="wrongpass">
+        <div class="field-meta"><a href="#">Forgot password?</a></div>
+      </div>
+
+      <button class="btn-signin">Sign in</button>
+    </div>
+  </div>
+
+  <!-- State B: Account locked -->
+  <div class="state-col">
+    <span class="state-tag">State B — Account locked</span>
+    <div class="login-card">
+      <div class="brand-row">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#1B5FA8" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9z"/></svg>
+        </div>
+        <h1>Sign in to your dashboard</h1>
+      </div>
+
+      <div class="error-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <div class="error-banner-text">
+          <p>Account temporarily locked.</p>
+          <span>Too many failed sign-in attempts. Please try again in 15 minutes.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email-b">Email address</label>
+        <input id="email-b" type="email" value="ahmad@moghultt.com" disabled>
+      </div>
+      <div class="field">
+        <label for="password-b">Password</label>
+        <input id="password-b" type="password" value="••••••••" disabled>
+      </div>
+
+      <button class="btn-signin" disabled>Sign in</button>
+      <p class="lockout-meta">Need urgent access? <a href="#">Contact your Master Admin</a></p>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

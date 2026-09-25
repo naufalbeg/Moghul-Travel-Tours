@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moghul Travel & Tours — Package Detail (Figure 3.2.2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1B5FA8;
+    --blue-dark: #123A66;
+    --blue-pale: #EAF2FA;
+    --orange: #F07C1E;
+    --orange-dark: #C7630F;
+    --bg: #F5F9FC;
+    --white: #FFFFFF;
+    --text: #1A2733;
+    --muted: #5B6B7A;
+    --border: #DCE6EF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: var(--blue-dark);
+    line-height: 1.2;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+
+  /* ── Promo bar ── */
+  .promo-bar {
+    background: var(--orange);
+    color: var(--white);
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 10px 16px;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Header ── */
+  header { background: var(--white); border-bottom: 1px solid var(--border); }
+
+  .logo-row {
+    display: flex;
+    justify-content: center;
+    padding: 20px 32px 12px;
+  }
+
+  .logo-block { display: flex; align-items: center; gap: 12px; }
+
+  .logo-mark {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--blue-pale);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-mark svg { width: 26px; height: 26px; }
+
+  .logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--blue-dark);
+    line-height: 1.15;
+  }
+  .logo-text span {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--orange-dark);
+  }
+
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 4px 32px 18px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  nav { display: flex; gap: 26px; flex-wrap: wrap; justify-content: center; }
+
+  nav a {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    padding: 6px 2px;
+    border-bottom: 2px solid transparent;
+  }
+  nav a:hover, nav a.active { color: var(--blue); border-bottom-color: var(--orange); }
+
+  .nav-cta {
+    background: var(--orange);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 12px 22px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative;
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue) 60%, #2E7BC4);
+    padding: 64px 32px 110px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 30%, rgba(255,255,255,0.08) 0, transparent 40%),
+      radial-gradient(circle at 85% 70%, rgba(255,255,255,0.08) 0, transparent 40%);
+  }
+
+  .hero-content { position: relative; max-width: 720px; margin: 0 auto; }
+
+  .hero-photo-note {
+    display: inline-block;
+    background: rgba(255,255,255,0.14);
+    border: 1px dashed rgba(255,255,255,0.4);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 22px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    margin-bottom: 18px;
+  }
+
+  .hero p.lead {
+    font-size: 19px;
+    color: rgba(255,255,255,0.88);
+    max-width: 560px;
+    margin: 0 auto 0;
+    font-weight: 400;
+  }
+
+  /* ── Search bar ── */
+  .search-bar {
+    position: relative;
+    max-width: 880px;
+    margin: -56px auto 0;
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(18,58,102,0.18);
+    padding: 22px 24px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .search-field { flex: 1 1 160px; text-align: left; }
+  .search-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .search-field select, .search-field input {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    background: var(--white);
+  }
+
+  .search-btn {
+    background: var(--orange);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 16px;
+    padding: 13px 30px;
+    border-radius: 8px;
+    flex: 0 0 auto;
+  }
+
+  /* ── Packages section ── */
+  .packages-section { padding: 56px 32px 64px; text-align: center; }
+
+  .section-head { max-width: 620px; margin: 0 auto 8px; }
+  .section-head h2 { font-size: 28px; margin-bottom: 10px; }
+  .stars-row { color: var(--orange); font-size: 18px; letter-spacing: 3px; margin-bottom: 32px; }
+
+  .filter-pills {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+
+  .pill {
+    font-size: 15px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 1.5px solid var(--blue);
+    color: var(--blue);
+    background: var(--white);
+  }
+  .pill.active { background: var(--blue); color: var(--white); }
+
+  .packages-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    text-align: left;
+  }
+
+  .package-card {
+    flex: 1 1 calc(33.333% - 16px);
+    min-width: 280px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-eyebrow {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--orange-dark);
+    letter-spacing: 0.03em;
+    margin-bottom: 8px;
+  }
+
+  .package-card h3 { font-size: 19px; margin-bottom: 8px; }
+
+  .package-price {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--blue);
+    margin-bottom: 12px;
+  }
+
+  .highlights-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .package-card ul {
+    list-style: none;
+    margin-bottom: 20px;
+    flex: 1;
+  }
+  .package-card li {
+    font-size: 15px;
+    color: var(--muted);
+    padding-left: 16px;
+    position: relative;
+    margin-bottom: 6px;
+  }
+  .package-card li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--orange);
+  }
+
+  .card-actions { display: flex; gap: 10px; }
+
+  .btn-outline {
+    flex: 1;
+    text-align: center;
+    border: 1.5px solid var(--blue);
+    color: var(--blue);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 11px 14px;
+    border-radius: 8px;
+  }
+
+  .btn-fill {
+    flex: 1;
+    text-align: center;
+    background: var(--orange);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 11px 14px;
+    border-radius: 8px;
+  }
+
+  /* ── Gallery + testimonials section ── */
+  .journeys-section {
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 60px 32px;
+  }
+
+  .journeys-section .section-head { text-align: center; margin-bottom: 40px; }
+
+  .gallery-grid {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .gallery-item {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 190px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue-pale), #CFE1F2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-item.tall { height: 240px; }
+  .gallery-item svg { width: 34px; height: 34px; color: var(--blue); opacity: 0.6; }
+
+  .gallery-caption {
+    text-align: center;
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .gallery-cta { text-align: center; margin-bottom: 52px; }
+  .btn-outline-inline {
+    display: inline-block;
+    border: 1.5px solid var(--blue);
+    color: var(--blue);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 12px 26px;
+    border-radius: 8px;
+  }
+
+  .testimonial-box {
+    background: var(--blue-pale);
+    border-radius: 14px;
+    padding: 36px 40px;
+    max-width: 780px;
+    margin: 0 auto 52px;
+    text-align: center;
+  }
+
+  .quote-mark { font-size: 34px; color: var(--orange); font-family: 'Poppins', sans-serif; line-height: 1; }
+  .testimonial-box h3 { font-size: 20px; margin: 6px 0 14px; }
+  .testimonial-box blockquote { font-size: 19px; color: var(--text); margin-bottom: 14px; font-style: italic; }
+  .testimonial-stars { color: var(--orange); font-size: 17px; letter-spacing: 3px; margin-bottom: 10px; }
+  .testimonial-name { font-weight: 600; color: var(--muted); font-size: 15px; }
+
+  .see-all-link { text-align: center; font-weight: 600; color: var(--blue); font-size: 15px; margin-bottom: 56px; }
+
+  .about-row {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    background: var(--bg);
+    border-radius: 14px;
+    padding: 28px 32px;
+  }
+
+  .about-photo {
+    flex: 0 0 160px;
+    height: 140px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--orange), var(--blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .about-photo svg { width: 40px; height: 40px; color: var(--white); opacity: 0.85; }
+
+  .about-text h3 { font-size: 19px; margin-bottom: 8px; }
+  .about-text p { font-size: 16px; color: var(--muted); margin-bottom: 12px; }
+  .about-text a { font-weight: 700; color: var(--orange-dark); font-size: 15px; }
+
+  /* ── Footer ── */
+  footer { background: var(--blue-dark); color: var(--white); padding: 48px 32px 24px; }
+
+  .footer-top {
+    max-width: 1160px;
+    margin: 0 auto 32px;
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .footer-brand { display: flex; align-items: center; gap: 14px; flex: 1 1 260px; }
+  .footer-logo-mark {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .footer-logo-mark svg { width: 26px; height: 26px; }
+  .footer-brand-text { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 18px; }
+  .footer-brand-text span { display: block; font-family: 'Inter', sans-serif; font-weight: 400; font-size: 14px; color: rgba(255,255,255,0.65); }
+
+  .footer-info { flex: 1 1 300px; font-size: 15px; }
+  .footer-info div { margin-bottom: 8px; color: rgba(255,255,255,0.85); }
+  .footer-info strong { color: var(--white); }
+
+  .footer-social { display: flex; gap: 10px; margin-top: 12px; }
+  .footer-social a {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .footer-social svg { width: 17px; height: 17px; }
+
+  .footer-badges { flex: 1 1 220px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .badge-pill {
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.1);
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .footer-bottom {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.14);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+  }
+
+  @media (max-width: 900px) {
+    .packages-grid, .gallery-grid { flex-direction: column; }
+    nav { display: none; }
+    .hero h1 { font-size: 28px; }
+    .about-row { flex-direction: column; text-align: center; }
+  }
+  /* ── Page banner (non-homepage pages) ── */
+  .page-banner {
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue) 60%, #2E7BC4);
+    padding: 48px 32px;
+    text-align: center;
+  }
+  .page-banner h1 {
+    font-size: 32px;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+  .page-banner p {
+    font-size: 17px;
+    color: rgba(255,255,255,0.88);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .pill.disabled-note { cursor: default; }
+
+  /* ── Breadcrumb ── */
+  .breadcrumb-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 14px 32px; }
+  .breadcrumb { font-size: 14px; color: var(--muted); }
+  .breadcrumb a { color: var(--blue); font-weight: 600; }
+  .breadcrumb span { margin: 0 6px; }
+
+  /* ── Gallery ── */
+  .detail-gallery { padding: 28px 32px 0; }
+  .gallery-main {
+    height: 360px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue-pale), #CFE1F2);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+  }
+  .gallery-main svg { width: 54px; height: 54px; color: var(--blue); opacity: 0.55; }
+  .gallery-thumbs { display: flex; gap: 14px; }
+  .thumb {
+    flex: 1 1 0; min-width: 0;
+    height: 88px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #CFE1F2, var(--blue-pale));
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid transparent;
+  }
+  .thumb.active { border-color: var(--orange); }
+  .thumb svg { width: 22px; height: 22px; color: var(--blue); opacity: 0.55; }
+
+  /* ── Detail layout ── */
+  .detail-layout { display: flex; gap: 36px; align-items: flex-start; padding: 36px 32px 64px; }
+  .detail-main { flex: 1.9 1 0; min-width: 0; }
+  .detail-sidebar { flex: 1 1 0; min-width: 0; position: sticky; top: 24px; }
+
+  .detail-header { margin-bottom: 24px; }
+  .detail-header h1 { font-size: 28px; margin-bottom: 10px; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 18px; font-size: 15px; color: var(--muted); font-weight: 500; }
+  .meta-row span { display: flex; align-items: center; }
+  .meta-row svg { width: 17px; height: 17px; margin-right: 7px; color: var(--blue); }
+
+  .detail-section { margin-bottom: 32px; }
+  .detail-section h2 { font-size: 20px; margin-bottom: 14px; }
+  .detail-section p { color: var(--muted); font-size: 16px; line-height: 1.7; }
+
+  .included-list { display: flex; flex-wrap: wrap; gap: 12px 28px; }
+  .included-item { display: flex; align-items: center; font-size: 15.5px; font-weight: 500; flex: 1 1 220px; }
+  .included-item svg { width: 19px; height: 19px; color: var(--green); margin-right: 10px; flex-shrink: 0; }
+
+  .itinerary-list { display: flex; flex-direction: column; gap: 0; }
+  .itinerary-day { display: flex; padding: 18px 0; border-bottom: 1px solid var(--border); }
+  .itinerary-day:last-child { border-bottom: none; }
+  .day-badge {
+    flex-shrink: 0;
+    width: 56px; height: 40px;
+    background: var(--blue-pale);
+    color: var(--blue);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700; font-size: 13.5px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 18px;
+  }
+  .day-content h3 { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .day-content p { font-size: 15px; color: var(--muted); line-height: 1.55; }
+
+  /* ── Sticky price card ── */
+  .price-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 26px; }
+  .price-value { font-family: 'Poppins', sans-serif; font-size: 30px; font-weight: 700; color: var(--blue-dark); }
+  .price-sub { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+
+  .dates-label { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+  .date-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+    font-size: 14.5px;
+  }
+  .date-row:last-of-type { border-bottom: none; margin-bottom: 18px; }
+  .date-status { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+  .status-open { background: var(--green-pale); color: var(--green); }
+  .status-almost { background: var(--orange-pale); color: var(--orange-dark); }
+  .status-full { background: var(--border); color: var(--muted); }
+
+  .btn-inquire-large {
+    display: block;
+    text-align: center;
+    background: var(--orange);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 17px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  .btn-call-line {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14.5px; font-weight: 600; color: var(--blue);
+    margin-bottom: 18px;
+  }
+  .btn-call-line svg { width: 16px; height: 16px; margin-right: 7px; }
+
+  .trust-line {
+    display: flex; align-items: flex-start;
+    font-size: 13px; color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+  .trust-line svg { width: 16px; height: 16px; color: var(--blue); margin-right: 8px; flex-shrink: 0; margin-top: 1px; }
+
+  @media (max-width: 900px) {
+    .detail-layout { flex-direction: column; }
+    .detail-sidebar { position: static; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="promo-bar">Special early bird promo — 10% off 2027 Umrah packages. Limited seats.</div>
+
+<header>
+  <div class="logo-row">
+    <div class="logo-block">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1B5FA8" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9z"/></svg>
+      </div>
+      <div class="logo-text">
+        Moghul Travel & Tours
+        <span>Sdn Bhd · MOTAC licensed</span>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <nav>
+      <a href="#">Home</a>
+      <a href="#" class="active">Packages</a>
+      <a href="#">Umrah</a>
+      <a href="#">Ziarah</a>
+      <a href="#">Group Tours</a>
+      <a href="#">Domestic</a>
+      <a href="#">Gallery</a>
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div class="breadcrumb-bar">
+  <div class="wrap breadcrumb">
+    <a href="#">Home</a><span>/</span><a href="#">Packages</a><span>/</span>Umrah Sakinah — 10 days
+  </div>
+</div>
+
+<div class="detail-gallery">
+  <div class="wrap">
+    <div class="gallery-main">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+    </div>
+    <div class="gallery-thumbs">
+      <div class="thumb active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+      <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+      <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+      <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+      <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+<div class="detail-layout">
+
+  <div class="detail-main">
+    <div class="detail-header">
+      <div class="card-eyebrow">Umrah</div>
+      <h1>Umrah Sakinah — 10 days</h1>
+      <div class="meta-row">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>10 days, 9 nights</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/></svg>Twin / triple sharing</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z"/></svg>MOTAC licensed package</span>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h2>About this package</h2>
+      <p>A gentle, well-paced Umrah journey through Makkah and Madinah, designed with families and older travellers in mind. We keep hotels close to the Haramain to minimise walking, and our group leader is with you throughout — from the airport to your final ziarah stop.</p>
+    </div>
+
+    <div class="detail-section">
+      <h2>What's included</h2>
+      <div class="included-list">
+        <div class="included-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>Return flights from Kuala Lumpur</div>
+        <div class="included-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>4-star hotels near the Haramain</div>
+        <div class="included-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>Daily halal breakfast &amp; dinner</div>
+        <div class="included-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>Visa &amp; Umrah permit processing</div>
+        <div class="included-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>Experienced group leader &amp; ustaz</div>
+        <div class="included-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6 9 17l-5-5"/></svg>Airport &amp; inter-city transfers</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h2>Itinerary</h2>
+      <div class="itinerary-list">
+        <div class="itinerary-day">
+          <div class="day-badge">Day 1</div>
+          <div class="day-content">
+            <h3>Depart Kuala Lumpur → Madinah</h3>
+            <p>Group check-in and departure. Arrival in Madinah, transfer to hotel and rest.</p>
+          </div>
+        </div>
+        <div class="itinerary-day">
+          <div class="day-badge">Day 2–4</div>
+          <div class="day-content">
+            <h3>Madinah — Masjid Nabawi</h3>
+            <p>Daily prayers at Masjid Nabawi, guided ziarah to key historical sites around Madinah.</p>
+          </div>
+        </div>
+        <div class="itinerary-day">
+          <div class="day-badge">Day 5</div>
+          <div class="day-content">
+            <h3>Madinah → Makkah</h3>
+            <p>Depart for Makkah by coach, Umrah performed together as a group upon arrival.</p>
+          </div>
+        </div>
+        <div class="itinerary-day">
+          <div class="day-badge">Day 6–8</div>
+          <div class="day-content">
+            <h3>Makkah — Masjid al-Haram</h3>
+            <p>Daily prayers at Masjid al-Haram, guided ziarah around Makkah, free time for personal worship.</p>
+          </div>
+        </div>
+        <div class="itinerary-day">
+          <div class="day-badge">Day 9</div>
+          <div class="day-content">
+            <h3>Free day &amp; farewell Tawaf</h3>
+            <p>Rest, last-minute shopping in Makkah, and a farewell Tawaf before departure preparations.</p>
+          </div>
+        </div>
+        <div class="itinerary-day">
+          <div class="day-badge">Day 10</div>
+          <div class="day-content">
+            <h3>Makkah → Kuala Lumpur</h3>
+            <p>Transfer to Jeddah airport for the return flight home.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-sidebar">
+    <div class="price-card">
+      <div class="price-value">RM 9,800</div>
+      <div class="price-sub">per person, twin sharing</div>
+
+      <div class="dates-label">Upcoming departure dates</div>
+      <div class="date-row"><span>14 Mar 2027</span><span class="date-status status-open">Open</span></div>
+      <div class="date-row"><span>02 May 2027</span><span class="date-status status-almost">Almost full</span></div>
+      <div class="date-row"><span>21 Jun 2027</span><span class="date-status status-full">Full</span></div>
+
+      <a href="#" class="btn-inquire-large">Inquire now</a>
+      <div class="btn-call-line">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Or call 03-1234 5678
+      </div>
+
+      <div class="trust-line">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z"/></svg>
+        MOTAC licensed &amp; MATTA member — trusted by 3,000+ pilgrims since 1998.
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F5F9FC" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9z"/></svg>
+      </div>
+      <div class="footer-brand-text">
+        Moghul Travel &amp; Tours
+        <span>Sdn Bhd</span>
+      </div>
+    </div>
+    <div class="footer-info">
+      <div><strong>Office</strong> — Lot 12, Jalan Tun Razak, 50400 Kuala Lumpur</div>
+      <div>03-1234 5678 · hello@moghultt.com</div>
+      <div>Office hours: Mon–Fri, 9am–6pm</div>
+      <div class="footer-social">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="#F5F9FC"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="#F5F9FC" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="3.5"/><circle cx="17.5" cy="6.5" r="0.8" fill="#F5F9FC" stroke="none"/></svg></a>
+        <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="#F5F9FC"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.9-1.4C8.4 21.5 10.2 22 12 22c5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-badges">
+      <span class="badge-pill">MOTAC License No. MTT-XXXX</span>
+      <span class="badge-pill">MATTA Member No. XXXX</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Moghul Travel &amp; Tours. All rights reserved.</span>
+    <span>Developed by CB23063 · Powered by MTT Website Management System</span>
+  </div>
+</footer>
+
+</body>
+</html>
