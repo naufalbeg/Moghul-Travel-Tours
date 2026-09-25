@@ -1,3 +1,4 @@
+import { AnnouncementBar } from "@/components/public/announcement-bar";
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
 import { WhatsAppButton } from "@/components/public/whatsapp-button";
@@ -13,7 +14,7 @@ export default async function PublicLayout({ children }: LayoutProps<"/">) {
       >
         Skip to content
       </a>
-      {/* Module 7: the announcement bar (promo strip) goes here. */}
+      <AnnouncementBar />
       <SiteHeader content={content} />
       <main id="main" className="flex-1">
         {children}

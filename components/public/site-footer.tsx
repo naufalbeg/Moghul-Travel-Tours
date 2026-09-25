@@ -88,6 +88,9 @@ export function SiteFooter({ content }: { content: SiteContent }) {
           <Link href="/contact" className="mt-2 text-sm font-semibold text-white/85 underline-offset-4 hover:underline">
             Contact &amp; directions →
           </Link>
+          <Link href="/testimonials" className="text-sm font-semibold text-white/85 underline-offset-4 hover:underline">
+            Traveller reviews →
+          </Link>
         </div>
       </div>
 

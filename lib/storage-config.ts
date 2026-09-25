@@ -12,6 +12,8 @@ export type ImageBucket = (typeof IMAGE_BUCKETS)[keyof typeof IMAGE_BUCKETS];
 export const IMAGE_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 export const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 export const MAX_PACKAGE_IMAGES = 10;
+/** Photos per gallery upload batch. */
+export const MAX_GALLERY_BATCH = 20;
 
 export const IMAGE_EXTENSION: Record<(typeof IMAGE_MIME_TYPES)[number], string> = {
   "image/jpeg": "jpg",

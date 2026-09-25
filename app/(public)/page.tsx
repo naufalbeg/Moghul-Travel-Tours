@@ -121,7 +121,8 @@ export default async function HomePage() {
           )}
 
           {testimonial && (
-            <figure className="mx-auto mb-14 max-w-[780px] rounded-[14px] bg-primary-pale px-6 py-9 text-center sm:px-10">
+            <div className="mb-14">
+            <figure className="mx-auto mb-4 max-w-[780px] rounded-[14px] bg-primary-pale px-6 py-9 text-center sm:px-10">
               <p className="font-heading text-[34px] leading-none text-accent" aria-hidden="true">
                 &ldquo;
               </p>
@@ -136,6 +137,12 @@ export default async function HomePage() {
                 — {testimonial.customerName}, {testimonial.tripName}
               </figcaption>
             </figure>
+            <p className="text-center">
+              <Link href="/testimonials" className="text-[15px] font-semibold text-primary hover:underline">
+                See all reviews →
+              </Link>
+            </p>
+            </div>
           )}
 
           <div className="flex flex-col items-center gap-6 rounded-[14px] bg-canvas px-6 py-7 text-center sm:flex-row sm:gap-8 sm:px-8 sm:text-left">

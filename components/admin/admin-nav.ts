@@ -65,6 +65,10 @@ export function isNavItemActive(href: string, pathname: string) {
 const SUB_PAGE_TITLES: [RegExp, string][] = [
   [/^\/admin\/packages\/new$/, "Add New Package"],
   [/^\/admin\/packages\/[^/]+\/edit$/, "Edit Package"],
+  [/^\/admin\/testimonials\/new$/, "Add Testimonial"],
+  [/^\/admin\/testimonials\/[^/]+\/edit$/, "Edit Testimonial"],
+  [/^\/admin\/announcements\/new$/, "Post Announcement"],
+  [/^\/admin\/announcements\/[^/]+\/edit$/, "Edit Announcement"],
 ];
 
 export function titleForPath(pathname: string) {

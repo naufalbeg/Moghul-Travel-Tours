@@ -249,8 +249,9 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
    in lib/site.ts (WhatsApp with the package name) — switch it there.
 5. ~~Admin package CRUD~~ — done (/admin/packages, /new, /[id]/edit).
 6. ~~Module 6 content pages~~ — done: /about, /contact, /admin/content.
-7. Remaining modules: inquiries (form + admin, needs hCaptcha + Resend keys),
-   gallery, testimonials, content pages, announcements, user management.
+7. ~~Testimonials, Gallery, Announcements (Modules 5, 4, 7)~~ — done.
+8. Remaining: inquiries (Module 3 — needs hCaptcha + Resend keys) and user
+   management invites (Module 1 — needs Resend).
 
 ## Editable content (Module 6)
 - All contact details, office hours, licence numbers, About text and social
@@ -264,6 +265,24 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   lib/validation/site-content.ts (Malaysian phone, https:// links).
 - The unsaved-changes warning covers reloads/closing the tab; in-app
   sidebar links don't trigger it (Next client navigation).
+
+## Testimonials, Gallery, Announcements
+- Testimonials: /admin/testimonials (+ /new, /[id]/edit), public
+  /testimonials; homepage shows the newest one. Hard delete.
+- Gallery: /admin/gallery — label (tag) + drag-and-drop upload via
+  lib/image-uploads.ts (signed URLs, bucket `gallery-images`), then
+  saveGalleryImages records rows. Public /gallery with tag pills and a
+  manual-only lightbox. Delete removes the Storage file and the row.
+- Announcements: /admin/announcements (+ /new, /[id]/edit). Live = status
+  ACTIVE and (expires_at null or in the future) — `liveAnnouncementWhere`
+  in lib/announcements.ts. "Show until" date = end of that day in Malaysia
+  (UTC+8). Public: <AnnouncementBar> at the top of the public layout, hidden
+  when nothing is live. Turn off/on = status EXPIRED/ACTIVE.
+- Shared admin UI: components/admin/field.tsx (Field, fieldClass,
+  PageHeader, primaryButton) and ConfirmActionButton (pass a server action
+  bound with .bind(null, id)).
+- "use server" files may only export async functions — keep constants in
+  lib/ (e.g. MAX_GALLERY_BATCH in lib/storage-config.ts).
 
 ## Security model (important)
 - Migration `20260926000000_lock_down_public_data_api` enables RLS (no

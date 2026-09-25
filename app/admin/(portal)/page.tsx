@@ -10,6 +10,7 @@ import {
   StarIcon,
 } from "@/components/ui/icons";
 import type { InquiryStatus } from "@/generated/prisma/enums";
+import { liveAnnouncementWhere } from "@/lib/announcements";
 import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -23,9 +24,9 @@ const statusPill: Record<InquiryStatus, { label: string; className: string }> = 
 
 const quickActions = [
   { href: "/admin/packages/new", label: "Add new package" },
-  { href: "/admin/announcements", label: "Post announcement" },
+  { href: "/admin/announcements/new", label: "Post announcement" },
   { href: "/admin/gallery", label: "Upload gallery photos" },
-  { href: "/admin/testimonials", label: "Add testimonial" },
+  { href: "/admin/testimonials/new", label: "Add testimonial" },
 ];
 
 export default async function DashboardPage() {
@@ -39,7 +40,7 @@ export default async function DashboardPage() {
       prisma.galleryImage.count(),
       prisma.testimonial.count(),
       prisma.announcement.count({
-        where: { status: "ACTIVE", OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
+        where: liveAnnouncementWhere(now),
       }),
       prisma.inquiry.findMany({
         orderBy: { createdAt: "desc" },

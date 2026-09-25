@@ -1,20 +1,13 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { logAudit } from "@/lib/audit";
 import { authorize } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import {
-  IMAGE_EXTENSION,
-  IMAGE_MAX_BYTES,
-  MAX_PACKAGE_IMAGES,
-  isAllowedImageType,
-  publicImageUrl,
-} from "@/lib/storage-config";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createSignedImageUploads, removeImages } from "@/lib/image-uploads";
+import { MAX_PACKAGE_IMAGES, publicImageUrl } from "@/lib/storage-config";
 import {
   PACKAGE_BUCKET,
   slugify,
@@ -43,30 +36,7 @@ export async function createPackageImageUploads(files: { type: string; size: num
   const admin = await requireAdminOrFail();
   if (!admin) return { ok: false, message: "Your session has expired. Please sign in again." } as ActionFailure;
 
-  if (files.length === 0 || files.length > MAX_PACKAGE_IMAGES) {
-    return { ok: false, message: `Choose between 1 and ${MAX_PACKAGE_IMAGES} images.` } as ActionFailure;
-  }
-  for (const file of files) {
-    if (!isAllowedImageType(file.type)) {
-      return { ok: false, message: "Only JPG, PNG or WEBP images can be uploaded." } as ActionFailure;
-    }
-    if (file.size > IMAGE_MAX_BYTES) {
-      return { ok: false, message: "Each image must be 5MB or smaller." } as ActionFailure;
-    }
-  }
-
-  const storage = createAdminClient().storage.from(PACKAGE_BUCKET);
-  const uploads = [];
-  for (const file of files) {
-    const path = `${randomUUID()}.${IMAGE_EXTENSION[file.type as keyof typeof IMAGE_EXTENSION]}`;
-    const { data, error } = await storage.createSignedUploadUrl(path);
-    if (error) {
-      console.error("createSignedUploadUrl failed", error);
-      return { ok: false, message: "Couldn't prepare the upload. Please try again." } as ActionFailure;
-    }
-    uploads.push({ path: data.path, token: data.token, url: publicImageUrl(PACKAGE_BUCKET, data.path) });
-  }
-  return { ok: true as const, uploads };
+  return createSignedImageUploads(PACKAGE_BUCKET, files, MAX_PACKAGE_IMAGES);
 }
 
 async function uniqueSlug(base: string, excludeId: string | null) {
@@ -182,10 +152,7 @@ export async function savePackage(
   if (existing) {
     const kept = new Set(v.images.map((img) => img.storagePath));
     const removed = existing.images.map((img) => img.storagePath).filter((p) => !kept.has(p));
-    if (removed.length > 0) {
-      const { error } = await createAdminClient().storage.from(PACKAGE_BUCKET).remove(removed);
-      if (error) console.error("Failed to delete removed package images", error);
-    }
+    await removeImages(PACKAGE_BUCKET, removed);
   }
 
   const action = !existing
