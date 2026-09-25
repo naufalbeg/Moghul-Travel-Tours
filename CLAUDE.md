@@ -242,9 +242,27 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 1. ~~Design system foundation~~ — done (tokens, header, footer, admin shell)
 2. ~~Supabase + Prisma client setup~~ — done
 3. ~~Master Admin seed + working login + change password~~ — done
-4. Public site: homepage → package listing → package detail → inquiry form
+4. ~~Public homepage, package listing, package detail~~ — done. Inquiry form
+   still to do: until it exists, every "Inquire" button uses `inquireUrl()`
+   in lib/site.ts (WhatsApp with the package name) — switch it there.
 5. Admin side: each management module (dashboard page already reads live
-   counts)
+   counts). Admin package CRUD is the natural next step — public package
+   pages are empty until packages can be entered.
+
+## Public pages — how they work
+- Package reads live in lib/packages.ts (public side of PackageController):
+  only `status: PUBLISHED` and `deletedAt: null`. They call `connection()`,
+  so every public page renders per request — admin changes show immediately,
+  no revalidation needed.
+- Vercel functions run in `sin1` (Singapore, vercel.json) next to the
+  Supabase DB (ap-southeast-1) — don't remove that.
+- Category filter slugs (`?category=`): `umrah-ziarah`, `group-tour`,
+  `domestic` (plus `umrah` / `ziarah` individually) — lib/package-labels.ts.
+- Package URLs are `/packages/<slug>`.
+- Gallery/testimonial sections on the homepage only render when data exists.
+- `npm run sample-packages` adds mockup packages (slugs `sample-*`) for
+  testing; **`-- --remove` deletes them. Dev and prod share one database, so
+  published samples appear on the live site — always remove them.**
 
 ## Working conventions
 - Prefer complete, working files over partial snippets/diffs when generating

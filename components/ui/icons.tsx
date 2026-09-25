@@ -136,6 +136,32 @@ export const CheckCircleIcon = (p: IconProps) => (
   </Stroke>
 );
 
+export const ClockIcon = (p: IconProps) => (
+  <Stroke strokeWidth={1.8} {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v5l3 3" />
+  </Stroke>
+);
+
+export const UserIcon = (p: IconProps) => (
+  <Stroke strokeWidth={1.8} {...p}>
+    <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
+    <circle cx="10" cy="7" r="4" />
+  </Stroke>
+);
+
+export const ShieldIcon = (p: IconProps) => (
+  <Stroke strokeWidth={1.8} {...p}>
+    <path d="M12 2 3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z" />
+  </Stroke>
+);
+
+export const CheckIcon = (p: IconProps) => (
+  <Stroke strokeWidth={2.2} {...p}>
+    <path d="M20 6 9 17l-5-5" />
+  </Stroke>
+);
+
 export const KeyIcon = (p: IconProps) => (
   <Stroke {...p}>
     <circle cx="7.5" cy="15.5" r="4.5" />

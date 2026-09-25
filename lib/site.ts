@@ -9,6 +9,7 @@ export const SITE = {
   name: "Moghul Travel & Tours",
   legalName: "Moghul Travel & Tours Sdn Bhd",
   companyReg: "Co. Reg. No. 1273862-K",
+  motacLicenseNo: "KPK/LN 9109",
   motacLicense: "MOTAC License No. KPK/LN 9109",
   addressLines: [
     "No. 6A (First Floor), Jalan Muara 8/9",
@@ -32,6 +33,13 @@ export const SITE = {
 
 export const whatsappUrl = (text?: string) =>
   `https://wa.me/${SITE.whatsappIntl}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
+
+/**
+ * Where "Inquire" buttons point. Until the inquiry form (Module 3) exists,
+ * this opens WhatsApp with the package name filled in.
+ */
+export const inquireUrl = (packageTitle: string) =>
+  whatsappUrl(`Hi Moghul Travel & Tours, I'd like to ask about the "${packageTitle}" package.`);
 
 export const PUBLIC_NAV = [
   { href: "/", label: "Home" },

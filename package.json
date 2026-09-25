@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate --config prisma7.config.ts",
-    "create-master-admin": "tsx scripts/create-master-admin.mts"
+    "create-master-admin": "tsx scripts/create-master-admin.mts",
+    "sample-packages": "tsx scripts/sample-packages.mts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
