@@ -44,7 +44,7 @@ const newKey = () => crypto.randomUUID();
 const emptyPackageForm = (): PackageFormState => ({
   title: "",
   slug: "",
-  category: "UMRAH",
+  category: "UMRAH_ZIARAH",
   description: "",
   highlights: "",
   inclusions: "",
@@ -329,7 +329,7 @@ export function PackageForm({
                       onChange={() => update("category", c)}
                       className="sr-only"
                     />
-                    {c === "GROUP_TOUR" ? "Group Tour" : CATEGORY_LABEL[c]}
+                    {CATEGORY_LABEL[c]}
                   </label>
                 ))}
               </div>

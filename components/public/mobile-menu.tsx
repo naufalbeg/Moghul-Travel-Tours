@@ -4,9 +4,9 @@ import Link from "next/link";
 import { Suspense, useState } from "react";
 import { CloseIcon, MenuIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { ActiveNavList, NavList } from "@/components/public/nav-links";
-import { SITE, whatsappUrl } from "@/lib/site";
+import { telHref, whatsappHref } from "@/lib/site-content";
 
-export function MobileMenu() {
+export function MobileMenu({ phone, whatsapp }: { phone: string; whatsapp: string }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
@@ -35,14 +35,14 @@ export function MobileMenu() {
 
           <div className="mt-4 grid grid-cols-2 gap-3">
             <a
-              href={`tel:+${SITE.phoneIntl}`}
+              href={telHref(phone)}
               className="flex min-h-13 items-center justify-center gap-2 rounded-lg border-[1.5px] border-primary font-bold text-primary"
             >
               <PhoneIcon className="size-5" />
               Call us
             </a>
             <a
-              href={whatsappUrl()}
+              href={whatsappHref({ whatsapp })}
               target="_blank"
               rel="noopener noreferrer"
               className="flex min-h-13 items-center justify-center gap-2 rounded-lg bg-[#1f9d55] font-bold text-white"

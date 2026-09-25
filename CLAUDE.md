@@ -15,9 +15,9 @@ mention them). This file is the quick orientation.
 
 Business facts that override the mockups: the agency has been operating for
 **about a decade** — never say "25+ years", "since 1998" or "3,000+ pilgrims"
-(mockup filler). Umrah and Ziarah share **one** public menu entry, "Umrah &
-Ziarah" (`/packages?category=umrah-ziarah`), though packages keep separate
-UMRAH / ZIARAH categories in the database. Footer credit is "Developed by MNB"
+(mockup filler). Umrah and Ziarah are **one** category everywhere: enum `UMRAH_ZIARAH`,
+label "Umrah & Ziarah", URL `/packages?category=umrah-ziarah` (`umrah` /
+`ziarah` are kept as URL aliases). Footer credit is "Developed by MNB"
 (Mirza Naufal Beg).
 
 Target audience skews older (40s–60s, families, Hajj/Umrah pilgrims, retired
@@ -151,9 +151,11 @@ components/
                          whatsapp-button
   admin/              — admin-shell, admin-nav (sidebar items + page titles)
 lib/
-  site.ts             — real business contact details + public nav (office
-                         hours and social links are still placeholders).
-                         Module 6 moves these into site_config
+  site.ts             — fixed facts (name, legal name) + public nav
+  site-content.ts     — editable content: keys, defaults, phone/WhatsApp/map
+                         helpers (shared with the browser)
+  site-config.ts      — getSiteContent(): site_config rows over defaults,
+                         once per request (server-only)
   prisma.ts           — Prisma client singleton (pg driver adapter)
   supabase/           — config.ts (env checks), server.ts, client.ts
                          (browser), admin.ts (secret key, bypasses RLS),
@@ -246,8 +248,22 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
    still to do: until it exists, every "Inquire" button uses `inquireUrl()`
    in lib/site.ts (WhatsApp with the package name) — switch it there.
 5. ~~Admin package CRUD~~ — done (/admin/packages, /new, /[id]/edit).
-6. Remaining modules: inquiries (form + admin, needs hCaptcha + Resend keys),
+6. ~~Module 6 content pages~~ — done: /about, /contact, /admin/content.
+7. Remaining modules: inquiries (form + admin, needs hCaptcha + Resend keys),
    gallery, testimonials, content pages, announcements, user management.
+
+## Editable content (Module 6)
+- All contact details, office hours, licence numbers, About text and social
+  links live in `site_config` (keys in lib/site-content.ts). Never hard-code
+  them — read `getSiteContent()` in a server component and pass values down.
+  The public layout already loads it once per request.
+- Missing keys fall back to SITE_CONTENT_DEFAULTS; empty optional fields
+  (mobile, alt email, MATTA, social links) are hidden on the site.
+- Admin editor: /admin/content → updateSiteContent (writes only changed
+  keys, audit action UPDATE_CONTENT). Validation in
+  lib/validation/site-content.ts (Malaysian phone, https:// links).
+- The unsaved-changes warning covers reloads/closing the tab; in-app
+  sidebar links don't trigger it (Next client navigation).
 
 ## Security model (important)
 - Migration `20260926000000_lock_down_public_data_api` enables RLS (no

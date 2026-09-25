@@ -2,12 +2,14 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
 import { WhatsAppIcon } from "@/components/ui/icons";
-import { whatsappUrl } from "@/lib/site";
+import { getSiteContent } from "@/lib/site-config";
+import { whatsappHref } from "@/lib/site-content";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const content = await getSiteContent();
   return (
     <div className="flex min-h-screen flex-col">
-      <SiteHeader />
+      <SiteHeader content={content} />
       <main className="flex flex-1 items-center justify-center px-4 py-20 text-center">
         <div className="max-w-[520px]">
           <h1 className="mb-3 text-[28px] text-primary-dark">Page not found</h1>
@@ -23,7 +25,7 @@ export default function NotFound() {
               Browse packages
             </Link>
             <a
-              href={whatsappUrl()}
+              href={whatsappHref(content)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border-[1.5px] border-primary px-6 font-bold text-primary"
@@ -34,7 +36,7 @@ export default function NotFound() {
           </div>
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter content={content} />
     </div>
   );
 }

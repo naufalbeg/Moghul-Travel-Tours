@@ -1,14 +1,20 @@
-import { FacebookIcon, InstagramIcon, WhatsAppIcon } from "@/components/ui/icons";
+import Link from "next/link";
+import { FacebookIcon, InstagramIcon, TikTokIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { LogoMark } from "@/components/ui/logo-mark";
-import { SITE, whatsappUrl } from "@/lib/site";
+import { SITE } from "@/lib/site";
+import { lines, telHref, whatsappHref, type SiteContent } from "@/lib/site-content";
 
-const socialLinks = [
-  { href: SITE.social.facebook, label: "Facebook", Icon: FacebookIcon },
-  { href: SITE.social.instagram, label: "Instagram", Icon: InstagramIcon },
-  { href: whatsappUrl(), label: "WhatsApp", Icon: WhatsAppIcon },
-];
+const badge = "rounded-lg bg-white/10 px-3.5 py-2 text-[13px] font-semibold text-white/90";
 
-export function SiteFooter() {
+export function SiteFooter({ content }: { content: SiteContent }) {
+  // Only show social links that have been filled in (admin: Content pages).
+  const socialLinks = [
+    { href: content.facebook_url, label: "Facebook", Icon: FacebookIcon },
+    { href: content.instagram_url, label: "Instagram", Icon: InstagramIcon },
+    { href: content.tiktok_url, label: "TikTok", Icon: TikTokIcon },
+    { href: whatsappHref(content), label: "WhatsApp", Icon: WhatsAppIcon },
+  ].filter((link) => link.href);
+
   // Extra bottom padding keeps the floating WhatsApp button off the text.
   return (
     <footer className="bg-primary-dark px-4 pt-12 pb-24 text-white sm:px-8">
@@ -24,7 +30,7 @@ export function SiteFooter() {
         <address className="flex-[1_1_300px] space-y-2 text-[15px] not-italic text-white/85">
           <p>
             <strong className="text-white">Office</strong>
-            {SITE.addressLines.map((line) => (
+            {lines(content.address).map((line) => (
               <span key={line} className="block">
                 {line}
               </span>
@@ -32,24 +38,32 @@ export function SiteFooter() {
           </p>
           <p>
             Tel/Fax:{" "}
-            <a href={`tel:+${SITE.phoneIntl}`} className="underline-offset-4 hover:underline">
-              {SITE.phone}
+            <a href={telHref(content.phone)} className="underline-offset-4 hover:underline">
+              {content.phone}
             </a>
-            {" · "}Mobile:{" "}
-            <a href={`tel:+${SITE.mobileIntl}`} className="underline-offset-4 hover:underline">
-              {SITE.mobile}
-            </a>
+            {content.mobile && (
+              <>
+                {" · "}Mobile:{" "}
+                <a href={telHref(content.mobile)} className="underline-offset-4 hover:underline">
+                  {content.mobile}
+                </a>
+              </>
+            )}
           </p>
           <p>
-            <a href={`mailto:${SITE.email}`} className="underline-offset-4 hover:underline">
-              {SITE.email}
+            <a href={`mailto:${content.email}`} className="underline-offset-4 hover:underline">
+              {content.email}
             </a>
-            {" · "}
-            <a href={`mailto:${SITE.altEmail}`} className="underline-offset-4 hover:underline">
-              {SITE.altEmail}
-            </a>
+            {content.alt_email && (
+              <>
+                {" · "}
+                <a href={`mailto:${content.alt_email}`} className="underline-offset-4 hover:underline">
+                  {content.alt_email}
+                </a>
+              </>
+            )}
           </p>
-          <p>Office hours: {SITE.officeHours}</p>
+          <p>Office hours: {lines(content.office_hours).join(" · ")}</p>
           <ul className="flex gap-2.5 pt-2">
             {socialLinks.map(({ href, label, Icon }) => (
               <li key={label}>
@@ -68,12 +82,12 @@ export function SiteFooter() {
         </address>
 
         <div className="flex flex-[1_1_220px] flex-col items-start gap-2">
-          <span className="rounded-lg bg-white/10 px-3.5 py-2 text-[13px] font-semibold text-white/90">
-            {SITE.motacLicense}
-          </span>
-          <span className="rounded-lg bg-white/10 px-3.5 py-2 text-[13px] font-semibold text-white/90">
-            {SITE.companyReg}
-          </span>
+          <span className={badge}>MOTAC License No. {content.motac_license}</span>
+          <span className={badge}>Co. Reg. No. {content.company_reg}</span>
+          {content.matta_member && <span className={badge}>MATTA Member No. {content.matta_member}</span>}
+          <Link href="/contact" className="mt-2 text-sm font-semibold text-white/85 underline-offset-4 hover:underline">
+            Contact &amp; directions →
+          </Link>
         </div>
       </div>
 

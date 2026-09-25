@@ -14,9 +14,9 @@ enum UserRole {
   ADMIN
 }
 
+// The business sells Umrah and Ziarah as one line of trips.
 enum PackageCategory {
-  UMRAH
-  ZIARAH
+  UMRAH_ZIARAH
   GROUP_TOUR
   DOMESTIC
 }

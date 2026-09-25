@@ -3,9 +3,9 @@ import { PackageImage } from "@/components/public/package-image";
 import { formatPrice } from "@/lib/format";
 import { CATEGORY_LABEL, PACKAGE_AVAILABILITY } from "@/lib/package-labels";
 import type { PackageCardData } from "@/lib/packages";
-import { inquireUrl } from "@/lib/site";
+import { inquireHref } from "@/lib/site-content";
 
-export function PackageCard({ pkg }: { pkg: PackageCardData }) {
+export function PackageCard({ pkg, whatsapp }: { pkg: PackageCardData; whatsapp: string }) {
   const href = `/packages/${pkg.slug}`;
   const availability = pkg.availability === "OPEN" ? null : PACKAGE_AVAILABILITY[pkg.availability];
 
@@ -63,7 +63,7 @@ export function PackageCard({ pkg }: { pkg: PackageCardData }) {
             View details
           </Link>
           <a
-            href={inquireUrl(pkg.title)}
+            href={inquireHref({ whatsapp }, pkg.title)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex min-h-12 flex-1 items-center justify-center rounded-lg bg-accent px-3 text-[15px] font-bold text-white hover:bg-accent-dark"
@@ -76,11 +76,11 @@ export function PackageCard({ pkg }: { pkg: PackageCardData }) {
   );
 }
 
-export function PackageGrid({ packages }: { packages: PackageCardData[] }) {
+export function PackageGrid({ packages, whatsapp }: { packages: PackageCardData[]; whatsapp: string }) {
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {packages.map((pkg) => (
-        <PackageCard key={pkg.id} pkg={pkg} />
+        <PackageCard key={pkg.id} pkg={pkg} whatsapp={whatsapp} />
       ))}
     </div>
   );

@@ -4,8 +4,9 @@ import { Logo } from "@/components/ui/logo-mark";
 import { ActiveNavList, NavList } from "@/components/public/nav-links";
 import { MobileMenu } from "@/components/public/mobile-menu";
 import { SITE } from "@/lib/site";
+import type { SiteContent } from "@/lib/site-content";
 
-export function SiteHeader() {
+export function SiteHeader({ content }: { content: SiteContent }) {
   return (
     <header className="relative border-b border-line bg-white">
       {/* Deliberately low-key: staff need it, visitors shouldn't be drawn to it. */}
@@ -19,7 +20,7 @@ export function SiteHeader() {
         <Link href="/" aria-label={`${SITE.name} — home`} className="min-w-0">
           <Logo priority className="h-12 w-auto sm:h-16 lg:h-[76px]" />
         </Link>
-        <MobileMenu />
+        <MobileMenu phone={content.phone} whatsapp={content.whatsapp} />
       </div>
 
       <nav aria-label="Main" className="hidden px-8 pb-[18px] lg:block">

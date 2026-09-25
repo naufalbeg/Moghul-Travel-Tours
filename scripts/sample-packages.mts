@@ -24,7 +24,7 @@ const samples: Prisma.PackageCreateInput[] = [
   {
     slug: "sample-umrah-sakinah-10-days",
     title: "Umrah Sakinah — 10 days",
-    category: "UMRAH",
+    category: "UMRAH_ZIARAH",
     status: "PUBLISHED",
     availability: "ALMOST_FULL",
     pricePerPax: 9800,
@@ -66,7 +66,7 @@ const samples: Prisma.PackageCreateInput[] = [
   {
     slug: "sample-umrah-barakah-12-days",
     title: "Umrah Barakah — 12 days",
-    category: "UMRAH",
+    category: "UMRAH_ZIARAH",
     status: "PUBLISHED",
     pricePerPax: 12500,
     durationDays: 12,
@@ -78,7 +78,7 @@ const samples: Prisma.PackageCreateInput[] = [
   {
     slug: "sample-ziarah-aqsa-jordan-9-days",
     title: "Ziarah Aqsa & Jordan — 9 days",
-    category: "ZIARAH",
+    category: "UMRAH_ZIARAH",
     status: "PUBLISHED",
     pricePerPax: 11200,
     durationDays: 9,

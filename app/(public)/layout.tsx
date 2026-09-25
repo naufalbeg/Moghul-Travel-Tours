@@ -1,8 +1,10 @@
 import { SiteFooter } from "@/components/public/site-footer";
 import { SiteHeader } from "@/components/public/site-header";
 import { WhatsAppButton } from "@/components/public/whatsapp-button";
+import { getSiteContent } from "@/lib/site-config";
 
-export default function PublicLayout({ children }: LayoutProps<"/">) {
+export default async function PublicLayout({ children }: LayoutProps<"/">) {
+  const content = await getSiteContent();
   return (
     <div className="flex min-h-screen flex-col">
       <a
@@ -12,12 +14,12 @@ export default function PublicLayout({ children }: LayoutProps<"/">) {
         Skip to content
       </a>
       {/* Module 7: the announcement bar (promo strip) goes here. */}
-      <SiteHeader />
+      <SiteHeader content={content} />
       <main id="main" className="flex-1">
         {children}
       </main>
-      <SiteFooter />
-      <WhatsAppButton />
+      <SiteFooter content={content} />
+      <WhatsAppButton content={content} />
     </div>
   );
 }

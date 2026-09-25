@@ -7,14 +7,16 @@ import { ShieldIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { LogoMark } from "@/components/ui/logo-mark";
 import { listPublishedPackages } from "@/lib/packages";
 import { prisma } from "@/lib/prisma";
-import { SITE, whatsappUrl } from "@/lib/site";
+import { SITE } from "@/lib/site";
+import { getSiteContent } from "@/lib/site-config";
+import { whatsappHref } from "@/lib/site-content";
 
 /** Homepage — mockup "moghul-homepage-mockup-v2". */
 export default async function HomePage() {
   // listPublishedPackages opts the page into per-request rendering, so the
   // other queries below are fresh too.
   const featured = await listPublishedPackages({ take: 3 });
-  const [photos, testimonial] = await Promise.all([
+  const [photos, testimonial, content] = await Promise.all([
     prisma.galleryImage.findMany({
       orderBy: { createdAt: "desc" },
       take: 4,
@@ -24,6 +26,7 @@ export default async function HomePage() {
       orderBy: { createdAt: "desc" },
       select: { customerName: true, tripName: true, reviewText: true, starRating: true },
     }),
+    getSiteContent(),
   ]);
 
   return (
@@ -55,7 +58,7 @@ export default async function HomePage() {
 
         {featured.length > 0 ? (
           <>
-            <PackageGrid packages={featured} />
+            <PackageGrid packages={featured} whatsapp={content.whatsapp} />
             <Link
               href="/packages"
               className="mt-10 inline-flex min-h-12 items-center rounded-lg border-[1.5px] border-primary px-7 font-bold text-primary hover:bg-primary-pale"
@@ -70,7 +73,7 @@ export default async function HomePage() {
               Umrah, Ziarah and tour dates with you.
             </p>
             <a
-              href={whatsappUrl("Hi Moghul Travel & Tours, I'd like to know about your upcoming packages.")}
+              href={whatsappHref(content, "Hi Moghul Travel & Tours, I'd like to know about your upcoming packages.")}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[#1f9d55] px-6 font-bold text-white"
@@ -139,15 +142,14 @@ export default async function HomePage() {
             <LogoMark className="size-28 shrink-0 shadow-sm" imageClassName="size-20" />
             <div>
               <h2 className="mb-2 text-[19px] text-primary-dark">About {SITE.name}</h2>
-              <p className="mb-3 text-base text-muted">
-                A MOTAC licensed agency based in Shah Alam, focused on Umrah, Ziarah, and
-                family-friendly tours — guiding Malaysian travellers to the places that matter to
-                them for over a decade.
-              </p>
-              <p className="flex items-center justify-center gap-2 text-sm font-semibold text-primary-dark sm:justify-start">
+              <p className="mb-3 text-base text-muted">{content.about_summary}</p>
+              <p className="mb-3 flex items-center justify-center gap-2 text-sm font-semibold text-primary-dark sm:justify-start">
                 <ShieldIcon className="size-4 text-primary" />
-                {SITE.motacLicense} · {SITE.companyReg}
+                MOTAC License No. {content.motac_license} · Co. Reg. No. {content.company_reg}
               </p>
+              <Link href="/about" className="text-[15px] font-bold text-accent-dark hover:underline">
+                Read our story →
+              </Link>
             </div>
           </div>
         </div>

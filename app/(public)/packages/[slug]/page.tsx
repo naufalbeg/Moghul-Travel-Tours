@@ -12,7 +12,8 @@ import {
   durationLabel,
 } from "@/lib/package-labels";
 import { getPublishedPackage } from "@/lib/packages";
-import { SITE, inquireUrl } from "@/lib/site";
+import { getSiteContent } from "@/lib/site-config";
+import { inquireHref, telHref } from "@/lib/site-content";
 
 export async function generateMetadata({ params }: PageProps<"/packages/[slug]">): Promise<Metadata> {
   const pkg = await getPublishedPackage((await params).slug);
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: PageProps<"/packages/[slug]">
 
 /** PackageDetailPage [PKG-MTT-002-002] — mockup 3.2.2. */
 export default async function PackageDetailPage({ params }: PageProps<"/packages/[slug]">) {
-  const pkg = await getPublishedPackage((await params).slug);
+  const [pkg, content] = await Promise.all([getPublishedPackage((await params).slug), getSiteContent()]);
   if (!pkg) notFound();
 
   const duration = durationLabel(pkg.durationDays, pkg.durationNights);
@@ -117,7 +118,7 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
             )}
 
             <a
-              href={inquireUrl(pkg.title)}
+              href={inquireHref(content, pkg.title)}
               target="_blank"
               rel="noopener noreferrer"
               className="mb-3.5 flex min-h-14 items-center justify-center rounded-[10px] bg-accent px-5 text-[17px] font-bold text-white hover:bg-accent-dark"
@@ -125,16 +126,16 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
               {isBookable ? "Inquire now" : "Ask about the next trip"}
             </a>
             <a
-              href={`tel:+${SITE.phoneIntl}`}
+              href={telHref(content.phone)}
               className="mb-[18px] flex items-center justify-center gap-2 text-[15px] font-semibold text-primary"
             >
               <PhoneIcon className="size-4" />
-              Or call {SITE.phone}
+              Or call {content.phone}
             </a>
 
             <p className="flex items-start gap-2 border-t border-line pt-4 text-[13px] text-muted">
               <ShieldIcon className="mt-px size-4 shrink-0 text-primary" />
-              MOTAC licensed ({SITE.motacLicenseNo}) — over a decade
+              MOTAC licensed ({content.motac_license}) — over a decade
               of guiding Malaysian travellers.
             </p>
           </div>

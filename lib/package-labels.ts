@@ -5,18 +5,17 @@ import type {
 } from "@/generated/prisma/enums";
 
 export const CATEGORY_LABEL: Record<PackageCategory, string> = {
-  UMRAH: "Umrah",
-  ZIARAH: "Ziarah",
-  GROUP_TOUR: "Group tour",
+  UMRAH_ZIARAH: "Umrah & Ziarah",
+  GROUP_TOUR: "Group Tour",
   DOMESTIC: "Domestic",
 };
 
 /**
- * Public category filters (URL ?category=...). Umrah and Ziarah share one
- * menu entry on the site, but "umrah" and "ziarah" still work on their own.
+ * Public category filters (URL ?category=...). "umrah" and "ziarah" are
+ * kept as aliases so older or hand-typed links still work.
  */
 export const CATEGORY_FILTERS = [
-  { slug: "umrah-ziarah", label: "Umrah & Ziarah", categories: ["UMRAH", "ZIARAH"] },
+  { slug: "umrah-ziarah", label: "Umrah & Ziarah", categories: ["UMRAH_ZIARAH"] },
   { slug: "group-tour", label: "Group Tours", categories: ["GROUP_TOUR"] },
   { slug: "domestic", label: "Domestic", categories: ["DOMESTIC"] },
 ] as const satisfies readonly {
@@ -25,17 +24,12 @@ export const CATEGORY_FILTERS = [
   categories: readonly PackageCategory[];
 }[];
 
-const EXTRA_FILTERS: Record<string, { label: string; categories: readonly PackageCategory[] }> = {
-  umrah: { label: "Umrah", categories: ["UMRAH"] },
-  ziarah: { label: "Ziarah", categories: ["ZIARAH"] },
-};
+const FILTER_ALIASES: Record<string, string> = { umrah: "umrah-ziarah", ziarah: "umrah-ziarah" };
 
 export function resolveCategoryFilter(slug: string | undefined) {
   if (!slug) return null;
-  const main = CATEGORY_FILTERS.find((f) => f.slug === slug);
-  if (main) return main;
-  const extra = EXTRA_FILTERS[slug];
-  return extra ? { slug, ...extra } : null;
+  const target = FILTER_ALIASES[slug] ?? slug;
+  return CATEGORY_FILTERS.find((f) => f.slug === target) ?? null;
 }
 
 type Pill = { label: string; className: string };

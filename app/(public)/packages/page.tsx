@@ -6,7 +6,8 @@ import { PageBanner } from "@/components/public/page-banner";
 import { WhatsAppIcon } from "@/components/ui/icons";
 import { resolveCategoryFilter } from "@/lib/package-labels";
 import { listPublishedPackages, upcomingMonths } from "@/lib/packages";
-import { whatsappUrl } from "@/lib/site";
+import { getSiteContent } from "@/lib/site-config";
+import { whatsappHref } from "@/lib/site-content";
 
 export const metadata: Metadata = {
   title: "Travel packages",
@@ -25,6 +26,7 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
   const query = param(params.q);
   const month = param(params.month);
 
+  const content = await getSiteContent();
   const packages = await listPublishedPackages({
     categories: filter?.categories,
     query,
@@ -61,7 +63,7 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
         )}
 
         {packages.length > 0 ? (
-          <PackageGrid packages={packages} />
+          <PackageGrid packages={packages} whatsapp={content.whatsapp} />
         ) : (
           <div className="mx-auto max-w-[560px] rounded-xl border border-line bg-white px-6 py-10 text-center">
             <h2 className="mb-2 text-xl text-primary-dark">No packages found</h2>
@@ -71,7 +73,7 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
                 : "New packages are coming soon. In the meantime, our team is happy to help you plan your trip."}
             </p>
             <a
-              href={whatsappUrl("Hi Moghul Travel & Tours, I'd like to ask about your travel packages.")}
+              href={whatsappHref(content, "Hi Moghul Travel & Tours, I'd like to ask about your travel packages.")}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[#1f9d55] px-6 font-bold text-white"
