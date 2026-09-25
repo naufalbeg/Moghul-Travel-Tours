@@ -1,21 +1,17 @@
 import Image from "next/image";
-import globe from "@/public/brand/moghul-globe.png";
 import logo from "@/public/brand/moghul-logo.png";
+import mark from "@/public/brand/moghul-mark.png";
 import { SITE } from "@/lib/site";
 
-/** The globe from the company logo, in a round badge. For tight spaces. */
-export function LogoMark({
-  className = "size-12",
-  imageClassName = "size-[34px]",
-}: {
-  className?: string;
-  imageClassName?: string;
-}) {
+/**
+ * The logo's globe with its orange swoosh and plane, on a white badge (the
+ * dark-blue globe needs a light background). Size it by height, e.g.
+ * className="h-12"; the width follows the mark's proportions.
+ */
+export function LogoMark({ className = "h-12" }: { className?: string }) {
   return (
-    <span
-      className={`flex shrink-0 items-center justify-center rounded-full bg-white ${className}`}
-    >
-      <Image src={globe} alt="" className={imageClassName} />
+    <span className={`relative block aspect-[8/5] shrink-0 rounded-xl bg-white ${className}`}>
+      <Image src={mark} alt="" fill sizes="180px" className="object-contain p-[9%]" />
     </span>
   );
 }

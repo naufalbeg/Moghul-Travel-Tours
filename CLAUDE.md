@@ -247,8 +247,11 @@ ambiguous — check there as a starting point for edge-case behavior.
 
 ## Branding
 Real logo files: `public/brand/moghul-logo.png` (full logo, white background
-baked in — only on white surfaces) and `public/brand/moghul-globe.png`
-(transparent globe, used by `LogoMark` and as `app/icon.png`). Use the
+baked in — only on white surfaces), `public/brand/moghul-mark.png` (globe +
+orange swoosh + plane, transparent — used by `LogoMark` on a white badge in
+the sidebar, footer and homepage About block) and
+`public/brand/moghul-globe.png` (globe only — the favicon `app/icon.png`,
+where the swoosh would be too small to see). Use the
 `Logo` / `LogoMark` components. Real company details from the logo: Co. Reg.
 No. 1273862-K, MOTAC licence KPK/LN 9109.
 

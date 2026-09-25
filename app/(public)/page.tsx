@@ -146,7 +146,7 @@ export default async function HomePage() {
           )}
 
           <div className="flex flex-col items-center gap-6 rounded-[14px] bg-canvas px-6 py-7 text-center sm:flex-row sm:gap-8 sm:px-8 sm:text-left">
-            <LogoMark className="size-28 shrink-0 shadow-sm" imageClassName="size-20" />
+            <LogoMark className="h-24 shadow-sm sm:h-28" />
             <div>
               <h2 className="mb-2 text-[19px] text-primary-dark">About {SITE.name}</h2>
               <p className="mb-3 text-base text-muted">{content.about_summary}</p>

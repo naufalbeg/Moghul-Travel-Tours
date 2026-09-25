@@ -42,7 +42,7 @@ export function AdminShell({
         }`}
       >
         <div className="mb-[18px] flex items-center gap-2.5 border-b border-white/10 px-[22px] pb-[22px]">
-          <LogoMark className="size-10" imageClassName="size-7" />
+          <LogoMark className="h-12" />
           <div className="font-heading text-[15px] leading-snug font-bold">
             {SITE.name}
             <span className="block font-sans text-xs font-normal text-white/55">Admin portal</span>

@@ -20,7 +20,7 @@ export function SiteFooter({ content }: { content: SiteContent }) {
     <footer className="bg-primary-dark px-4 pt-12 pb-24 text-white sm:px-8">
       <div className="mx-auto mb-8 flex max-w-[1160px] flex-wrap justify-between gap-10">
         <div className="flex flex-[1_1_260px] items-center gap-3.5">
-          <LogoMark />
+          <LogoMark className="h-14" />
           <div className="font-heading text-lg font-bold">
             {SITE.name}
             <span className="block font-sans text-sm font-normal text-white/65">Sdn Bhd</span>
