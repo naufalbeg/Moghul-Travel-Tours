@@ -59,17 +59,23 @@ CURRENT names, not the SDD's original ANON_KEY/SERVICE_ROLE_KEY terminology:
   bypasses RLS)
 - `DATABASE_URL` (Prisma connection string)
 
-### Supabase connection pooling — important gotcha already hit once
-Use the **Session pooler** (port 5432), not the Transaction pooler (port 6543),
-for `DATABASE_URL`. Transaction-mode pooling silently hangs forever on
-`prisma migrate dev` (it runs `SET session_replication_role = 'replica'`,
-unsupported in transaction mode) — no error, just an infinite hang. This cost
-significant debugging time already; don't reintroduce it.
+### Supabase connection pooling — two URLs, both matter
+- `DATABASE_URL` (runtime, used by the app via lib/prisma.ts) = **Transaction
+  pooler, port 6543**. The Session pooler caps ALL clients at 15; a few warm
+  Vercel instances exhausted it and pages crashed with `EMAXCONNSESSION max
+  clients reached in session mode` (2026-09-26). Never point the app back
+  at 5432.
+- `DIRECT_URL` (Prisma CLI only, via prisma7.config.ts) = **Session pooler,
+  port 5432**. `prisma migrate` silently hangs forever on the Transaction
+  pooler (it runs `SET session_replication_role`, unsupported there).
+- Scripts in scripts/ use DATABASE_URL (transaction mode works for them).
 
 ## Environment variables
 Already set locally (`.env`, gitignored) and on Vercel (all 3 environments):
-`DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`,
-`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`.
+`DATABASE_URL`, `DIRECT_URL`, `NEXT_PUBLIC_SUPABASE_URL`,
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, plus the hCaptcha/Resend keys.
+(Vercel's Preview DATABASE_URL is still the old 5432 value — unused, fix if
+preview deploys are ever used.)
 **Double-check `NEXT_PUBLIC_SUPABASE_URL` on Vercel is actually the plain
 `https://bgomzagmktakkqmkiqdn.supabase.co` URL and not the publishable key's
 value** — `vercel env ls` showed an ambiguous truncated preview for it that's

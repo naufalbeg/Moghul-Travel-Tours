@@ -6,9 +6,17 @@ function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL is not set");
 
-  // DATABASE_URL points at Supabase's Session pooler, which caps concurrent
-  // client connections — keep each server instance's pool small.
-  const adapter = new PrismaPg({ connectionString, max: 5 });
+  // DATABASE_URL is Supabase's Transaction pooler (port 6543), built for
+  // serverless: many short-lived connections. (The Session pooler caps all
+  // clients at 15, which several warm Vercel instances exhaust — that caused
+  // "max clients reached" outages.) Keep each instance's pool small and let
+  // idle connections close.
+  const adapter = new PrismaPg({
+    connectionString,
+    max: 3,
+    idleTimeoutMillis: 10_000,
+    connectionTimeoutMillis: 10_000,
+  });
   return new PrismaClient({ adapter });
 }
 

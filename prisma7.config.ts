@@ -9,6 +9,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // The CLI (migrate, status, diff) must use the Session pooler — it hangs
+    // on the Transaction pooler that the running app uses (DATABASE_URL).
+    url: process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"],
   },
 });
