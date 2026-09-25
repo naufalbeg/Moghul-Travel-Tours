@@ -245,9 +245,36 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 4. ~~Public homepage, package listing, package detail~~ — done. Inquiry form
    still to do: until it exists, every "Inquire" button uses `inquireUrl()`
    in lib/site.ts (WhatsApp with the package name) — switch it there.
-5. Admin side: each management module (dashboard page already reads live
-   counts). Admin package CRUD is the natural next step — public package
-   pages are empty until packages can be entered.
+5. ~~Admin package CRUD~~ — done (/admin/packages, /new, /[id]/edit).
+6. Remaining modules: inquiries (form + admin, needs hCaptcha + Resend keys),
+   gallery, testimonials, content pages, announcements, user management.
+
+## Security model (important)
+- Migration `20260926000000_lock_down_public_data_api` enables RLS (no
+  policies) and revokes anon/authenticated on every app table. The Supabase
+  REST/Data API is NOT used — all data goes through Prisma (table owner,
+  bypasses RLS). Any new table must get the same treatment (default
+  privileges are revoked for future tables, but add `ENABLE ROW LEVEL
+  SECURITY` in its migration too).
+- Storage buckets (`npm run setup-storage`): `package-images`,
+  `gallery-images` — public read, JPG/PNG/WEBP ≤5MB enforced by the bucket.
+  No storage RLS policies: uploads only via signed upload URLs that a server
+  action issues after `authorize()` (see createPackageImageUploads). The
+  browser uploads straight to Storage; only the object path is saved.
+
+## Admin package module
+- Server actions in app/admin/(portal)/packages/actions.ts:
+  `createPackageImageUploads`, `savePackage(id, input, "draft"|"publish")`,
+  `deletePackage` (soft delete). Validation shared with the form:
+  lib/validation/package.ts — drafts need only a title; publishing needs
+  description, price > 0 and ≥1 image.
+- Saving replaces itinerary/departure/image rows wholesale in a transaction;
+  photos removed in an edit are deleted from Storage. Soft-deleted packages
+  keep their photos.
+- Audit actions: CREATE_PACKAGE, UPDATE_PACKAGE, PUBLISH_PACKAGE,
+  UNPUBLISH_PACKAGE, DELETE_PACKAGE.
+- Client components must not export helpers that server code calls (Next
+  errors: "Attempted to call X() from the server").
 
 ## Public pages — how they work
 - Package reads live in lib/packages.ts (public side of PackageController):

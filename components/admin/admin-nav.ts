@@ -61,7 +61,16 @@ export function isNavItemActive(href: string, pathname: string) {
   return href === "/admin" ? pathname === "/admin" : pathname === href || pathname.startsWith(`${href}/`);
 }
 
+// Sub-pages whose top-bar title differs from their section's.
+const SUB_PAGE_TITLES: [RegExp, string][] = [
+  [/^\/admin\/packages\/new$/, "Add New Package"],
+  [/^\/admin\/packages\/[^/]+\/edit$/, "Edit Package"],
+];
+
 export function titleForPath(pathname: string) {
+  for (const [pattern, title] of SUB_PAGE_TITLES) {
+    if (pattern.test(pathname)) return title;
+  }
   for (const group of ADMIN_NAV) {
     for (const item of group.items) {
       if (isNavItemActive(item.href, pathname)) return item.title;

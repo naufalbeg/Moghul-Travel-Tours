@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Suspense, useState } from "react";
 import { CloseIcon, MenuIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { ActiveNavList, NavList } from "@/components/public/nav-links";
@@ -50,6 +51,14 @@ export function MobileMenu() {
               WhatsApp
             </a>
           </div>
+
+          <Link
+            href="/admin/login"
+            onClick={close}
+            className="mt-4 block text-center text-[13px] font-medium text-muted hover:text-primary"
+          >
+            Admin login
+          </Link>
         </nav>
       )}
     </div>
