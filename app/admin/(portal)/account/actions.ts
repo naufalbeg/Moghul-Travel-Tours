@@ -6,6 +6,7 @@ import { logAudit } from "@/lib/audit";
 import { getCurrentAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/supabase/config";
+import { newPassword } from "@/lib/validation/password";
 
 export type ChangePasswordState =
   | { status: "idle" }
@@ -16,16 +17,10 @@ export type ChangePasswordState =
       fieldErrors?: Partial<Record<"currentPassword" | "newPassword" | "confirmPassword", string>>;
     };
 
-// SRS rule: min. 8 characters, at least one number and one special character.
 const schema = z
   .object({
     currentPassword: z.string().min(1, "Enter your current password."),
-    newPassword: z
-      .string()
-      .min(8, "Use at least 8 characters.")
-      .max(72, "Use 72 characters or fewer.")
-      .regex(/\d/, "Include at least one number.")
-      .regex(/[^A-Za-z0-9]/, "Include at least one special character, e.g. ! @ # $."),
+    newPassword,
     confirmPassword: z.string(),
   })
   .refine((d) => d.newPassword === d.confirmPassword, {

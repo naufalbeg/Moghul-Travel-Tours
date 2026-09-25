@@ -8,7 +8,10 @@ export async function proxy(request: NextRequest) {
   const { response, isSignedIn } = await updateSession(request);
   const { pathname } = request.nextUrl;
 
-  const isAdminPage = pathname.startsWith("/admin") && !pathname.startsWith("/admin/login");
+  const isPublicAdminPage = ["/admin/login", "/admin/forgot-password", "/admin/set-password"].some((p) =>
+    pathname.startsWith(p),
+  );
+  const isAdminPage = pathname.startsWith("/admin") && !isPublicAdminPage;
 
   if (isAdminPage && !isSignedIn) {
     const redirect = NextResponse.redirect(new URL("/admin/login", request.url));

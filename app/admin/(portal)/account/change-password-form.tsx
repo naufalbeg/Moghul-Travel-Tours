@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { AlertCircleIcon } from "@/components/ui/icons";
 import { PasswordInput } from "@/components/ui/password-input";
+import { PASSWORD_HINT } from "@/lib/validation/password";
 import { changePassword, type ChangePasswordState } from "./actions";
 
 const fields = [
@@ -12,7 +13,7 @@ const fields = [
     name: "newPassword",
     label: "New password",
     autoComplete: "new-password",
-    hint: "At least 8 characters, with a number and a special character (e.g. ! @ # $).",
+    hint: PASSWORD_HINT,
   },
   { name: "confirmPassword", label: "Confirm new password", autoComplete: "new-password" },
 ] as const;

@@ -51,6 +51,14 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
+    if (error.code === "user_banned") {
+      return {
+        status: "error",
+        email,
+        message: "This account has been deactivated.",
+        detail: "Please contact your Master Admin if you think this is a mistake.",
+      };
+    }
     if (error.code !== "invalid_credentials") {
       console.error("Sign-in failed", error);
       return {

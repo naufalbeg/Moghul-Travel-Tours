@@ -1,6 +1,7 @@
 import "server-only";
 import { Resend } from "resend";
 import { SITE } from "@/lib/site";
+import { siteUrl } from "@/lib/site-url";
 
 /**
  * ResendEmail middleware (SDD PKG-MTT-010-003).
@@ -12,11 +13,6 @@ import { SITE } from "@/lib/site";
  */
 const FROM = process.env.EMAIL_FROM || `${SITE.name} <onboarding@resend.dev>`;
 
-/** Absolute site URL for links in emails. */
-export function siteUrl() {
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-  return "http://localhost:3000";
-}
 
 const escape = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
@@ -89,4 +85,59 @@ export async function sendInquiryNotification(to: string, inquiry: InquiryEmail)
     console.error("Inquiry email failed", error);
     return false;
   }
+}
+
+/** Sends one email; returns false (and logs) instead of throwing. */
+async function send(message: { to: string; subject: string; html: string; text: string }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.error("RESEND_API_KEY is not set — email skipped:", message.subject);
+    return false;
+  }
+  try {
+    const { error } = await new Resend(apiKey).emails.send({ from: FROM, ...message });
+    if (error) {
+      console.error("Resend rejected an email", message.subject, error);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error("Email failed", message.subject, error);
+    return false;
+  }
+}
+
+const button = (href: string, label: string) =>
+  `<p style="margin:24px 0"><a href="${href}" style="background:#f07c1e;color:#fff;padding:13px 22px;border-radius:8px;text-decoration:none;font-weight:bold">${label}</a></p>`;
+
+const wrap = (body: string) =>
+  `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.55;color:#1a2733;max-width:560px">${body}</div>`;
+
+/** sendInvitationEmail — REQ-MTT-001-004: one-time setup link, valid 24 hours. */
+export function sendInvitationEmail(to: string, name: string, invitedBy: string, link: string) {
+  return send({
+    to,
+    subject: `You're invited to the ${SITE.name} admin dashboard`,
+    html: wrap(`
+      <h2 style="color:#123a66;margin:0 0 12px">Hi ${escape(name)},</h2>
+      <p>${escape(invitedBy)} has invited you to help manage the ${SITE.name} website.</p>
+      <p>Click the button below to choose your password and sign in.</p>
+      ${button(link, "Set up my account")}
+      <p style="color:#5b6b7a;font-size:13px">This link works once and expires in 24 hours. If it has expired, ask ${escape(invitedBy)} to send a new invitation.</p>`),
+    text: `Hi ${name},\n\n${invitedBy} has invited you to help manage the ${SITE.name} website.\n\nSet up your account (link expires in 24 hours):\n${link}`,
+  });
+}
+
+/** Password reset link, valid 1 hour. */
+export function sendPasswordResetEmail(to: string, name: string, link: string) {
+  return send({
+    to,
+    subject: `Reset your ${SITE.name} admin password`,
+    html: wrap(`
+      <h2 style="color:#123a66;margin:0 0 12px">Hi ${escape(name)},</h2>
+      <p>We received a request to reset the password for your admin account.</p>
+      ${button(link, "Choose a new password")}
+      <p style="color:#5b6b7a;font-size:13px">This link works once and expires in 1 hour. If you didn't ask for this, you can ignore this email — your password won't change.</p>`),
+    text: `Hi ${name},\n\nReset your admin password (link expires in 1 hour):\n${link}\n\nIf you didn't ask for this, ignore this email.`,
+  });
 }

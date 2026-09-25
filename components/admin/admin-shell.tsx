@@ -8,14 +8,10 @@ import { ADMIN_NAV, isNavItemActive, titleForPath } from "@/components/admin/adm
 import { CloseIcon, LogoutIcon, MenuIcon } from "@/components/ui/icons";
 import { LogoMark } from "@/components/ui/logo-mark";
 import type { AdminUser } from "@/lib/auth";
+import { initials } from "@/lib/format";
 import { SITE } from "@/lib/site";
 
 const roleLabel = { MASTER_ADMIN: "Master Admin", ADMIN: "Admin" } as const;
-
-function initials(name: string) {
-  const words = name.split(/\s+/).filter((w) => !/^(bin|binti|bte|bt)$/i.test(w));
-  return ((words[0]?.[0] ?? "") + (words[1]?.[0] ?? "")).toUpperCase();
-}
 
 export function AdminShell({
   admin,

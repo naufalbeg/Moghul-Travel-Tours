@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import { SITE } from "@/lib/site";
+import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const inter = Inter({
@@ -17,12 +18,14 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
   title: {
     default: `${SITE.name} — Umrah, Ziarah & Group Tours`,
     template: `%s | ${SITE.name}`,
   },
   description:
     "MOTAC-licensed Malaysian travel agency offering Umrah, Ziarah, group tours, and domestic packages.",
+  openGraph: { type: "website", siteName: SITE.name, locale: "en_MY" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

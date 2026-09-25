@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -59,6 +60,11 @@ export function LoginForm() {
           aria-invalid={invalid || undefined}
           className={inputClass}
         />
+        <p className="mt-2 text-right">
+          <Link href="/admin/forgot-password" className="text-sm font-semibold text-primary hover:underline">
+            Forgot password?
+          </Link>
+        </p>
       </div>
 
       <button

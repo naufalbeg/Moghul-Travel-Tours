@@ -29,3 +29,9 @@ export function todayInMalaysia() {
   );
   return new Date(`${ymd}T00:00:00Z`);
 }
+
+/** "Nurul Huda binti Rahman" → "NH" (skips bin/binti). */
+export function initials(name: string) {
+  const words = name.split(/\s+/).filter((w) => w && !/^(bin|binti|bte|bt|a\/l|a\/p)$/i.test(w));
+  return ((words[0]?.[0] ?? "") + (words[1]?.[0] ?? "")).toUpperCase();
+}

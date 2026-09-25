@@ -231,7 +231,19 @@ ambiguous — check there as a starting point for edge-case behavior.
   audit_log). Unknown emails get a generic error with no attempt counter.
 - Any admin can change their own password at /admin/account (SRS rule: 8+
   chars, a number, a special character).
-- No "forgot password" email flow yet — needs Resend, comes with invitations.
+- Staff accounts: /admin/users (Master Admin only). Invite → Supabase auth
+  user with a random password + users row (joined_at null) + one-time link
+  (lib/password-tokens.ts: SHA-256 hash stored, 24h invite / 1h reset) to
+  /admin/set-password. If the email fails, the dialog shows the link to
+  share manually. Deactivate = is_active false + Supabase ban; delete nulls
+  FK references then removes the users row and auth user. The Master Admin
+  row can never be modified.
+- /admin/forgot-password emails a 1h reset link; same response for unknown
+  emails. Until the Resend domain is verified, reset emails only reach
+  moghultt@gmail.com — the Master Admin (moghul@gmail.com) should still use
+  `npm run create-master-admin` to recover.
+- proxy.ts treats /admin/login, /admin/forgot-password, /admin/set-password
+  as public.
 
 ## Branding
 Real logo files: `public/brand/moghul-logo.png` (full logo, white background
@@ -249,9 +261,10 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 6. ~~Module 6 content pages~~ — done: /about, /contact, /admin/content.
 7. ~~Testimonials, Gallery, Announcements (Modules 5, 4, 7)~~ — done.
 8. ~~Inquiries (Module 3)~~ — done.
-9. Remaining: user management invites (Module 1). Needs a verified sending
-   domain in Resend (moghultt.com DNS) to email anyone other than
-   moghultt@gmail.com.
+9. ~~User management + forgot password (Module 1)~~ — done.
+10. Remaining: verify moghultt.com in Resend (DNS records from the domain
+    manager), then set EMAIL_FROM on Vercel so invite/reset emails reach any
+    address. Later: point moghultt.com at Vercel.
 
 ## Editable content (Module 6)
 - All contact details, office hours, licence numbers, About text and social
@@ -304,6 +317,11 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 - Admin: /admin/inquiries (status tabs, newest first), /admin/inquiries/[id]
   (WhatsApp/call/email shortcuts, status New/In progress/Resolved, delete only
   when resolved). Sidebar shows the count of NEW inquiries.
+
+## SEO
+- app/sitemap.ts (dynamic, includes published packages), app/robots.ts
+  (disallows /admin, /api), app/opengraph-image.png (logo share card).
+  Absolute URLs come from lib/site-url.ts (VERCEL_PROJECT_PRODUCTION_URL).
 
 ## Security model (important)
 - Migration `20260926000000_lock_down_public_data_api` enables RLS (no
