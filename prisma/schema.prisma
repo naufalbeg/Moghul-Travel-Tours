@@ -21,10 +21,25 @@ enum PackageCategory {
   DOMESTIC
 }
 
+// Publication state only — whether visitors can see the package at all.
 enum PackageStatus {
-  PUBLISHED
   DRAFT
+  PUBLISHED
+}
+
+// Package-level booking availability, shown on cards and the admin list.
+// Independent of PackageStatus: a PUBLISHED package can be ALMOST_FULL.
+enum PackageAvailability {
+  OPEN
+  ALMOST_FULL
+  FULL
   COMING_SOON
+}
+
+// Seat availability for a single departure date.
+enum DepartureAvailability {
+  OPEN
+  ALMOST_FULL
   FULL
 }
 
@@ -62,23 +77,62 @@ model User {
 }
 
 model Package {
-  id             String          @id @default(uuid()) @db.Uuid
+  id             String              @id @default(uuid()) @db.Uuid
+  slug           String              @unique
   title          String
   category       PackageCategory
   description    String
-  itinerary      String
-  pricePerPax    Decimal         @map("price_per_pax") @db.Decimal(10, 2)
-  status         PackageStatus   @default(DRAFT)
-  departureDates String[]        @map("departure_dates")
-  createdById    String?         @map("created_by") @db.Uuid
-  createdBy      User?           @relation(fields: [createdById], references: [id])
-  deletedAt      DateTime?       @map("deleted_at") @db.Timestamptz
-  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+  // Short bullet points shown on package cards ("Highlights").
+  highlights     String[]            @default([])
+  // Checklist shown under "What's included" on the detail page.
+  inclusions     String[]            @default([])
+  durationDays   Int?                @map("duration_days") @db.SmallInt
+  durationNights Int?                @map("duration_nights") @db.SmallInt
+  // Free text, e.g. "Twin / triple sharing".
+  roomSharing    String?             @map("room_sharing")
+  pricePerPax    Decimal             @map("price_per_pax") @db.Decimal(10, 2)
+  status         PackageStatus       @default(DRAFT)
+  availability   PackageAvailability @default(OPEN)
+  createdById    String?             @map("created_by") @db.Uuid
+  createdBy      User?               @relation(fields: [createdById], references: [id])
+  deletedAt      DateTime?           @map("deleted_at") @db.Timestamptz
+  createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime            @updatedAt @map("updated_at") @db.Timestamptz
 
-  images PackageImage[]
+  images     PackageImage[]
+  itinerary  PackageItineraryDay[]
+  departures PackageDeparture[]
 
+  @@index([status, category])
   @@map("packages")
+}
+
+// One itinerary entry. dayEnd is set when an entry spans several days
+// ("Day 2–4"), otherwise null ("Day 1").
+model PackageItineraryDay {
+  id          String  @id @default(uuid()) @db.Uuid
+  packageId   String  @map("package_id") @db.Uuid
+  package     Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  dayStart    Int     @map("day_start") @db.SmallInt
+  dayEnd      Int?    @map("day_end") @db.SmallInt
+  title       String
+  description String
+  sortOrder   Int     @default(0) @map("sort_order")
+
+  @@index([packageId])
+  @@map("package_itinerary_days")
+}
+
+model PackageDeparture {
+  id            String                @id @default(uuid()) @db.Uuid
+  packageId     String                @map("package_id") @db.Uuid
+  package       Package               @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  departureDate DateTime              @map("departure_date") @db.Date
+  availability  DepartureAvailability @default(OPEN)
+  createdAt     DateTime              @default(now()) @map("created_at") @db.Timestamptz
+
+  @@unique([packageId, departureDate])
+  @@map("package_departures")
 }
 
 model PackageImage {
@@ -91,6 +145,7 @@ model PackageImage {
   sortOrder   Int      @default(0) @map("sort_order")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
 
+  @@index([packageId])
   @@map("package_images")
 }
 
