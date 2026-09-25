@@ -144,9 +144,9 @@ components/
                          whatsapp-button
   admin/              — admin-shell, admin-nav (sidebar items + page titles)
 lib/
-  site.ts             — site name/contact constants + public nav. Contact
-                         details are MOCKUP PLACEHOLDERS until Module 6 moves
-                         them into site_config
+  site.ts             — real business contact details + public nav (office
+                         hours and social links are still placeholders).
+                         Module 6 moves these into site_config
   prisma.ts           — Prisma client singleton (pg driver adapter)
   supabase/           — config.ts (env checks), server.ts, client.ts
                          (browser), admin.ts (secret key, bypasses RLS),
@@ -205,11 +205,30 @@ ambiguous — check there as a starting point for edge-case behavior.
   ruled out — not a project misconfiguration). Deploys are currently manual:
   `git push` then `vercel --prod`. Fine to revisit later, not urgent.
 
+## Admin accounts
+- Master Admin: Mirza Raziq, `moghul@gmail.com` (Naufal's father). Created
+  with `npm run create-master-admin` (scripts/create-master-admin.mts), which
+  takes MASTER_ADMIN_EMAIL / MASTER_ADMIN_NAME / MASTER_ADMIN_PASSWORD from the
+  environment — never commit a password. Re-running it resets the password
+  and clears any lockout, so it's also the recovery path.
+- Login: server action in app/admin/login/actions.ts. 5 consecutive wrong
+  passwords → `locked_until` = now + 15 min (tracked in `users`, logged to
+  audit_log). Unknown emails get a generic error with no attempt counter.
+- Any admin can change their own password at /admin/account (SRS rule: 8+
+  chars, a number, a special character).
+- No "forgot password" email flow yet — needs Resend, comes with invitations.
+
+## Branding
+Real logo files: `public/brand/moghul-logo.png` (full logo, white background
+baked in — only on white surfaces) and `public/brand/moghul-globe.png`
+(transparent globe, used by `LogoMark` and as `app/icon.png`). Use the
+`Logo` / `LogoMark` components. Real company details from the logo: Co. Reg.
+No. 1273862-K, MOTAC licence KPK/LN 9109.
+
 ## What's next (build order)
 1. ~~Design system foundation~~ — done (tokens, header, footer, admin shell)
 2. ~~Supabase + Prisma client setup~~ — done
-3. Master Admin seed + working login (lockout after 5 failures), so the
-   admin side can actually be used
+3. ~~Master Admin seed + working login + change password~~ — done
 4. Public site: homepage → package listing → package detail → inquiry form
 5. Admin side: each management module (dashboard page already reads live
    counts)

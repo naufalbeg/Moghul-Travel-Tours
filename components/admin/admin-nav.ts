@@ -4,6 +4,7 @@ import {
   DashboardIcon,
   FileIcon,
   ImageIcon,
+  KeyIcon,
   MailIcon,
   MegaphoneIcon,
   PackageIcon,
@@ -51,6 +52,7 @@ export const ADMIN_NAV: { label: string; items: NavItem[] }[] = [
         Icon: UsersIcon,
         minRole: "MASTER_ADMIN",
       },
+      { href: "/admin/account", label: "My account", title: "My Account", Icon: KeyIcon },
     ],
   },
 ];

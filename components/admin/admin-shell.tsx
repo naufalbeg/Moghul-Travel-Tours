@@ -38,7 +38,7 @@ export function AdminShell({ admin, children }: { admin: AdminUser; children: Re
         }`}
       >
         <div className="mb-[18px] flex items-center gap-2.5 border-b border-white/10 px-[22px] pb-[22px]">
-          <LogoMark variant="dark" className="size-9" iconClassName="size-5" />
+          <LogoMark className="size-10" imageClassName="size-7" />
           <div className="font-heading text-[15px] leading-snug font-bold">
             {SITE.name}
             <span className="block font-sans text-xs font-normal text-white/55">Admin portal</span>
@@ -111,7 +111,11 @@ export function AdminShell({ admin, children }: { admin: AdminUser; children: Re
             <h1 className="text-xl text-primary-dark">{titleForPath(pathname)}</h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <Link
+            href="/admin/account"
+            aria-label="My account"
+            className="flex items-center gap-3 rounded-lg p-1 hover:bg-canvas"
+          >
             <div className="hidden text-right leading-snug sm:block">
               <div className="font-bold">{admin.name}</div>
               <span className="mt-0.5 inline-block rounded-full bg-accent-pale px-2.5 py-0.5 text-xs font-bold text-accent-dark">
@@ -121,7 +125,7 @@ export function AdminShell({ admin, children }: { admin: AdminUser; children: Re
             <span className="flex size-10 items-center justify-center rounded-full bg-primary-pale font-heading font-bold text-primary">
               {initials(admin.name)}
             </span>
-          </div>
+          </Link>
         </header>
 
         <div className="p-4 sm:p-8">{children}</div>

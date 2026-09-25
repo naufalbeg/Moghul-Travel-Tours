@@ -14,7 +14,7 @@ export function SiteFooter() {
     <footer className="bg-primary-dark px-4 pt-12 pb-24 text-white sm:px-8">
       <div className="mx-auto mb-8 flex max-w-[1160px] flex-wrap justify-between gap-10">
         <div className="flex flex-[1_1_260px] items-center gap-3.5">
-          <LogoMark variant="dark" />
+          <LogoMark />
           <div className="font-heading text-lg font-bold">
             {SITE.name}
             <span className="block font-sans text-sm font-normal text-white/65">Sdn Bhd</span>
@@ -23,15 +23,30 @@ export function SiteFooter() {
 
         <address className="flex-[1_1_300px] space-y-2 text-[15px] not-italic text-white/85">
           <p>
-            <strong className="text-white">Office</strong> — {SITE.address}
+            <strong className="text-white">Office</strong>
+            {SITE.addressLines.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </p>
           <p>
+            Tel/Fax:{" "}
             <a href={`tel:+${SITE.phoneIntl}`} className="underline-offset-4 hover:underline">
               {SITE.phone}
             </a>
-            {" · "}
+            {" · "}Mobile:{" "}
+            <a href={`tel:+${SITE.mobileIntl}`} className="underline-offset-4 hover:underline">
+              {SITE.mobile}
+            </a>
+          </p>
+          <p>
             <a href={`mailto:${SITE.email}`} className="underline-offset-4 hover:underline">
               {SITE.email}
+            </a>
+            {" · "}
+            <a href={`mailto:${SITE.altEmail}`} className="underline-offset-4 hover:underline">
+              {SITE.altEmail}
             </a>
           </p>
           <p>Office hours: {SITE.officeHours}</p>
@@ -57,7 +72,7 @@ export function SiteFooter() {
             {SITE.motacLicense}
           </span>
           <span className="rounded-lg bg-white/10 px-3.5 py-2 text-[13px] font-semibold text-white/90">
-            {SITE.mattaMember}
+            {SITE.companyReg}
           </span>
         </div>
       </div>

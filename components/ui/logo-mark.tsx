@@ -1,27 +1,37 @@
-import { GlobeIcon } from "@/components/ui/icons";
+import Image from "next/image";
+import globe from "@/public/brand/moghul-globe.png";
+import logo from "@/public/brand/moghul-logo.png";
+import { SITE } from "@/lib/site";
 
-type Variant = "light" | "dark";
-
-const styles: Record<Variant, string> = {
-  light: "bg-primary-pale text-primary",
-  dark: "bg-white/10 text-canvas",
-};
-
-/** Round globe badge used as the brand mark until a real logo exists. */
+/** The globe from the company logo, in a round badge. For tight spaces. */
 export function LogoMark({
-  variant = "light",
   className = "size-12",
-  iconClassName = "size-[26px]",
+  imageClassName = "size-[34px]",
 }: {
-  variant?: Variant;
   className?: string;
-  iconClassName?: string;
+  imageClassName?: string;
 }) {
   return (
     <span
-      className={`flex shrink-0 items-center justify-center rounded-full ${styles[variant]} ${className}`}
+      className={`flex shrink-0 items-center justify-center rounded-full bg-white ${className}`}
     >
-      <GlobeIcon className={iconClassName} />
+      <Image src={globe} alt="" className={imageClassName} />
     </span>
+  );
+}
+
+/**
+ * The full company logo (wordmark, reg. no. and licence). It has a white
+ * background baked in, so only place it on white surfaces.
+ */
+export function Logo({ className = "h-16 w-auto", priority }: { className?: string; priority?: boolean }) {
+  return (
+    <Image
+      src={logo}
+      alt={SITE.legalName}
+      className={className}
+      priority={priority}
+      sizes="(min-width: 1024px) 300px, 200px"
+    />
   );
 }
