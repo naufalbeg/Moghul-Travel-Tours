@@ -36,8 +36,8 @@ export const whatsappUrl = (text?: string) =>
 export const PUBLIC_NAV = [
   { href: "/", label: "Home" },
   { href: "/packages", label: "Packages" },
-  { href: "/packages?category=umrah", label: "Umrah" },
-  { href: "/packages?category=ziarah", label: "Ziarah" },
+  // One menu entry covering both the UMRAH and ZIARAH package categories.
+  { href: "/packages?category=umrah-ziarah", label: "Umrah & Ziarah" },
   { href: "/packages?category=group-tour", label: "Group Tours" },
   { href: "/packages?category=domestic", label: "Domestic" },
   { href: "/gallery", label: "Gallery" },

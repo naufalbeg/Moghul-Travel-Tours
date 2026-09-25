@@ -10,8 +10,8 @@ export default function HomePage() {
           Go beyond the ordinary — find your ideal journey
         </h1>
         <p className="mx-auto mb-8 max-w-[560px] text-[19px] text-white/88">
-          Umrah, Ziarah, and family tours planned with care, backed by 25+ years of
-          experience and a team you can actually reach.
+          Umrah, Ziarah, and family tours planned with care, backed by over a decade
+          of experience and a team you can actually reach.
         </p>
         <Link
           href="/packages"

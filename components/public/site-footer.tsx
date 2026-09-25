@@ -81,7 +81,7 @@ export function SiteFooter() {
         <span>
           © {new Date().getFullYear()} {SITE.name}. All rights reserved.
         </span>
-        <span>Developed by CB23063 · Powered by MTT Website Management System</span>
+        <span>Developed by MNB</span>
       </div>
     </footer>
   );

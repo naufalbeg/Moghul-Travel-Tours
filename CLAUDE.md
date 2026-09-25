@@ -13,6 +13,13 @@ personal project: deviating from them when it makes the product better is fine
 (no need to keep the docs in sync or ask permission for sensible changes, just
 mention them). This file is the quick orientation.
 
+Business facts that override the mockups: the agency has been operating for
+**about a decade** — never say "25+ years", "since 1998" or "3,000+ pilgrims"
+(mockup filler). Umrah and Ziarah share **one** public menu entry, "Umrah &
+Ziarah" (`/packages?category=umrah-ziarah`), though packages keep separate
+UMRAH / ZIARAH categories in the database. Footer credit is "Developed by MNB"
+(Mirza Naufal Beg).
+
 Target audience skews older (40s–60s, families, Hajj/Umrah pilgrims, retired
 couples) — legibility and simplicity are design requirements, not nice-to-haves.
 Body text minimum 17–18px, large touch targets, no auto-advancing carousels,
@@ -200,10 +207,16 @@ ambiguous — check there as a starting point for edge-case behavior.
 - Deployed to Vercel (`moghul-travel-tours.vercel.app`), project name
   `moghul-dev/moghul-travel-tours`
 - Environment variables set on Vercel (see caveat above)
-- **Known limitation:** Vercel's GitHub auto-deploy-on-push integration would
-  not connect (a persistent platform-side issue, several fixes attempted and
-  ruled out — not a project misconfiguration). Deploys are currently manual:
-  `git push` then `vercel --prod`. Fine to revisit later, not urgent.
+- Live at https://moghul-travel-tours.vercel.app (the `…-moghul-dev.vercel.app`
+  URL sits behind Vercel's team SSO protection — that's expected).
+- Deploys are manual: `git push` then `vercel --prod`. The project lives in
+  the `moghul-dev` Vercel team (Hobby) while commits are authored by GitHub
+  user `naufalbeg`, a different Vercel account. Hobby blocks that for
+  **private** repos ("commit author did not have contributing access"), so
+  the GitHub repo is kept **public** — making it private again will re-block
+  deploys. A blocked deployment never un-blocks; redeploy after fixing. This
+  mismatch is likely also why GitHub auto-deploy never connected — worth
+  retrying `vercel git connect` now that the repo is public.
 
 ## Admin accounts
 - Master Admin: Mirza Raziq, `moghul@gmail.com` (Naufal's father). Created
