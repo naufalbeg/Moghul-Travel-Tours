@@ -90,7 +90,7 @@ const samples: Prisma.PackageCreateInput[] = [
   {
     slug: "sample-historic-turkiye-8-days",
     title: "Historic Turkiye — 8 days",
-    category: "GROUP_TOUR",
+    category: "OUTBOUND",
     status: "PUBLISHED",
     pricePerPax: 6500,
     durationDays: 8,
@@ -102,7 +102,7 @@ const samples: Prisma.PackageCreateInput[] = [
   {
     slug: "sample-langkawi-family-getaway-4-days",
     title: "Langkawi Family Getaway — 4 days",
-    category: "DOMESTIC",
+    category: "INBOUND",
     status: "PUBLISHED",
     availability: "FULL",
     pricePerPax: 1200,
@@ -114,11 +114,23 @@ const samples: Prisma.PackageCreateInput[] = [
   {
     slug: "sample-bandung-heritage-tour-5-days",
     title: "Bandung Heritage Tour — 5 days",
-    category: "GROUP_TOUR",
+    category: "OUTBOUND",
     status: "DRAFT",
     pricePerPax: 2800,
     description: "Draft sample — should NOT appear on the public site.",
     highlights: ["Colonial old town, tea plantations, and local markets"],
+  },
+  {
+    slug: "sample-straits-cruise-5-days",
+    title: "Straits of Malacca Cruise — 5 days",
+    category: "CRUISE",
+    status: "PUBLISHED",
+    pricePerPax: 2400,
+    durationDays: 5,
+    durationNights: 4,
+    description: "Port Klang to Penang and Phuket aboard a family-friendly ship with halal dining.",
+    highlights: ["Penang and Phuket shore excursions", "Halal dining on board"],
+    departures: { create: [{ departureDate: d("2027-05-09") }] },
   },
 ];
 

@@ -14,11 +14,13 @@ enum UserRole {
   ADMIN
 }
 
-// The business sells Umrah and Ziarah as one line of trips.
+// The business sells Umrah and Ziarah as one line of trips. Outbound =
+// tours abroad, Inbound = tours within Malaysia.
 enum PackageCategory {
   UMRAH_ZIARAH
-  GROUP_TOUR
-  DOMESTIC
+  OUTBOUND
+  INBOUND
+  CRUISE
 }
 
 // Publication state only — whether visitors can see the package at all.

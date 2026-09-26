@@ -4,7 +4,7 @@ import { IMAGE_BUCKETS, MAX_PACKAGE_IMAGES } from "@/lib/storage-config";
 // Shared by the admin package form (instant feedback) and the savePackage
 // server action (the real check). Keep it free of server-only imports.
 
-export const CATEGORIES = ["UMRAH_ZIARAH", "GROUP_TOUR", "DOMESTIC"] as const;
+export const CATEGORIES = ["UMRAH_ZIARAH", "OUTBOUND", "INBOUND", "CRUISE"] as const;
 export const AVAILABILITIES = ["OPEN", "ALMOST_FULL", "FULL", "COMING_SOON"] as const;
 export const DEPARTURE_AVAILABILITIES = ["OPEN", "ALMOST_FULL", "FULL"] as const;
 

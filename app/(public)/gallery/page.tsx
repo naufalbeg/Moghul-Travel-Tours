@@ -6,7 +6,7 @@ import { listGalleryImages, listGalleryTags } from "@/lib/gallery";
 
 export const metadata: Metadata = {
   title: "Gallery",
-  description: "Photos from Moghul Travel & Tours trips — Umrah, Ziarah, group tours and more.",
+  description: "Photos from Moghul Travel & Tours trips — Umrah & Ziarah, tours, cruises and more.",
 };
 
 /** GalleryPage [PKG-MTT-004-001] — grid, filter by destination tag, lightbox. */

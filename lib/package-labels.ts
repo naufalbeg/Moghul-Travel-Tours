@@ -6,25 +6,33 @@ import type {
 
 export const CATEGORY_LABEL: Record<PackageCategory, string> = {
   UMRAH_ZIARAH: "Umrah & Ziarah",
-  GROUP_TOUR: "Group Tour",
-  DOMESTIC: "Domestic",
+  OUTBOUND: "Outbound",
+  INBOUND: "Inbound",
+  CRUISE: "Cruise",
 };
 
 /**
- * Public category filters (URL ?category=...). "umrah" and "ziarah" are
- * kept as aliases so older or hand-typed links still work.
+ * Public category filters (URL ?category=...). The aliases keep older or
+ * hand-typed links working ("group-tour" and "domestic" were the previous
+ * names of Outbound and Inbound).
  */
 export const CATEGORY_FILTERS = [
   { slug: "umrah-ziarah", label: "Umrah & Ziarah", categories: ["UMRAH_ZIARAH"] },
-  { slug: "group-tour", label: "Group Tours", categories: ["GROUP_TOUR"] },
-  { slug: "domestic", label: "Domestic", categories: ["DOMESTIC"] },
+  { slug: "outbound", label: "Outbound", categories: ["OUTBOUND"] },
+  { slug: "inbound", label: "Inbound", categories: ["INBOUND"] },
+  { slug: "cruise", label: "Cruise", categories: ["CRUISE"] },
 ] as const satisfies readonly {
   slug: string;
   label: string;
   categories: readonly PackageCategory[];
 }[];
 
-const FILTER_ALIASES: Record<string, string> = { umrah: "umrah-ziarah", ziarah: "umrah-ziarah" };
+const FILTER_ALIASES: Record<string, string> = {
+  umrah: "umrah-ziarah",
+  ziarah: "umrah-ziarah",
+  "group-tour": "outbound",
+  domestic: "inbound",
+};
 
 export function resolveCategoryFilter(slug: string | undefined) {
   if (!slug) return null;

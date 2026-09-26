@@ -12,7 +12,7 @@ import { whatsappHref } from "@/lib/site-content";
 export const metadata: Metadata = {
   title: "Travel packages",
   description:
-    "Browse Umrah, Ziarah, group tour and domestic travel packages from Moghul Travel & Tours.",
+    "Browse Umrah & Ziarah, outbound, inbound and cruise packages from Moghul Travel & Tours.",
 };
 
 function param(value: string | string[] | undefined) {
@@ -42,7 +42,7 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
   return (
     <>
       <PageBanner title={filter ? `${filter.label} packages` : "Our travel packages"}>
-        Browse our full range of Umrah, Ziarah, group tours, and domestic getaways.
+        Browse our Umrah &amp; Ziarah, outbound, inbound and cruise packages.
       </PageBanner>
 
       <section className="mx-auto max-w-[1160px] px-4 pt-10 pb-16 sm:px-8 sm:pt-14">

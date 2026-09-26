@@ -1,24 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { PUBLIC_NAV } from "@/lib/site";
 
 type NavHref = (typeof PUBLIC_NAV)[number]["href"];
 
 function useIsActive() {
   const pathname = usePathname();
-  const category = useSearchParams().get("category");
 
   return (href: NavHref) => {
-    const [path, query] = href.split("?");
-    if (path === "/") return pathname === "/";
-    if (path === "/packages") {
-      if (!pathname.startsWith("/packages")) return false;
-      const hrefCategory = new URLSearchParams(query).get("category");
-      return hrefCategory === category;
-    }
-    return pathname === path || pathname.startsWith(`${path}/`);
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 }
 
@@ -68,7 +61,7 @@ export function NavList({
   );
 }
 
-/** NavList with active-link highlighting. Must sit inside <Suspense>. */
+/** NavList with active-link highlighting. */
 export function ActiveNavList(props: { variant: Variant; onNavigate?: () => void }) {
   const isActive = useIsActive();
   return <NavList {...props} isActive={isActive} />;

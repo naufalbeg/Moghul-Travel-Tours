@@ -10,9 +10,6 @@ export const SITE = {
 export const PUBLIC_NAV = [
   { href: "/", label: "Home" },
   { href: "/packages", label: "Packages" },
-  { href: "/packages?category=umrah-ziarah", label: "Umrah & Ziarah" },
-  { href: "/packages?category=group-tour", label: "Group Tours" },
-  { href: "/packages?category=domestic", label: "Domestic" },
   { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact" },

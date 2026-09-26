@@ -20,11 +20,11 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: {
-    default: `${SITE.name} — Umrah, Ziarah & Group Tours`,
+    default: `${SITE.name} — Umrah, Ziarah, Tours & Cruises`,
     template: `%s | ${SITE.name}`,
   },
   description:
-    "MOTAC-licensed Malaysian travel agency offering Umrah, Ziarah, group tours, and domestic packages.",
+    "MOTAC-licensed Malaysian travel agency offering Umrah & Ziarah, outbound and inbound tours, and cruises.",
   openGraph: { type: "website", siteName: SITE.name, locale: "en_MY" },
 };
 

@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { CloseIcon, MenuIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
-import { ActiveNavList, NavList } from "@/components/public/nav-links";
+import { ActiveNavList } from "@/components/public/nav-links";
 import { telHref, whatsappHref } from "@/lib/site-content";
 
 export function MobileMenu({ phone, whatsapp }: { phone: string; whatsapp: string }) {
@@ -29,9 +29,7 @@ export function MobileMenu({ phone, whatsapp }: { phone: string; whatsapp: strin
           aria-label="Main"
           className="absolute inset-x-0 top-full z-40 border-b border-line bg-white px-4 pt-3 pb-5 shadow-lg"
         >
-          <Suspense fallback={<NavList variant="mobile" onNavigate={close} />}>
-            <ActiveNavList variant="mobile" onNavigate={close} />
-          </Suspense>
+          <ActiveNavList variant="mobile" onNavigate={close} />
 
           <div className="mt-4 grid grid-cols-2 gap-3">
             <a

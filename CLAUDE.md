@@ -4,7 +4,7 @@
 
 ## What this is
 A production website for Moghul Travel & Tours Sdn Bhd, a MOTAC-licensed Malaysian
-travel agency (Umrah, Ziarah, group tours, domestic packages) based in Shah Alam.
+travel agency (Umrah & Ziarah, outbound and inbound tours, cruises) based in Shah Alam.
 Built by Naufal (UMPSA Software Engineering student) for his father's business,
 replacing a static, unmaintainable site at moghultt.com. Full design and
 architecture documents exist as SRS-MTT-2026 and SDD-MTT-2026 — treat those as
@@ -189,8 +189,8 @@ than raw hex values. Public body text is 17px; the admin shell uses 15px.
 ## Modules (7, matching SRS use cases UC-MTT-001 to 007)
 1. User Access & Account Management — login, Master Admin invites/removes
    Admin accounts, 5-failed-attempt lockout (15 min)
-2. Manage Packages — CRUD, category filter (Umrah/Ziarah/Group Tour/
-   Domestic), image upload direct-to-Storage (bypasses API for the upload
+2. Manage Packages — CRUD, category filter (Umrah & Ziarah / Outbound /
+   Inbound / Cruise), image upload direct-to-Storage (bypasses API for the upload
    itself, only the URL gets saved via the Controller)
 3. Manage Inquiries — public form (name, phone, email, package interest,
    message, CAPTCHA) → email notification to Admin; email failure must NOT
@@ -366,8 +366,15 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   no revalidation needed.
 - Vercel functions run in `sin1` (Singapore, vercel.json) next to the
   Supabase DB (ap-southeast-1) — don't remove that.
-- Category filter slugs (`?category=`): `umrah-ziarah`, `group-tour`,
-  `domestic` (plus `umrah` / `ziarah` individually) — lib/package-labels.ts.
+- Categories (enum PackageCategory): UMRAH_ZIARAH, OUTBOUND (tours abroad),
+  INBOUND (tours within Malaysia), CRUISE — set by the owner on 2026-09-26,
+  replacing GROUP_TOUR/DOMESTIC (renamed in place by migration
+  `20260930000000_outbound_inbound_cruise_categories`).
+- Category filter slugs (`?category=`): `umrah-ziarah`, `outbound`,
+  `inbound`, `cruise`; aliases `umrah` / `ziarah` / `group-tour` /
+  `domestic` still resolve — lib/package-labels.ts.
+- The top nav has a single "Packages" link (owner's request); categories
+  are only the pills on /packages and the homepage, plus the hero search.
 - Package URLs are `/packages/<slug>`.
 - Gallery/testimonial sections on the homepage only render when data exists.
 - `npm run sample-packages` adds mockup packages (slugs `sample-*`) for
