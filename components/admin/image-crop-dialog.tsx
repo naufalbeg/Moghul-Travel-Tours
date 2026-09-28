@@ -174,7 +174,8 @@ function CropStep({
         </div>
         {area && area.width < LOW_RES_WIDTH && (
           <p className="mt-2 text-[13.5px] text-accent-dark">
-            This part of the photo is quite small, so it may look blurry on large screens. Zooming out helps.
+            This part of the photo is quite small, so it may look blurry on large screens. Zooming out helps, or
+            use a larger photo (at least {CROPPED_IMAGE_MAX_WIDTH} pixels wide is best).
           </p>
         )}
         {problem && <p className="mt-2 text-sm font-semibold text-danger">{problem}</p>}

@@ -7,8 +7,10 @@ import { createPackageImageUploads } from "@/app/admin/(portal)/packages/actions
 import { ImageCropDialog, type CropJob } from "@/components/admin/image-crop-dialog";
 import { AlertCircleIcon, CloseIcon, UploadIcon } from "@/components/ui/icons";
 import {
+  CROPPED_IMAGE_MAX_WIDTH,
   MAX_PACKAGE_IMAGES,
   ORIGINAL_IMAGE_MAX_BYTES,
+  PACKAGE_IMAGE_ASPECT,
   isAllowedImageType,
 } from "@/lib/storage-config";
 import { createClient } from "@/lib/supabase/client";
@@ -171,6 +173,12 @@ export function PackageImageField({ images, onChange, error }: Props) {
         </span>
         <span className="text-[13px] text-muted">
           JPG, PNG, or WEBP — up to {MAX_PACKAGE_IMAGES} photos. You&apos;ll crop each one to fit the website.
+        </span>
+        <span className="mt-1 text-[13px] text-muted">
+          <strong className="font-semibold text-ink">Best results:</strong> landscape (sideways) photos at least{" "}
+          {CROPPED_IMAGE_MAX_WIDTH} × {Math.round(CROPPED_IMAGE_MAX_WIDTH / PACKAGE_IMAGE_ASPECT)} pixels. Most phone
+          and camera photos are bigger — that&apos;s fine. Photos saved from WhatsApp are often too small and can look
+          blurry.
         </span>
         <input
           id="package-images"
