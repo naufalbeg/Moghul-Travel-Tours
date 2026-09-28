@@ -2,12 +2,13 @@
 
 /* eslint-disable @next/next/no-img-element -- previews use blob: URLs, which next/image can't load */
 
-import { useRef, useState, type DragEvent } from "react";
+import { useState, type DragEvent } from "react";
 import { createPackageImageUploads } from "@/app/admin/(portal)/packages/actions";
+import { ImageCropDialog, type CropJob } from "@/components/admin/image-crop-dialog";
 import { AlertCircleIcon, CloseIcon, UploadIcon } from "@/components/ui/icons";
 import {
-  IMAGE_MAX_BYTES,
   MAX_PACKAGE_IMAGES,
+  ORIGINAL_IMAGE_MAX_BYTES,
   isAllowedImageType,
 } from "@/lib/storage-config";
 import { createClient } from "@/lib/supabase/client";
@@ -15,7 +16,7 @@ import { PACKAGE_BUCKET } from "@/lib/validation/package";
 
 export type ImageItem = {
   key: string;
-  /** Null while uploading or if the upload failed. */
+  /** Null until a new photo finishes uploading, or if its upload failed. */
   storagePath: string | null;
   url: string;
   isPrimary: boolean;
@@ -29,29 +30,31 @@ type Props = {
 };
 
 /**
- * Photo picker for a package. Files upload straight to Supabase Storage via
- * signed URLs from createPackageImageUploads; only the paths are saved with
+ * Photo picker for a package. Every photo goes through the 16:9 crop dialog
+ * first; the cropped JPEG then uploads straight to Supabase Storage via a
+ * signed URL from createPackageImageUploads, and only its path is saved with
  * the package.
  */
 export function PackageImageField({ images, onChange, error }: Props) {
-  const inputRef = useRef<HTMLInputElement>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
+  // Photos waiting to be cropped, and how many were in this batch (for "2 of 5").
+  const [queue, setQueue] = useState<CropJob[]>([]);
+  const [batchSize, setBatchSize] = useState(0);
 
-  async function addFiles(fileList: FileList | null) {
+  function addFiles(fileList: FileList | null) {
     if (!fileList?.length) return;
     setNotice(null);
 
-    const room = MAX_PACKAGE_IMAGES - images.length;
-    const files = Array.from(fileList);
+    const room = MAX_PACKAGE_IMAGES - images.length - queue.length;
     const problems: string[] = [];
-    const accepted = files.filter((file) => {
+    const accepted = Array.from(fileList).filter((file) => {
       if (!isAllowedImageType(file.type)) {
         problems.push(`${file.name} isn't a JPG, PNG or WEBP image.`);
         return false;
       }
-      if (file.size > IMAGE_MAX_BYTES) {
-        problems.push(`${file.name} is larger than 5MB.`);
+      if (file.size > ORIGINAL_IMAGE_MAX_BYTES) {
+        problems.push(`${file.name} is larger than 25MB.`);
         return false;
       }
       return true;
@@ -63,43 +66,72 @@ export function PackageImageField({ images, onChange, error }: Props) {
     if (problems.length) setNotice(problems.join(" "));
     if (accepted.length === 0) return;
 
-    const pending: ImageItem[] = accepted.map((file) => ({
-      key: crypto.randomUUID(),
-      storagePath: null,
-      url: URL.createObjectURL(file),
-      isPrimary: false,
-      status: "uploading",
-    }));
-    onChange((current) => withPrimary([...current, ...pending]));
+    const jobs = accepted.map((file) => ({ id: crypto.randomUUID(), src: URL.createObjectURL(file) }));
+    setBatchSize((n) => (queue.length ? n : 0) + jobs.length);
+    setQueue((q) => [...q, ...jobs]);
+  }
 
-    const markFailed = (keys: string[]) =>
-      onChange((current) => current.map((img) => (keys.includes(img.key) ? { ...img, status: "failed" } : img)));
+  function adjust(img: ImageItem) {
+    setNotice(null);
+    setBatchSize(1);
+    setQueue([{ id: crypto.randomUUID(), src: img.url, targetKey: img.key }]);
+  }
 
-    const prepared = await createPackageImageUploads(accepted.map((f) => ({ type: f.type, size: f.size })));
-    if (!prepared.ok) {
-      setNotice(prepared.message);
-      markFailed(pending.map((p) => p.key));
-      return;
-    }
+  function finishJob(job: CropJob) {
+    // New files' previews are only needed while cropping; saved photos' URLs aren't ours to revoke.
+    if (!job.targetKey) URL.revokeObjectURL(job.src);
+    setQueue((q) => q.filter((j) => j.id !== job.id));
+  }
 
-    const storage = createClient().storage.from(PACKAGE_BUCKET);
-    await Promise.all(
-      accepted.map(async (file, i) => {
-        const target = prepared.uploads[i];
-        const { error: uploadError } = await storage.uploadToSignedUrl(target.path, target.token, file, {
-          contentType: file.type,
-        });
-        const key = pending[i].key;
-        if (uploadError) {
-          console.error("Upload failed", uploadError);
-          markFailed([key]);
-          return;
-        }
-        // Keep showing the local preview; the saved record uses the public URL.
-        onChange((current) =>
-          current.map((img) => (img.key === key ? { ...img, storagePath: target.path, status: "done" } : img)),
-        );
-      }),
+  function cancelCropping() {
+    for (const job of queue) if (!job.targetKey) URL.revokeObjectURL(job.src);
+    setQueue([]);
+  }
+
+  function onCropped(job: CropJob, file: File) {
+    finishJob(job);
+    if (job.targetKey) replacePhoto(job.targetKey, file);
+    else addPhoto(file);
+  }
+
+  async function addPhoto(file: File) {
+    const key = crypto.randomUUID();
+    onChange((current) =>
+      withPrimary([
+        ...current,
+        { key, storagePath: null, url: URL.createObjectURL(file), isPrimary: false, status: "uploading" },
+      ]),
+    );
+    const result = await upload(file);
+    if (!result.ok) setNotice(result.message);
+    onChange((current) =>
+      current.map((img) =>
+        img.key === key
+          ? result.ok
+            ? { ...img, storagePath: result.path, status: "done" }
+            : { ...img, status: "failed" }
+          : img,
+      ),
+    );
+  }
+
+  /** Swaps in a re-cropped copy; the old photo stays until the new one is stored. */
+  async function replacePhoto(key: string, file: File) {
+    const previous = images.find((img) => img.key === key);
+    if (!previous) return;
+    onChange((current) =>
+      current.map((img) => (img.key === key ? { ...img, url: URL.createObjectURL(file), status: "uploading" } : img)),
+    );
+    const result = await upload(file);
+    if (!result.ok) setNotice(`The new crop wasn't saved: ${result.message}`);
+    onChange((current) =>
+      current.map((img) =>
+        img.key === key
+          ? result.ok
+            ? { ...img, storagePath: result.path, status: "done" }
+            : { ...img, url: previous.url, status: previous.status }
+          : img,
+      ),
     );
   }
 
@@ -138,10 +170,9 @@ export function PackageImageField({ images, onChange, error }: Props) {
           Drag photos here, or click to browse
         </span>
         <span className="text-[13px] text-muted">
-          JPG, PNG, or WEBP — up to 5MB each, up to {MAX_PACKAGE_IMAGES} images
+          JPG, PNG, or WEBP — up to {MAX_PACKAGE_IMAGES} photos. You&apos;ll crop each one to fit the website.
         </span>
         <input
-          ref={inputRef}
           id="package-images"
           type="file"
           accept="image/jpeg,image/png,image/webp"
@@ -163,43 +194,51 @@ export function PackageImageField({ images, onChange, error }: Props) {
 
       {images.length > 0 && (
         <>
-          <ul className="flex flex-wrap gap-3">
+          <ul className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
             {images.map((img) => (
-              <li key={img.key} className="relative size-[110px] overflow-hidden rounded-lg bg-primary-pale">
-                <img src={img.url} alt="" className={`size-full object-cover ${img.status === "uploading" ? "opacity-50" : ""}`} />
-                {img.status === "uploading" && (
-                  <span className="absolute inset-x-0 bottom-0 bg-navy/75 py-1 text-center text-[11px] font-semibold text-white">
-                    Uploading…
-                  </span>
-                )}
-                {img.status === "failed" && (
-                  <span className="absolute inset-x-0 bottom-0 bg-danger py-1 text-center text-[11px] font-semibold text-white">
-                    Upload failed
-                  </span>
-                )}
-                {img.isPrimary ? (
-                  <span className="absolute top-1.5 left-1.5 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-white">
-                    Main photo
-                  </span>
-                ) : (
-                  img.status === "done" && (
-                    <button
-                      type="button"
-                      onClick={() => makePrimary(img.key)}
-                      className="absolute bottom-1.5 left-1.5 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-primary-dark hover:bg-white"
-                    >
-                      Set as main
+              <li key={img.key} className="overflow-hidden rounded-lg border border-line bg-white">
+                <div className="relative aspect-video bg-primary-pale">
+                  <img
+                    src={img.url}
+                    alt=""
+                    className={`size-full object-cover ${img.status === "uploading" ? "opacity-50" : ""}`}
+                  />
+                  {img.status === "uploading" && (
+                    <span className="absolute inset-x-0 bottom-0 bg-navy/75 py-1 text-center text-[12px] font-semibold text-white">
+                      Uploading…
+                    </span>
+                  )}
+                  {img.status === "failed" && (
+                    <span className="absolute inset-x-0 bottom-0 bg-danger py-1 text-center text-[12px] font-semibold text-white">
+                      Upload failed
+                    </span>
+                  )}
+                  {img.isPrimary && (
+                    <span className="absolute top-1.5 left-1.5 rounded-full bg-accent px-2 py-0.5 text-[11px] font-bold text-white">
+                      Main photo
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => remove(img.key)}
+                    aria-label="Remove photo"
+                    className="absolute top-1.5 right-1.5 flex size-7 items-center justify-center rounded-full bg-navy/70 text-white hover:bg-navy"
+                  >
+                    <CloseIcon className="size-3.5" />
+                  </button>
+                </div>
+                {img.status === "done" && (
+                  <div className="flex flex-wrap gap-x-4 px-3 py-1.5 text-[13px] font-semibold text-primary">
+                    <button type="button" onClick={() => adjust(img)} className="min-h-9 hover:underline">
+                      Adjust crop
                     </button>
-                  )
+                    {!img.isPrimary && (
+                      <button type="button" onClick={() => makePrimary(img.key)} className="min-h-9 hover:underline">
+                        Set as main
+                      </button>
+                    )}
+                  </div>
                 )}
-                <button
-                  type="button"
-                  onClick={() => remove(img.key)}
-                  aria-label="Remove photo"
-                  className="absolute top-1.5 right-1.5 flex size-6 items-center justify-center rounded-full bg-navy/70 text-white hover:bg-navy"
-                >
-                  <CloseIcon className="size-3" />
-                </button>
               </li>
             ))}
           </ul>
@@ -208,8 +247,30 @@ export function PackageImageField({ images, onChange, error }: Props) {
           </p>
         </>
       )}
+
+      <ImageCropDialog
+        job={queue[0] ?? null}
+        position={{ index: batchSize - queue.length, total: batchSize }}
+        onCropped={onCropped}
+        onSkip={finishJob}
+        onCancel={cancelCropping}
+      />
     </div>
   );
+}
+
+async function upload(file: File): Promise<{ ok: true; path: string } | { ok: false; message: string }> {
+  const prepared = await createPackageImageUploads([{ type: file.type, size: file.size }]);
+  if (!prepared.ok) return { ok: false, message: prepared.message };
+  const target = prepared.uploads[0];
+  const { error } = await createClient()
+    .storage.from(PACKAGE_BUCKET)
+    .uploadToSignedUrl(target.path, target.token, file, { contentType: file.type });
+  if (error) {
+    console.error("Upload failed", error);
+    return { ok: false, message: "A photo didn't upload. Please try again." };
+  }
+  return { ok: true, path: target.path };
 }
 
 function withPrimary(images: ImageItem[]) {

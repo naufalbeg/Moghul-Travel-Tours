@@ -12,6 +12,19 @@ export type ImageBucket = (typeof IMAGE_BUCKETS)[keyof typeof IMAGE_BUCKETS];
 export const IMAGE_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 export const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 export const MAX_PACKAGE_IMAGES = 10;
+
+/**
+ * Package photos are shown at 16:9 everywhere (Tailwind `aspect-video`), and
+ * admins crop every photo to exactly that before it is uploaded.
+ */
+export const PACKAGE_IMAGE_ASPECT = 16 / 9;
+/** Crops are saved as JPEG at most this wide (1920×1080), well under 5MB. */
+export const CROPPED_IMAGE_MAX_WIDTH = 1920;
+/**
+ * Originals can be bigger than the 5MB storage limit (phone photos often
+ * are) because only the smaller cropped copy is uploaded.
+ */
+export const ORIGINAL_IMAGE_MAX_BYTES = 25 * 1024 * 1024;
 /** Photos per gallery upload batch. */
 export const MAX_GALLERY_BATCH = 20;
 

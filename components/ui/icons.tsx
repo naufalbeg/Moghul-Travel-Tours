@@ -188,6 +188,18 @@ export const UploadIcon = (p: IconProps) => (
   </Stroke>
 );
 
+export const ChevronLeftIcon = (p: IconProps) => (
+  <Stroke strokeWidth={2.2} {...p}>
+    <path d="M15 5l-7 7 7 7" />
+  </Stroke>
+);
+
+export const ChevronRightIcon = (p: IconProps) => (
+  <Stroke strokeWidth={2.2} {...p}>
+    <path d="M9 5l7 7-7 7" />
+  </Stroke>
+);
+
 export const KeyIcon = (p: IconProps) => (
   <Stroke {...p}>
     <circle cx="7.5" cy="15.5" r="4.5" />

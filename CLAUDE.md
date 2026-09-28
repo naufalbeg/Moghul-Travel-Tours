@@ -351,6 +351,15 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   `deletePackage` (soft delete). Validation shared with the form:
   lib/validation/package.ts — drafts need only a title; publishing needs
   description, price > 0 and ≥1 image.
+- Package photos are 16:9 everywhere (`aspect-video`; PACKAGE_IMAGE_ASPECT in
+  lib/storage-config.ts). Every upload goes through ImageCropDialog
+  (components/admin/image-crop-dialog.tsx, react-easy-crop): the admin drags
+  and zooms a fixed 16:9 frame, lib/crop-image.ts renders a ≤1920×1080 JPEG
+  and only that is uploaded — so originals up to 25MB are accepted. "Adjust
+  crop" re-crops a saved photo (Supabase Storage sends CORS headers, so the
+  canvas works) and swaps its path once the new upload succeeds.
+- Public package page: components/public/package-gallery.tsx — a sliding
+  strip with ← → buttons, swipe, arrow keys and thumbnails; no auto-advance.
 - Saving replaces itinerary/departure/image rows wholesale in a transaction;
   photos removed in an edit are deleted from Storage. Soft-deleted packages
   keep their photos.
