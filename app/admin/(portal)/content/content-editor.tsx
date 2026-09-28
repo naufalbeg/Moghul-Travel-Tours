@@ -12,11 +12,22 @@ type Field = {
   label: string;
   hint?: string;
   kind?: "text" | "textarea" | "email" | "tel" | "url";
+  /** Give a single-line field the full row (textareas always get it). */
+  wide?: boolean;
   rows?: number;
   placeholder?: string;
 };
 
 const SECTIONS: { title: string; hint: string; preview?: string; fields: Field[] }[] = [
+  {
+    title: "Homepage banner",
+    hint: "The big headline and message at the top of the homepage.",
+    preview: "/",
+    fields: [
+      { key: "hero_title", label: "Headline", wide: true, hint: "Keep it short. It's shown in capital letters automatically." },
+      { key: "hero_message", label: "Message", kind: "textarea", rows: 2, hint: "One or two sentences under the headline." },
+    ],
+  },
   {
     title: "About us",
     hint: "The company story on the About page, and the short summary on the homepage.",
@@ -207,7 +218,7 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
                   };
                   const onChange = (v: string) => setValues((s) => ({ ...s, [field.key]: v }));
                   return (
-                    <div key={field.key} className={field.kind === "textarea" ? "col-span-full" : undefined}>
+                    <div key={field.key} className={field.kind === "textarea" || field.wide ? "col-span-full" : undefined}>
                       <label htmlFor={field.key} className="mb-2 block text-sm font-semibold">
                         {field.label}
                         {optional && <span className="font-normal text-muted"> (optional)</span>}

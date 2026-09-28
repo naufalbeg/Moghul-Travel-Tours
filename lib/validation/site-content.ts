@@ -24,6 +24,8 @@ const optionalUrl = z.union([
 ]);
 
 export const siteContentSchema = z.object({
+  hero_title: required(80),
+  hero_message: required(250),
   about_summary: required(400),
   about_story: required(6000),
   address: required(300),

@@ -34,12 +34,9 @@ export default async function HomePage() {
       <section className="bg-hero px-4 pt-14 pb-[110px] text-center sm:px-8 sm:pt-16">
         <div className="mx-auto max-w-[720px]">
           <h1 className="mb-[18px] text-[28px] tracking-[0.01em] text-white uppercase sm:text-[40px]">
-            Go beyond the ordinary — find your ideal journey
+            {content.hero_title}
           </h1>
-          <p className="mx-auto max-w-[560px] text-lg text-white/88 sm:text-[19px]">
-            Umrah, Ziarah, and family tours planned with care, backed by over a decade of
-            experience and a team you can actually reach.
-          </p>
+          <p className="mx-auto max-w-[560px] text-lg text-white/88 sm:text-[19px]">{content.hero_message}</p>
         </div>
       </section>
 

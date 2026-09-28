@@ -2,6 +2,11 @@
 // Shared by server and client code — keep server-only imports out.
 
 export const SITE_CONTENT_DEFAULTS = {
+  // Homepage banner. The headline is shown in capitals by CSS, so it's stored
+  // as typed.
+  hero_title: "Go beyond the ordinary — find your ideal journey",
+  hero_message:
+    "Umrah, Ziarah, and family tours planned with care, backed by over a decade of experience and a team you can actually reach.",
   about_summary:
     "A MOTAC licensed agency based in Shah Alam, focused on Umrah, Ziarah, and family-friendly tours — guiding Malaysian travellers to the places that matter to them for over a decade.",
   about_story: [

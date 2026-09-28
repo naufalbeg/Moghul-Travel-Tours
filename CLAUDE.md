@@ -276,8 +276,8 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
     address. Later: point moghultt.com at Vercel.
 
 ## Editable content (Module 6)
-- All contact details, office hours, licence numbers, About text and social
-  links live in `site_config` (keys in lib/site-content.ts). Never hard-code
+- The homepage banner (hero_title / hero_message), contact details, office
+  hours, licence numbers, About text and social links live in `site_config` (keys in lib/site-content.ts). Never hard-code
   them — read `getSiteContent()` in a server component and pass values down.
   The public layout already loads it once per request.
 - Missing keys fall back to SITE_CONTENT_DEFAULTS; empty optional fields
