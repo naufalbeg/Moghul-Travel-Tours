@@ -69,3 +69,64 @@
     #2e7bc4
   );
 }
+
+/*
+ * Top-menu page slides (app/(public)/template.tsx). Kept short and small:
+ * the old page fades out drifting away, the new one slides in from the side
+ * of the clicked menu item.
+ */
+::view-transition-old(.nav-forward) {
+  --slide-offset: -80px;
+  animation:
+    120ms ease-in both page-fade reverse,
+    260ms ease-in-out both page-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 80px;
+  animation:
+    180ms ease-out 80ms both page-fade,
+    260ms ease-in-out both page-slide;
+}
+::view-transition-old(.nav-back) {
+  --slide-offset: 80px;
+  animation:
+    120ms ease-in both page-fade reverse,
+    260ms ease-in-out both page-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -80px;
+  animation:
+    180ms ease-out 80ms both page-fade,
+    260ms ease-in-out both page-slide;
+}
+
+@keyframes page-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes page-slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+
+/* Clicks during the brief animation reach the new page instead of being lost. */
+::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}

@@ -40,15 +40,19 @@ export function NavList({
   onNavigate?: () => void;
 }) {
   const s = linkStyles[variant];
+  // Menu items to the right of the current page slide the content in from
+  // the right, items to the left from the left (app/(public)/template.tsx).
+  const current = PUBLIC_NAV.findIndex(({ href }) => isActive(href));
   return (
     <ul className={variant === "desktop" ? "flex flex-wrap justify-center gap-x-7 gap-y-2" : "space-y-1"}>
-      {PUBLIC_NAV.map(({ href, label }) => {
-        const active = isActive(href);
+      {PUBLIC_NAV.map(({ href, label }, i) => {
+        const active = i === current;
         return (
           <li key={href}>
             <Link
               href={href}
               onClick={onNavigate}
+              transitionTypes={current === -1 || active ? undefined : [i > current ? "nav-forward" : "nav-back"]}
               aria-current={active ? "page" : undefined}
               className={`${s.base} ${active ? s.active : s.idle}`}
             >
