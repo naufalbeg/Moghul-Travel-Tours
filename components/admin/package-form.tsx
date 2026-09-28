@@ -284,7 +284,7 @@ export function PackageForm({
         {actions}
       </div>
 
-      <div className="max-w-[760px]">
+      <div>
         {banner && (
           <div className="mb-5">
             <Alert tone="error" title={banner}>
@@ -295,23 +295,53 @@ export function PackageForm({
 
         <div className="rounded-xl border border-line bg-white">
           <Section title="Basic details" hint="The name and category visitors will see first.">
-            <div className="mb-5">
-              <label htmlFor="title" className="mb-2 block text-sm font-semibold">
-                Package title
-              </label>
-              <input
-                id="title"
-                value={state.title}
-                onChange={(e) => update("title", e.target.value)}
-                placeholder="e.g. Umrah Sakinah — 10 days"
-                aria-invalid={Boolean(err("title"))}
-                aria-describedby={describedBy("title")}
-                className={inputClass(err("title"))}
-              />
-              <FieldError id="title-error" message={err("title")} />
+            <div className="mb-5 grid gap-5 xl:grid-cols-2">
+              <div>
+                <label htmlFor="title" className="mb-2 block text-sm font-semibold">
+                  Package title
+                </label>
+                <input
+                  id="title"
+                  value={state.title}
+                  onChange={(e) => update("title", e.target.value)}
+                  placeholder="e.g. Umrah Sakinah — 10 days"
+                  aria-invalid={Boolean(err("title"))}
+                  aria-describedby={describedBy("title")}
+                  className={inputClass(err("title"))}
+                />
+                <FieldError id="title-error" message={err("title")} />
+              </div>
+              <div>
+                <label htmlFor="slug" className="mb-2 block text-sm font-semibold">
+                  Web address
+                </label>
+                <div className="flex items-stretch">
+                  <span className="hidden items-center rounded-l-lg border-[1.5px] border-r-0 border-line bg-canvas px-3 text-sm text-muted sm:flex">
+                    moghultt.com/packages/
+                  </span>
+                  <input
+                    id="slug"
+                    value={state.slug}
+                    onChange={(e) => {
+                      setSlugEdited(true);
+                      update("slug", e.target.value.toLowerCase());
+                    }}
+                    placeholder="filled in from the title"
+                    aria-invalid={Boolean(err("slug"))}
+                    aria-describedby={describedBy("slug") ?? "slug-hint"}
+                    className={`${inputClass(err("slug"))} sm:rounded-l-none`}
+                  />
+                </div>
+                <p id="slug-hint" className="mt-1.5 text-[13px] text-muted">
+                  {packageId
+                    ? "Changing this breaks links people have already shared."
+                    : "Filled in automatically from the title. Leave it as is unless you want a shorter link."}
+                </p>
+                <FieldError id="slug-error" message={err("slug")} />
+              </div>
             </div>
 
-            <fieldset className="mb-5">
+            <fieldset>
               <legend className="mb-2 text-sm font-semibold">Category</legend>
               <div className="flex flex-wrap gap-2.5">
                 {CATEGORIES.map((c) => (
@@ -334,35 +364,6 @@ export function PackageForm({
                 ))}
               </div>
             </fieldset>
-
-            <div>
-              <label htmlFor="slug" className="mb-2 block text-sm font-semibold">
-                Web address
-              </label>
-              <div className="flex items-stretch">
-                <span className="hidden items-center rounded-l-lg border-[1.5px] border-r-0 border-line bg-canvas px-3 text-sm text-muted sm:flex">
-                  moghultt.com/packages/
-                </span>
-                <input
-                  id="slug"
-                  value={state.slug}
-                  onChange={(e) => {
-                    setSlugEdited(true);
-                    update("slug", e.target.value.toLowerCase());
-                  }}
-                  placeholder="filled in from the title"
-                  aria-invalid={Boolean(err("slug"))}
-                  aria-describedby={describedBy("slug") ?? "slug-hint"}
-                  className={`${inputClass(err("slug"))} sm:rounded-l-none`}
-                />
-              </div>
-              <p id="slug-hint" className="mt-1.5 text-[13px] text-muted">
-                {packageId
-                  ? "Changing this breaks links people have already shared."
-                  : "Filled in automatically from the title. Leave it as is unless you want a shorter link."}
-              </p>
-              <FieldError id="slug-error" message={err("slug")} />
-            </div>
           </Section>
 
           <Section title="Description" hint="A short overview shown at the top of the package page.">
@@ -371,11 +372,11 @@ export function PackageForm({
               aria-label="Description"
               value={state.description}
               onChange={(e) => update("description", e.target.value)}
-              rows={5}
+              rows={8}
               placeholder="Describe what makes this journey special..."
               aria-invalid={Boolean(err("description"))}
               aria-describedby={describedBy("description")}
-              className={`${inputClass(err("description"))} resize-y leading-relaxed`}
+              className={`${inputClass(err("description"))} min-h-52 resize-y leading-relaxed field-sizing-content`}
             />
             <FieldError id="description-error" message={err("description")} />
 
@@ -412,7 +413,7 @@ export function PackageForm({
               </div>
             </div>
 
-            <div className="mt-5 grid gap-5 sm:grid-cols-3">
+            <div className="mt-5 grid gap-5 sm:grid-cols-[9rem_9rem_minmax(0,1fr)] xl:grid-cols-[9rem_9rem_minmax(0,28rem)]">
               <div>
                 <label htmlFor="durationDays" className="mb-2 block text-sm font-semibold">
                   Days
@@ -498,24 +499,26 @@ export function PackageForm({
                           className={`${inputClass(e("dayEnd"))} max-w-24 py-2`}
                         />
                       </div>
+                      <div className="min-w-56 flex-1">
+                        <label htmlFor={`day-title-${day.key}`} className="mb-1 block text-[13px] font-semibold">
+                          Title
+                        </label>
+                        <input
+                          id={`day-title-${day.key}`}
+                          value={day.title}
+                          onChange={(ev) => updateRow("itinerary", day.key, { title: ev.target.value })}
+                          placeholder="e.g. Depart Kuala Lumpur → Madinah"
+                          className={`${inputClass(e("title"))} py-2`}
+                        />
+                      </div>
                       <button
                         type="button"
                         onClick={() => removeRow("itinerary", day.key)}
-                        className="ml-auto min-h-10 px-2 text-[13px] font-semibold text-danger"
+                        className="min-h-10 px-2 text-[13px] font-semibold text-danger"
                       >
                         Remove day
                       </button>
                     </div>
-                    <label htmlFor={`day-title-${day.key}`} className="sr-only">
-                      Day title
-                    </label>
-                    <input
-                      id={`day-title-${day.key}`}
-                      value={day.title}
-                      onChange={(ev) => updateRow("itinerary", day.key, { title: ev.target.value })}
-                      placeholder="e.g. Depart Kuala Lumpur → Madinah"
-                      className={`${inputClass(e("title"))} mb-2 py-2.5`}
-                    />
                     <label htmlFor={`day-desc-${day.key}`} className="sr-only">
                       What happens this day
                     </label>
@@ -523,9 +526,9 @@ export function PackageForm({
                       id={`day-desc-${day.key}`}
                       value={day.description}
                       onChange={(ev) => updateRow("itinerary", day.key, { description: ev.target.value })}
-                      rows={2}
+                      rows={3}
                       placeholder="What happens this day"
-                      className={`${inputClass(e("description"))} resize-y py-2.5`}
+                      className={`${inputClass(e("description"))} min-h-24 resize-y py-2.5 field-sizing-content`}
                     />
                     <FieldError id={`day-${day.key}-error`} message={e("title") ?? e("dayStart") ?? e("dayEnd")} />
                   </li>
@@ -542,7 +545,7 @@ export function PackageForm({
           </Section>
 
           <Section title="Pricing & availability" hint="Base price per person and current booking status.">
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2 xl:max-w-3xl">
               <div>
                 <label htmlFor="price" className="mb-2 block text-sm font-semibold">
                   Price per person
@@ -589,12 +592,12 @@ export function PackageForm({
 
           <Section title="Departure dates" hint="Add upcoming departure dates. Past dates hide themselves on the website.">
             {err("departures") && <FieldError id="departures-error" message={err("departures")} />}
-            <ul className="space-y-3">
+            <ul className="grid gap-3 xl:grid-cols-2 xl:gap-x-8">
               {state.departures.map((d, i) => {
                 const idx = dateIndex[i];
                 const e = idx >= 0 ? err(`departures.${idx}.date`) : undefined;
                 return (
-                  <li key={d.key} className="flex flex-wrap items-center gap-3">
+                  <li key={d.key} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,11rem)_auto]">
                     <label htmlFor={`date-${d.key}`} className="sr-only">
                       Departure date
                     </label>
@@ -603,7 +606,7 @@ export function PackageForm({
                       type="date"
                       value={d.date}
                       onChange={(ev) => updateRow("departures", d.key, { date: ev.target.value })}
-                      className={`${inputClass(e)} w-auto flex-1`}
+                      className={`${inputClass(e)} col-span-2 sm:col-span-1`}
                     />
                     <label htmlFor={`date-avail-${d.key}`} className="sr-only">
                       Seats
@@ -614,7 +617,7 @@ export function PackageForm({
                       onChange={(ev) =>
                         updateRow("departures", d.key, { availability: ev.target.value as DepartureAvailability })
                       }
-                      className={`${inputClass()} w-auto`}
+                      className={inputClass()}
                     >
                       {DEPARTURE_AVAILABILITIES.map((a) => (
                         <option key={a} value={a}>
