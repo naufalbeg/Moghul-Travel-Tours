@@ -375,12 +375,16 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   `domestic` still resolve — lib/package-labels.ts.
 - The top nav has a single "Packages" link (owner's request); categories
   are only the pills on /packages and the homepage, plus the hero search.
-- Page slides: top-menu links carry `transitionTypes` nav-forward / nav-back
-  (item to the right / left of the current page — components/public/nav-links.tsx);
-  app/(public)/template.tsx wraps each page in React `<ViewTransition>` and
-  the slide CSS is at the end of app/globals.css (~350ms, off for
-  prefers-reduced-motion). Other links and browser back don't animate.
-  Put new public pages under (public)/ so they get it automatically.
+- Page slides: top-menu links and category pills carry `transitionTypes`
+  nav-forward / nav-back (item right / left of the current one —
+  components/public/nav-links.tsx, category-pills.tsx; homepage pills always
+  forward). `<SlideTransition>` (components/public/slide-transition.tsx,
+  React `<ViewTransition>`) wraps every page via app/(public)/template.tsx,
+  and on /packages the banner and results are wrapped again with
+  `key={category}` so a same-route category change slides too. Slide CSS is
+  at the end of app/globals.css (~350ms, off for prefers-reduced-motion).
+  Other links and browser back don't animate. New public pages under
+  (public)/ get it automatically.
 - Package URLs are `/packages/<slug>`.
 - Gallery/testimonial sections on the homepage only render when data exists.
 - `npm run sample-packages` adds mockup packages (slugs `sample-*`) for

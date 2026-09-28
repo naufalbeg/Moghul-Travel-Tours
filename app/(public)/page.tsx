@@ -53,7 +53,7 @@ export default async function HomePage() {
           ★★★★★
         </p>
         <div className="mb-9">
-          <CategoryPills active={null} allLabel="All" />
+          <CategoryPills active={null} allLabel="All" fromHomepage />
         </div>
 
         {featured.length > 0 ? (

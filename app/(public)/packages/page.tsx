@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CategoryPills } from "@/components/public/category-pills";
 import { PackageGrid } from "@/components/public/package-card";
 import { PageBanner } from "@/components/public/page-banner";
+import { SlideTransition } from "@/components/public/slide-transition";
 import { WhatsAppIcon } from "@/components/ui/icons";
 import { resolveCategoryFilter } from "@/lib/package-labels";
 import { listPublishedPackages, upcomingMonths } from "@/lib/packages";
@@ -39,50 +40,60 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
     monthLabel && `departing in ${monthLabel}`,
   ].filter(Boolean);
 
+  // Switching category re-keys the banner and results, so they slide like a
+  // page change while the pills stay put (see CategoryPills).
+  const view = filter?.slug ?? "all";
+
   return (
     <>
-      <PageBanner title={filter ? `${filter.label} packages` : "Our travel packages"}>
-        Browse our Umrah &amp; Ziarah, outbound, inbound and cruise packages.
-      </PageBanner>
+      <SlideTransition key={view}>
+        <PageBanner title={filter ? `${filter.label} packages` : "Our travel packages"}>
+          Browse our Umrah &amp; Ziarah, outbound, inbound and cruise packages.
+        </PageBanner>
+      </SlideTransition>
 
       <section className="mx-auto max-w-[1160px] px-4 pt-10 pb-16 sm:px-8 sm:pt-14">
         <div className="mb-9">
           <CategoryPills active={filter?.slug ?? null} />
         </div>
 
-        {searchParts.length > 0 && (
-          <p className="mb-6 text-center text-muted">
-            Showing packages matching {searchParts.join(", ")}.{" "}
-            <Link
-              href={filter ? `/packages?category=${filter.slug}` : "/packages"}
-              className="font-semibold text-primary underline underline-offset-4"
-            >
-              Clear search
-            </Link>
-          </p>
-        )}
+        <SlideTransition key={view}>
+          <div>
+            {searchParts.length > 0 && (
+              <p className="mb-6 text-center text-muted">
+                Showing packages matching {searchParts.join(", ")}.{" "}
+                <Link
+                  href={filter ? `/packages?category=${filter.slug}` : "/packages"}
+                  className="font-semibold text-primary underline underline-offset-4"
+                >
+                  Clear search
+                </Link>
+              </p>
+            )}
 
-        {packages.length > 0 ? (
-          <PackageGrid packages={packages} />
-        ) : (
-          <div className="mx-auto max-w-[560px] rounded-xl border border-line bg-white px-6 py-10 text-center">
-            <h2 className="mb-2 text-xl text-primary-dark">No packages found</h2>
-            <p className="mb-6 text-muted">
-              {searchParts.length > 0 || filter
-                ? "Nothing matches right now — try another category, or ask us directly. We often arrange trips on request."
-                : "New packages are coming soon. In the meantime, our team is happy to help you plan your trip."}
-            </p>
-            <a
-              href={whatsappHref(content, "Hi Moghul Travel & Tours, I'd like to ask about your travel packages.")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[#1f9d55] px-6 font-bold text-white"
-            >
-              <WhatsAppIcon className="size-5" />
-              Ask us on WhatsApp
-            </a>
+            {packages.length > 0 ? (
+              <PackageGrid packages={packages} />
+            ) : (
+              <div className="mx-auto max-w-[560px] rounded-xl border border-line bg-white px-6 py-10 text-center">
+                <h2 className="mb-2 text-xl text-primary-dark">No packages found</h2>
+                <p className="mb-6 text-muted">
+                  {searchParts.length > 0 || filter
+                    ? "Nothing matches right now — try another category, or ask us directly. We often arrange trips on request."
+                    : "New packages are coming soon. In the meantime, our team is happy to help you plan your trip."}
+                </p>
+                <a
+                  href={whatsappHref(content, "Hi Moghul Travel & Tours, I'd like to ask about your travel packages.")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[#1f9d55] px-6 font-bold text-white"
+                >
+                  <WhatsAppIcon className="size-5" />
+                  Ask us on WhatsApp
+                </a>
+              </div>
+            )}
           </div>
-        )}
+        </SlideTransition>
       </section>
     </>
   );
