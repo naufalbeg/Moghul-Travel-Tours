@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { ConfirmActionButton } from "@/components/admin/confirm-action-button";
+import { centeredPage } from "@/components/admin/field";
 import { InquiryStatusControl } from "@/components/admin/inquiry-status-control";
 import { MailIcon, PhoneIcon, TrashIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { requireAdmin } from "@/lib/auth";
@@ -27,7 +28,7 @@ export default async function InquiryDetailPage({ params }: PageProps<"/admin/in
     "flex min-h-12 items-center justify-center gap-2 rounded-lg border-[1.5px] px-4 font-bold";
 
   return (
-    <div className="max-w-[820px]">
+    <div className={centeredPage}>
       <Link href="/admin/inquiries" className="mb-4 inline-block text-sm font-semibold text-primary hover:underline">
         ← All inquiries
       </Link>

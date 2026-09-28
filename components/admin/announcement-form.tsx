@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { saveAnnouncement } from "@/app/admin/(portal)/announcements/actions";
-import { Field, describedBy, fieldClass, primaryButton } from "@/components/admin/field";
+import { Field, centeredPage, describedBy, fieldClass, primaryButton } from "@/components/admin/field";
 import { Alert } from "@/components/ui/alert";
 import { MegaphoneIcon } from "@/components/ui/icons";
 import {
@@ -46,7 +46,7 @@ export function AnnouncementForm({ id, initial }: { id: string | null; initial: 
         save();
       }}
       noValidate
-      className="max-w-[680px]"
+      className={centeredPage}
     >
       <h2 className="mb-6 text-[23px]">{id ? "Edit announcement" : "Post an announcement"}</h2>
 

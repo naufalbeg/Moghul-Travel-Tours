@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { saveTestimonial } from "@/app/admin/(portal)/testimonials/actions";
-import { Field, FieldError, describedBy, fieldClass, primaryButton } from "@/components/admin/field";
+import { Field, FieldError, centeredPage, describedBy, fieldClass, primaryButton } from "@/components/admin/field";
 import { Alert } from "@/components/ui/alert";
 import { validateTestimonial, type TestimonialErrors, type TestimonialInput } from "@/lib/validation/testimonial";
 
@@ -49,7 +49,7 @@ export function TestimonialForm({ id, initial }: { id: string | null; initial: T
         save();
       }}
       noValidate
-      className="max-w-[680px]"
+      className={centeredPage}
     >
       <h2 className="mb-6 text-[23px]">{id ? "Edit testimonial" : "Add testimonial"}</h2>
 
@@ -94,7 +94,7 @@ export function TestimonialForm({ id, initial }: { id: string | null; initial: T
             placeholder="Their review, in their own words"
             aria-invalid={Boolean(errors.reviewText)}
             aria-describedby={describedBy("reviewText", undefined, errors.reviewText)}
-            className={`${fieldClass(errors.reviewText)} resize-y leading-relaxed`}
+            className={`${fieldClass(errors.reviewText)} min-h-36 resize-y leading-relaxed field-sizing-content`}
           />
         </Field>
 

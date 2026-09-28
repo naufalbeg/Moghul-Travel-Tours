@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { centeredPage } from "@/components/admin/field";
 import { requireAdmin } from "@/lib/auth";
 import { ChangePasswordForm } from "./change-password-form";
 
@@ -10,7 +11,7 @@ export default async function AccountPage() {
   const admin = await requireAdmin();
 
   return (
-    <div className="max-w-[640px] space-y-6">
+    <div className={`${centeredPage} space-y-6`}>
       <div>
         <h2 className="mb-1 text-[23px]">My account</h2>
         <p className="text-muted">Your sign-in details for the admin dashboard.</p>

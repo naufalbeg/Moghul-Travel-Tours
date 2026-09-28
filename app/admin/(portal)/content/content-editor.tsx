@@ -159,7 +159,7 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
         {actions}
       </div>
 
-      <div className="max-w-[760px]">
+      <div>
         {banner && (
           <div className="mb-5">
             <Alert tone={banner.tone} title={banner.title}>
@@ -190,11 +190,10 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
                 )}
               </div>
 
-              <div className="grid gap-5 sm:grid-cols-2">
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {section.fields.map((field) => {
                   const error = errors[field.key];
                   const optional = OPTIONAL_CONTENT_KEYS.includes(field.key);
-                  const wide = field.kind === "textarea" || section.fields.length === 1;
                   const ids = [field.hint && `${field.key}-hint`, error && `${field.key}-error`].filter(Boolean).join(" ");
                   const props = {
                     id: field.key,
@@ -208,7 +207,7 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
                   };
                   const onChange = (v: string) => setValues((s) => ({ ...s, [field.key]: v }));
                   return (
-                    <div key={field.key} className={wide ? "sm:col-span-2" : undefined}>
+                    <div key={field.key} className={field.kind === "textarea" ? "col-span-full" : undefined}>
                       <label htmlFor={field.key} className="mb-2 block text-sm font-semibold">
                         {field.label}
                         {optional && <span className="font-normal text-muted"> (optional)</span>}
@@ -218,7 +217,9 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
                           {...props}
                           rows={field.rows}
                           onChange={(e) => onChange(e.target.value)}
-                          className={`${props.className} resize-y leading-relaxed`}
+                          // Grows with its text; `rows` is the starting height.
+                          style={{ minHeight: `calc(${field.rows}lh + 1.5rem + 3px)` }}
+                          className={`${props.className} resize-y leading-relaxed field-sizing-content`}
                         />
                       ) : (
                         <input

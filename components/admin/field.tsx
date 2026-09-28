@@ -7,6 +7,12 @@ export const fieldClass = (error?: string) =>
     error ? "border-danger bg-danger-pale" : "border-line bg-white"
   }`;
 
+/**
+ * Page wrapper for the smaller admin forms and detail views: full width on
+ * laptops, centred at about three quarters of the content area on wide screens.
+ */
+export const centeredPage = "mx-auto w-full xl:w-3/4";
+
 /** aria-describedby value for a field with an optional hint and error. */
 export const describedBy = (id: string, hint?: string, error?: string) =>
   [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(" ") || undefined;
