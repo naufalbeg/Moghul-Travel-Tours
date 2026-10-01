@@ -5,6 +5,8 @@ import { PackageGrid } from "@/components/public/package-card";
 import { PageBanner } from "@/components/public/page-banner";
 import { SlideTransition } from "@/components/public/slide-transition";
 import { WhatsAppIcon } from "@/components/ui/icons";
+import { getBannerImages } from "@/lib/banner-images";
+import { packagesBannerKey } from "@/lib/banners";
 import { resolveCategoryFilter } from "@/lib/package-labels";
 import { listPublishedPackages, upcomingMonths } from "@/lib/packages";
 import { getSiteContent } from "@/lib/site-config";
@@ -27,12 +29,11 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
   const query = param(params.q);
   const month = param(params.month);
 
-  const content = await getSiteContent();
-  const packages = await listPublishedPackages({
-    categories: filter?.categories,
-    query,
-    month,
-  });
+  const [content, packages, bannerImages] = await Promise.all([
+    getSiteContent(),
+    listPublishedPackages({ categories: filter?.categories, query, month }),
+    getBannerImages(packagesBannerKey(filter?.slug)),
+  ]);
 
   const monthLabel = month ? upcomingMonths().find((m) => m.value === month)?.label : undefined;
   const searchParts = [
@@ -47,7 +48,7 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
   return (
     <>
       <SlideTransition key={view}>
-        <PageBanner title={filter ? `${filter.label} packages` : "Our travel packages"}>
+        <PageBanner title={filter ? `${filter.label} packages` : "Our travel packages"} images={bannerImages}>
           Browse our Umrah &amp; Ziarah, outbound, inbound and cruise packages.
         </PageBanner>
       </SlideTransition>

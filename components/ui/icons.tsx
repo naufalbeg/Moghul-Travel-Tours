@@ -188,6 +188,13 @@ export const UploadIcon = (p: IconProps) => (
   </Stroke>
 );
 
+export const SlidesIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <rect x="3" y="6" width="18" height="12" rx="2" />
+    <path d="M7 3h10M7 21h10M8 14l3-3 2 2 3-3" />
+  </Stroke>
+);
+
 export const ChevronLeftIcon = (p: IconProps) => (
   <Stroke strokeWidth={2.2} {...p}>
     <path d="M15 5l-7 7 7 7" />

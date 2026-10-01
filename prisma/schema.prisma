@@ -188,6 +188,21 @@ model GalleryImage {
   @@map("gallery_images")
 }
 
+// Slideshow photos behind the homepage and package-listing banners (up to 5
+// per banner). `banner` is a key from lib/banners.ts, e.g. "home",
+// "packages", "packages-cruise". Who uploaded is in audit_log.
+model BannerImage {
+  id          String   @id @default(uuid()) @db.Uuid
+  banner      String
+  storagePath String   @map("storage_path")
+  url         String
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([banner, sortOrder])
+  @@map("banner_images")
+}
+
 model Testimonial {
   id           String    @id @default(uuid()) @db.Uuid
   customerName String    @map("customer_name")

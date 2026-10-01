@@ -22,7 +22,9 @@ label "Umrah & Ziarah", URL `/packages?category=umrah-ziarah` (`umrah` /
 
 Target audience skews older (40s–60s, families, Hajj/Umrah pilgrims, retired
 couples) — legibility and simplicity are design requirements, not nice-to-haves.
-Body text minimum 17–18px, large touch targets, no auto-advancing carousels,
+Body text minimum 17–18px, large touch targets, no auto-advancing carousels
+(one owner-requested exception: the banner photo slideshows, which fade, have
+a Pause button and don't autoplay for prefers-reduced-motion),
 phone/WhatsApp contact always visible.
 
 ## Tech stack (decided, do not deviate without discussion)
@@ -85,9 +87,9 @@ dashboard directly) before relying on it.
 ## Database schema
 Full schema already exists at `prisma/schema.prisma` and is migrated live to
 Supabase — do not regenerate from scratch; schema changes go in new
-migrations. Eleven tables: `users`, `packages`, `package_images`,
+migrations. Twelve tables: `users`, `packages`, `package_images`,
 `package_itinerary_days`, `package_departures`, `inquiries`, `gallery_images`,
-`testimonials`, `site_config`, `announcements`, `audit_log`. The SDD Section
+`banner_images`, `testimonials`, `site_config`, `announcements`, `audit_log`. The SDD Section
 3.5 Data Dictionary is now out of date for packages — schema.prisma is the
 authoritative, current version.
 
@@ -300,6 +302,14 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   in lib/announcements.ts. "Show until" date = end of that day in Malaysia
   (UTC+8). Public: <AnnouncementBar> at the top of the public layout, hidden
   when nothing is live. Turn off/on = status EXPIRED/ACTIVE.
+- Banners: /admin/banners — up to 5 photos for each of six banners (keys in
+  lib/banners.ts: "home", "packages", "packages-<category slug>"), stored in
+  `banner_images` + bucket `banner-images`. Photos are cropped to a 3:1 strip
+  (≤2400×800) with the shared ImageCropDialog (`shape` prop); add/remove/
+  reorder save immediately (app/admin/(portal)/banners/actions.ts). Public:
+  <BannerSlideshow> behind the homepage hero and <PageBanner images> on
+  /packages — fades every 3s (BANNER_SLIDE_MS), Pause button, no autoplay
+  for reduced motion; no photos = the plain blue banner.
 - Shared admin UI: components/admin/field.tsx (Field, fieldClass,
   PageHeader, primaryButton) and ConfirmActionButton (pass a server action
   bound with .bind(null, id)).
@@ -339,7 +349,7 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   bypasses RLS). Any new table must get the same treatment (default
   privileges are revoked for future tables, but add `ENABLE ROW LEVEL
   SECURITY` in its migration too).
-- Storage buckets (`npm run setup-storage`): `package-images`,
+- Storage buckets (`npm run setup-storage`): `package-images`, `banner-images`,
   `gallery-images` — public read, JPG/PNG/WEBP ≤5MB enforced by the bucket.
   No storage RLS policies: uploads only via signed upload URLs that a server
   action issues after `authorize()` (see createPackageImageUploads). The

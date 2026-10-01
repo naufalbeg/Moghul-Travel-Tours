@@ -8,6 +8,7 @@ import {
   MailIcon,
   MegaphoneIcon,
   PackageIcon,
+  SlidesIcon,
   StarIcon,
   UsersIcon,
 } from "@/components/ui/icons";
@@ -34,6 +35,7 @@ export const ADMIN_NAV: { label: string; items: NavItem[] }[] = [
       { href: "/admin/gallery", label: "Gallery", title: "Gallery", Icon: ImageIcon },
       { href: "/admin/testimonials", label: "Testimonials", title: "Testimonials", Icon: StarIcon },
       { href: "/admin/content", label: "Content pages", title: "Content Pages", Icon: FileIcon },
+      { href: "/admin/banners", label: "Banners", title: "Banners", Icon: SlidesIcon },
       {
         href: "/admin/announcements",
         label: "Announcements",

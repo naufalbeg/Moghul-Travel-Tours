@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BannerSlideshow } from "@/components/public/banner-slideshow";
 import { CategoryPills } from "@/components/public/category-pills";
 import { PackageGrid } from "@/components/public/package-card";
 import { PackageSearch } from "@/components/public/package-search";
 import { ShieldIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { LogoMark } from "@/components/ui/logo-mark";
+import { getBannerImages } from "@/lib/banner-images";
 import { listPublishedPackages } from "@/lib/packages";
 import { prisma } from "@/lib/prisma";
 import { SITE } from "@/lib/site";
@@ -16,7 +18,7 @@ export default async function HomePage() {
   // listPublishedPackages opts the page into per-request rendering, so the
   // other queries below are fresh too.
   const featured = await listPublishedPackages({ take: 3 });
-  const [photos, testimonial, content] = await Promise.all([
+  const [photos, testimonial, content, bannerImages] = await Promise.all([
     prisma.galleryImage.findMany({
       orderBy: { createdAt: "desc" },
       take: 4,
@@ -27,11 +29,13 @@ export default async function HomePage() {
       select: { customerName: true, tripName: true, reviewText: true, starRating: true },
     }),
     getSiteContent(),
+    getBannerImages("home"),
   ]);
 
   return (
     <>
-      <section className="bg-hero px-4 pt-14 pb-[110px] text-center sm:px-8 sm:pt-16">
+      <section className="relative isolate overflow-hidden bg-hero px-4 pt-14 pb-[110px] text-center sm:px-8 sm:pt-16">
+        {bannerImages.length > 0 && <BannerSlideshow images={bannerImages} />}
         <div className="mx-auto max-w-[720px]">
           <h1 className="mb-[18px] text-[28px] tracking-[0.01em] text-white uppercase sm:text-[40px]">
             {content.hero_title}

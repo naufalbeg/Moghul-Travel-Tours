@@ -13,24 +13,39 @@ export type CropJob = {
   targetKey?: string;
 };
 
-/** Crops under this width look soft on a large screen. */
-const LOW_RES_WIDTH = 1000;
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
 
+/** The frame to crop to: package photos by default, wide strips for banners. */
+export type CropShape = {
+  aspect: number;
+  /** Crops are saved as JPEG at most this many pixels wide. */
+  maxWidth: number;
+  /** What the admin is told about how the crop is shown. */
+  hint: string;
+};
+
+export const PACKAGE_PHOTO_SHAPE: CropShape = {
+  aspect: PACKAGE_IMAGE_ASPECT,
+  maxWidth: CROPPED_IMAGE_MAX_WIDTH,
+  hint: "Drag the photo to choose what shows inside the frame, and zoom in with the slider. The website shows exactly this.",
+};
+
 /**
- * Modal crop step for package photos: a fixed 16:9 frame the admin drags and
- * zooms, so every photo shows exactly what they chose on the public site.
- * Works through one job at a time; the parent keeps the queue.
+ * Modal crop step: a fixed-shape frame the admin drags and zooms, so each
+ * photo shows what they chose on the public site. Works through one job at a
+ * time; the parent keeps the queue.
  */
 export function ImageCropDialog({
   job,
   position,
+  shape = PACKAGE_PHOTO_SHAPE,
   onCropped,
   onSkip,
   onCancel,
 }: {
   job: CropJob | null;
+  shape?: CropShape;
   position: { index: number; total: number };
   onCropped: (job: CropJob, file: File) => void;
   onSkip: (job: CropJob) => void;
@@ -61,6 +76,7 @@ export function ImageCropDialog({
           key={job.id}
           job={job}
           position={position}
+          shape={shape}
           onCropped={onCropped}
           onSkip={onSkip}
           onCancel={onCancel}
@@ -73,11 +89,13 @@ export function ImageCropDialog({
 function CropStep({
   job,
   position,
+  shape,
   onCropped,
   onSkip,
   onCancel,
 }: {
   job: CropJob;
+  shape: CropShape;
   position: { index: number; total: number };
   onCropped: (job: CropJob, file: File) => void;
   onSkip: (job: CropJob) => void;
@@ -94,7 +112,7 @@ function CropStep({
     setWorking(true);
     setProblem(null);
     try {
-      onCropped(job, await cropImage(job.src, area, CROPPED_IMAGE_MAX_WIDTH));
+      onCropped(job, await cropImage(job.src, area, shape.maxWidth));
     } catch (err) {
       console.error("Crop failed", err);
       setProblem("Couldn't crop this photo. Please try again, or choose a different photo.");
@@ -119,10 +137,7 @@ function CropStep({
             </span>
           )}
         </div>
-        <p className="text-[15px] text-muted">
-          Drag the photo to choose what shows inside the frame, and zoom in with the slider. The website shows
-          exactly this.
-        </p>
+        <p className="text-[15px] text-muted">{shape.hint}</p>
       </div>
 
       <div className="relative h-[min(56vh,460px)] bg-navy">
@@ -132,7 +147,7 @@ function CropStep({
           zoom={zoom}
           minZoom={MIN_ZOOM}
           maxZoom={MAX_ZOOM}
-          aspect={PACKAGE_IMAGE_ASPECT}
+          aspect={shape.aspect}
           onCropChange={setCrop}
           onZoomChange={setZoom}
           onCropComplete={(_, pixels) => setArea(pixels)}
@@ -172,10 +187,11 @@ function CropStep({
             +
           </button>
         </div>
-        {area && area.width < LOW_RES_WIDTH && (
+        {/* Under half the saved width looks soft on a large screen. */}
+        {area && area.width < shape.maxWidth / 2 && (
           <p className="mt-2 text-[13.5px] text-accent-dark">
             This part of the photo is quite small, so it may look blurry on large screens. Zooming out helps, or
-            use a larger photo (at least {CROPPED_IMAGE_MAX_WIDTH} pixels wide is best).
+            use a larger photo (at least {shape.maxWidth} pixels wide is best).
           </p>
         )}
         {problem && <p className="mt-2 text-sm font-semibold text-danger">{problem}</p>}
