@@ -229,7 +229,9 @@ ambiguous — check there as a starting point for edge-case behavior.
   retrying `vercel git connect` now that the repo is public.
 
 ## Admin accounts
-- Master Admin: Mirza Raziq, `moghul@gmail.com` (Naufal's father). Created
+- Master Admin: Mirza Raziq, `moghultt@gmail.com` (Naufal's father; was
+  mistakenly created as the non-existent `moghul@gmail.com` and changed in
+  place on 2026-10-02 — same account id and password). Created
   with `npm run create-master-admin` (scripts/create-master-admin.mts), which
   takes MASTER_ADMIN_EMAIL / MASTER_ADMIN_NAME / MASTER_ADMIN_PASSWORD from the
   environment — never commit a password. Re-running it resets the password
@@ -248,8 +250,8 @@ ambiguous — check there as a starting point for edge-case behavior.
   row can never be modified.
 - /admin/forgot-password emails a 1h reset link; same response for unknown
   emails. Until the Resend domain is verified, reset emails only reach
-  moghultt@gmail.com — the Master Admin (moghul@gmail.com) should still use
-  `npm run create-master-admin` to recover.
+  moghultt@gmail.com — which is the Master Admin's address, so his reset
+  works; other staff still need the Master Admin (or the copy-link invite).
 - proxy.ts treats /admin/login, /admin/forgot-password, /admin/set-password
   as public.
 
