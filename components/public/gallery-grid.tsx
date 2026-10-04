@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useI18n } from "@/components/public/i18n-provider";
 import { CloseIcon } from "@/components/ui/icons";
+import { fmt } from "@/lib/i18n/config";
 
 type Photo = { id: string; url: string; tag: string };
 
@@ -11,6 +13,7 @@ type Photo = { id: string; url: string; tag: string };
  * Manual navigation only — no auto-advance, per the design rules.
  */
 export function GalleryGrid({ photos }: { photos: Photo[] }) {
+  const { t } = useI18n();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [index, setIndex] = useState<number | null>(null);
 
@@ -53,7 +56,7 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
                 sizes="(min-width: 1024px) 270px, (min-width: 768px) 33vw, 50vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
               />
-              <span className="sr-only">Open photo {i + 1} full screen</span>
+              <span className="sr-only">{fmt(t.lightbox.open, { n: i + 1 })}</span>
             </button>
           </li>
         ))}
@@ -62,7 +65,7 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
       <dialog
         ref={dialogRef}
         onClose={() => setIndex(null)}
-        aria-label="Photo viewer"
+        aria-label={t.lightbox.viewer}
         className="m-0 h-full max-h-none w-full max-w-none bg-black/95 p-0 text-white backdrop:bg-black/80"
       >
         {current && (
@@ -71,7 +74,7 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
               <p className="text-[15px]">
                 <span className="font-semibold">{current.tag}</span>
                 <span className="ml-3 text-white/60">
-                  {index! + 1} of {photos.length}
+                  {fmt(t.lightbox.counter, { n: index! + 1, total: photos.length })}
                 </span>
               </p>
               <button
@@ -80,7 +83,7 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
                 className="flex min-h-12 items-center gap-2 rounded-lg bg-white/10 px-4 font-semibold hover:bg-white/20"
               >
                 <CloseIcon className="size-5" />
-                Close
+                {t.lightbox.close}
               </button>
             </div>
             <div className="relative min-h-0 flex-1">
@@ -93,14 +96,14 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
                   onClick={() => step(-1)}
                   className="min-h-12 min-w-32 rounded-lg bg-white/10 px-5 font-semibold hover:bg-white/20"
                 >
-                  ← Previous
+                  {t.lightbox.previous}
                 </button>
                 <button
                   type="button"
                   onClick={() => step(1)}
                   className="min-h-12 min-w-32 rounded-lg bg-white/10 px-5 font-semibold hover:bg-white/20"
                 >
-                  Next →
+                  {t.lightbox.next}
                 </button>
               </div>
             )}

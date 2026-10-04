@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getDictionary } from "@/lib/i18n/server";
 import { CATEGORY_FILTERS } from "@/lib/package-labels";
 
 /**
@@ -7,20 +8,21 @@ import { CATEGORY_FILTERS } from "@/lib/package-labels";
  * the left from the left. On the homepage (`fromHomepage`) every pill leads to
  * the Packages page, so they all slide forward like the Packages menu item.
  */
-export function CategoryPills({
+export async function CategoryPills({
   active,
-  allLabel = "All packages",
+  allLabel,
   fromHomepage = false,
 }: {
   active: string | null;
   allLabel?: string;
   fromHomepage?: boolean;
 }) {
+  const t = await getDictionary();
   const pills = [
-    { slug: null, label: allLabel, href: "/packages" },
+    { slug: null, label: allLabel ?? t.categoryPills.all, href: "/packages" },
     ...CATEGORY_FILTERS.map((f) => ({
       slug: f.slug,
-      label: f.label,
+      label: t.categories[f.categories[0]],
       href: `/packages?category=${f.slug}`,
     })),
   ];
@@ -28,13 +30,13 @@ export function CategoryPills({
   const current = pills.findIndex((pill) => pill.slug === active);
 
   return (
-    <nav aria-label="Package categories" className="flex flex-wrap justify-center gap-3">
+    <nav aria-label={t.categoryPills.label} className="flex flex-wrap justify-center gap-3">
       {pills.map((pill, i) => {
         const isActive = i === current;
         const direction = fromHomepage || i > current ? "nav-forward" : "nav-back";
         return (
           <Link
-            key={pill.label}
+            key={pill.slug ?? "all"}
             href={pill.href}
             transitionTypes={isActive && !fromHomepage ? undefined : [direction]}
             aria-current={isActive ? "page" : undefined}

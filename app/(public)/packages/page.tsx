@@ -7,16 +7,17 @@ import { SlideTransition } from "@/components/public/slide-transition";
 import { WhatsAppIcon } from "@/components/ui/icons";
 import { getBannerImages } from "@/lib/banner-images";
 import { packagesBannerKey } from "@/lib/banners";
+import { fmt } from "@/lib/i18n/config";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { resolveCategoryFilter } from "@/lib/package-labels";
 import { listPublishedPackages, upcomingMonths } from "@/lib/packages";
-import { getSiteContent } from "@/lib/site-config";
+import { getPublicContent } from "@/lib/site-config";
 import { whatsappHref } from "@/lib/site-content";
 
-export const metadata: Metadata = {
-  title: "Travel packages",
-  description:
-    "Browse Umrah & Ziarah, outbound, inbound and cruise packages from Moghul Travel & Tours.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getDictionary();
+  return { title: t.meta.packagesTitle, description: t.meta.packagesDescription };
+}
 
 function param(value: string | string[] | undefined) {
   return (Array.isArray(value) ? value[0] : value)?.trim() || undefined;
@@ -29,16 +30,18 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
   const query = param(params.q);
   const month = param(params.month);
 
-  const [content, packages, bannerImages] = await Promise.all([
-    getSiteContent(),
+  const [content, packages, bannerImages, t, locale] = await Promise.all([
+    getPublicContent(),
     listPublishedPackages({ categories: filter?.categories, query, month }),
     getBannerImages(packagesBannerKey(filter?.slug)),
+    getDictionary(),
+    getLocale(),
   ]);
 
-  const monthLabel = month ? upcomingMonths().find((m) => m.value === month)?.label : undefined;
+  const monthLabel = month ? upcomingMonths(locale).find((m) => m.value === month)?.label : undefined;
   const searchParts = [
     query && `“${query}”`,
-    monthLabel && `departing in ${monthLabel}`,
+    monthLabel && fmt(t.packages.departingIn, { month: monthLabel }),
   ].filter(Boolean);
 
   // Switching category re-keys the banner and results, so they slide like a
@@ -48,8 +51,11 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
   return (
     <>
       <SlideTransition key={view}>
-        <PageBanner title={filter ? `${filter.label} packages` : "Our travel packages"} images={bannerImages}>
-          Browse our Umrah &amp; Ziarah, outbound, inbound and cruise packages.
+        <PageBanner
+          title={filter ? fmt(t.packages.categoryTitle, { category: t.categories[filter.categories[0]] }) : t.packages.title}
+          images={bannerImages}
+        >
+          {t.packages.subtitle}
         </PageBanner>
       </SlideTransition>
 
@@ -62,12 +68,12 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
           <div>
             {searchParts.length > 0 && (
               <p className="mb-6 text-center text-muted">
-                Showing packages matching {searchParts.join(", ")}.{" "}
+                {fmt(t.packages.matching, { terms: searchParts.join(", ") })}{" "}
                 <Link
                   href={filter ? `/packages?category=${filter.slug}` : "/packages"}
                   className="font-semibold text-primary underline underline-offset-4"
                 >
-                  Clear search
+                  {t.packages.clearSearch}
                 </Link>
               </p>
             )}
@@ -76,20 +82,18 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
               <PackageGrid packages={packages} />
             ) : (
               <div className="mx-auto max-w-[560px] rounded-xl border border-line bg-white px-6 py-10 text-center">
-                <h2 className="mb-2 text-xl text-primary-dark">No packages found</h2>
+                <h2 className="mb-2 text-xl text-primary-dark">{t.packages.noneTitle}</h2>
                 <p className="mb-6 text-muted">
-                  {searchParts.length > 0 || filter
-                    ? "Nothing matches right now — try another category, or ask us directly. We often arrange trips on request."
-                    : "New packages are coming soon. In the meantime, our team is happy to help you plan your trip."}
+                  {searchParts.length > 0 || filter ? t.packages.noneFiltered : t.packages.noneYet}
                 </p>
                 <a
-                  href={whatsappHref(content, "Hi Moghul Travel & Tours, I'd like to ask about your travel packages.")}
+                  href={whatsappHref(content, t.whatsapp.askPackages)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[#1f9d55] px-6 font-bold text-white"
                 >
                   <WhatsAppIcon className="size-5" />
-                  Ask us on WhatsApp
+                  {t.home.askWhatsApp}
                 </a>
               </div>
             )}

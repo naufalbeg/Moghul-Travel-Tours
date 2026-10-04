@@ -3,16 +3,17 @@ import Link from "next/link";
 import { GalleryGrid } from "@/components/public/gallery-grid";
 import { PageBanner } from "@/components/public/page-banner";
 import { listGalleryImages, listGalleryTags } from "@/lib/gallery";
+import { getDictionary } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Gallery",
-  description: "Photos from Moghul Travel & Tours trips — Umrah & Ziarah, tours, cruises and more.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getDictionary();
+  return { title: t.meta.galleryTitle, description: t.meta.galleryDescription };
+}
 
 /** GalleryPage [PKG-MTT-004-001] — grid, filter by destination tag, lightbox. */
 export default async function GalleryPage({ searchParams }: PageProps<"/gallery">) {
   const tagParam = (await searchParams).tag;
-  const tags = await listGalleryTags();
+  const [tags, t] = await Promise.all([listGalleryTags(), getDictionary()]);
   const activeTag = typeof tagParam === "string" && tags.some((t) => t.tag === tagParam) ? tagParam : undefined;
   const photos = await listGalleryImages(activeTag);
 
@@ -23,13 +24,13 @@ export default async function GalleryPage({ searchParams }: PageProps<"/gallery"
 
   return (
     <>
-      <PageBanner title="Our journeys">Real moments from our clients&apos; trips.</PageBanner>
+      <PageBanner title={t.gallery.title}>{t.gallery.subtitle}</PageBanner>
 
       <section className="mx-auto max-w-[1160px] px-4 py-10 sm:px-8 sm:py-14">
         {tags.length > 1 && (
-          <nav aria-label="Filter photos by trip" className="mb-8 flex flex-wrap justify-center gap-3">
+          <nav aria-label={t.gallery.filterLabel} className="mb-8 flex flex-wrap justify-center gap-3">
             <Link href="/gallery" className={pill(!activeTag)} aria-current={!activeTag ? "page" : undefined}>
-              All photos
+              {t.gallery.all}
             </Link>
             {tags.map((t) => (
               <Link
@@ -48,9 +49,9 @@ export default async function GalleryPage({ searchParams }: PageProps<"/gallery"
           <GalleryGrid photos={photos} />
         ) : (
           <div className="mx-auto max-w-[520px] rounded-xl border border-line bg-white px-6 py-10 text-center">
-            <p className="mb-5 text-muted">Photos from our trips will appear here soon.</p>
+            <p className="mb-5 text-muted">{t.gallery.empty}</p>
             <Link href="/packages" className="font-semibold text-primary underline underline-offset-4">
-              Browse our packages
+              {t.gallery.browse}
             </Link>
           </div>
         )}

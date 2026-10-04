@@ -3,6 +3,12 @@ import type {
   PackageAvailability,
   PackageCategory,
 } from "@/generated/prisma/enums";
+import { fmt } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/ms";
+
+// Labels here are English, for the admin portal. The public site shows the
+// same things from the visitor's dictionary (lib/i18n) — the pill colours
+// below are shared.
 
 export const CATEGORY_LABEL: Record<PackageCategory, string> = {
   UMRAH_ZIARAH: "Umrah & Ziarah",
@@ -55,12 +61,14 @@ export const DEPARTURE_AVAILABILITY: Record<DepartureAvailability, Pill> = {
   FULL: { label: "Full", className: "bg-line text-muted" },
 };
 
-export function durationLabel(days: number | null, nights: number | null) {
+/** "10 days, 9 nights" / "10 hari, 9 malam". */
+export function durationLabel(days: number | null, nights: number | null, t: Dictionary["duration"]) {
   if (!days) return null;
-  const d = `${days} day${days === 1 ? "" : "s"}`;
-  return nights ? `${d}, ${nights} night${nights === 1 ? "" : "s"}` : d;
+  const d = fmt(days === 1 ? t.oneDay : t.days, { n: days });
+  return nights ? `${d}, ${fmt(nights === 1 ? t.oneNight : t.nights, { n: nights })}` : d;
 }
 
-export function dayLabel(start: number, end: number | null) {
-  return end && end > start ? `Day ${start}–${end}` : `Day ${start}`;
+/** "Day 2–4" / "Hari 2–4". */
+export function dayLabel(start: number, end: number | null, t: Dictionary["duration"]) {
+  return end && end > start ? fmt(t.dayRange, { start, end }) : fmt(t.day, { n: start });
 }

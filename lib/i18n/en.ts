@@ -1,0 +1,313 @@
+import type { Dictionary } from "@/lib/i18n/ms";
+
+// English — the secondary language. Same entries as ms.ts (TypeScript checks).
+
+export const en: Dictionary = {
+  meta: {
+    ogLocale: "en_MY",
+    siteTitle: "Umrah, Ziarah, Tours & Cruises",
+    siteDescription:
+      "MOTAC-licensed Malaysian travel agency in Shah Alam offering Umrah & Ziarah, outbound and inbound tours, and cruises.",
+    packagesTitle: "Travel packages",
+    packagesDescription: "Browse Umrah & Ziarah, outbound, inbound and cruise packages from Moghul Travel & Tours.",
+    packageNotFound: "Package not found",
+    galleryTitle: "Gallery",
+    galleryDescription: "Photos from Moghul Travel & Tours trips — Umrah & Ziarah, tours, cruises and more.",
+    testimonialsTitle: "Traveller reviews",
+    testimonialsDescription: "What our Umrah, Ziarah and tour travellers say about Moghul Travel & Tours.",
+    aboutTitle: "About us",
+    contactTitle: "Contact us",
+    contactDescription: "Call, WhatsApp, email or visit the Moghul Travel & Tours office in Shah Alam, Selangor.",
+    inquireTitle: "Send an inquiry",
+    inquireDescription: "Ask Moghul Travel & Tours about a package — we'll get back to you shortly.",
+  },
+
+  layout: {
+    skipToContent: "Skip to content",
+    adminLogin: "Admin login",
+    homeLink: "{name} — home",
+    announcements: "Announcements",
+    whatsappUs: "WhatsApp us",
+  },
+
+  whatsapp: {
+    askPackage: "Hi Moghul Travel & Tours, I'd like to ask about a package.",
+    askUpcoming: "Hi Moghul Travel & Tours, I'd like to know about your upcoming packages.",
+    askPackages: "Hi Moghul Travel & Tours, I'd like to ask about your travel packages.",
+    planTrip: "Hi Moghul Travel & Tours, I'd like to plan a trip.",
+    askTrip: "Hi Moghul Travel & Tours, I'd like to ask about a trip.",
+    sentMessage: "Hi Moghul Travel & Tours, I just sent a message on your website.",
+    sentInquiry: "Hi Moghul Travel & Tours, I just sent an inquiry on your website.",
+  },
+
+  footer: {
+    office: "Office",
+    telFax: "Tel/Fax",
+    mobile: "Mobile",
+    officeHours: "Office hours",
+    motac: "MOTAC License No. {value}",
+    companyReg: "Co. Reg. No. {value}",
+    matta: "MATTA Member No. {value}",
+    contactLink: "Contact & directions →",
+    reviewsLink: "Traveller reviews →",
+    rights: "All rights reserved.",
+    credit: "Developed by MNB",
+  },
+
+  home: {
+    featured: "Featured travel packages",
+    all: "All",
+    viewAll: "View all packages",
+    noPackages:
+      "Our upcoming packages are being finalised. Message us and we'll share the latest Umrah, Ziarah and tour dates with you.",
+    askWhatsApp: "Ask us on WhatsApp",
+    journeysHeading: "Our journeys & client feedback",
+    photosCaption: "Capturing memories from our clients' journeys",
+    viewGallery: "View full gallery",
+    reviewHeading: "What our travellers say",
+    stars: "{n} out of 5 stars",
+    allReviews: "See all reviews →",
+    aboutHeading: "About {name}",
+    readStory: "Read our story →",
+  },
+
+  search: {
+    label: "Find a package",
+    destination: "Destination",
+    destinationPlaceholder: "Where would you like to go?",
+    month: "Month",
+    anyMonth: "Any month",
+    category: "Category",
+    allCategories: "All categories",
+    submit: "Search",
+  },
+
+  categories: {
+    UMRAH_ZIARAH: "Umrah & Ziarah",
+    OUTBOUND: "Outbound",
+    INBOUND: "Inbound",
+    CRUISE: "Cruise",
+  },
+
+  categoryPills: {
+    label: "Package categories",
+    all: "All packages",
+  },
+
+  availability: {
+    OPEN: "Open for booking",
+    ALMOST_FULL: "Almost full",
+    FULL: "Fully booked",
+    COMING_SOON: "Coming soon",
+  },
+
+  departureAvailability: {
+    OPEN: "Open",
+    ALMOST_FULL: "Almost full",
+    FULL: "Full",
+  },
+
+  duration: {
+    days: "{n} days",
+    oneDay: "{n} day",
+    nights: "{n} nights",
+    oneNight: "{n} night",
+    day: "Day {n}",
+    dayRange: "Day {start}–{end}",
+  },
+
+  prices: {
+    startsFrom: "Starts from",
+    perPax: "per pax",
+    perPerson: "per person",
+    askForPrice: "Ask us for the price",
+    seeDetails: "See price details",
+    heading: "Prices per person",
+    traveller: "Traveller",
+    askUs: "Ask us",
+    travellers: { ADULT: "Adult", CHILD: "Child" },
+    rooms: {
+      TWIN: { label: "Twin room", hint: "2 people per room", short: "twin" },
+      TRIPLE: { label: "Triple room", hint: "3 people per room", short: "triple" },
+    },
+    roomsOffered: "{rooms} room",
+    or: "or",
+  },
+
+  card: {
+    highlights: "Highlights",
+    viewDetails: "View details",
+    inquire: "Inquire",
+  },
+
+  packages: {
+    title: "Our travel packages",
+    categoryTitle: "{category} packages",
+    subtitle: "Browse our Umrah & Ziarah, outbound, inbound and cruise packages.",
+    matching: "Showing packages matching {terms}.",
+    departingIn: "departing in {month}",
+    clearSearch: "Clear search",
+    noneTitle: "No packages found",
+    noneFiltered:
+      "Nothing matches right now — try another category, or ask us directly. We often arrange trips on request.",
+    noneYet: "New packages are coming soon. In the meantime, our team is happy to help you plan your trip.",
+  },
+
+  detail: {
+    breadcrumb: "Breadcrumb",
+    home: "Home",
+    packages: "Packages",
+    motacPackage: "MOTAC licensed package",
+    departures: "Upcoming departure dates",
+    noDepartures: "New dates are being arranged — ask us for the latest schedule.",
+    inquireNow: "Inquire now",
+    askNextTrip: "Ask about the next trip",
+    orCall: "Or call {phone}",
+    trust: "MOTAC licensed ({licence}) — over a decade of guiding Malaysian travellers.",
+    about: "About this package",
+    included: "What's included",
+    itinerary: "Itinerary",
+  },
+
+  about: {
+    title: "About us",
+    credentials: "Licensed & registered",
+    motac: "MOTAC License No. {value}",
+    companyReg: "Co. Reg. No. {value}",
+    matta: "MATTA Member No. {value}",
+    basedIn: "Based in Shah Alam, Selangor",
+    planHeading: "Plan your next journey with us",
+    planText: "Tell us where you'd like to go and we'll help you find the right trip.",
+    browse: "Browse packages",
+  },
+
+  contact: {
+    title: "Contact us",
+    subtitle: "We're happy to help you plan your trip — call, WhatsApp, email or visit our office.",
+    whatsappText: "The quickest way to reach us. {number}",
+    whatsappButton: "Chat on WhatsApp",
+    callHeading: "Call us",
+    office: "Office (tel/fax): ",
+    mobile: "Mobile: ",
+    email: "Email",
+    hours: "Office hours",
+    visit: "Visit our office",
+    directions: "Get directions",
+    mapTitle: "Map showing our office: {address}",
+    lookingForTrip: "Looking for a trip?",
+    browse: "Browse our packages",
+    messageHeading: "Send us a message",
+    messageText: "We'll get back to you by phone or email.",
+  },
+
+  inquire: {
+    title: "Send us an inquiry",
+    subtitle: "Tell us what you're looking for and our team will get back to you shortly.",
+    talkHeading: "Prefer to talk?",
+    talkText: "We're happy to answer questions by phone or WhatsApp.",
+    whatsapp: "WhatsApp {number}",
+    call: "Call {number}",
+  },
+
+  gallery: {
+    title: "Our journeys",
+    subtitle: "Real moments from our clients' trips.",
+    filterLabel: "Filter photos by trip",
+    all: "All photos",
+    empty: "Photos from our trips will appear here soon.",
+    browse: "Browse our packages",
+  },
+
+  testimonials: {
+    title: "What our travellers say",
+    subtitle: "Reviews from families, pilgrims and groups who travelled with us.",
+    empty: "Reviews from our travellers will appear here soon.",
+    browse: "Browse our packages",
+    stars: "{n} out of 5 stars",
+  },
+
+  notFound: {
+    title: "Page not found",
+    text: "This page doesn't exist, or it may have moved. You can browse our packages, or message us and we'll point you in the right direction.",
+    browse: "Browse packages",
+  },
+
+  client: {
+    nav: {
+      label: "Main",
+      home: "Home",
+      packages: "Packages",
+      gallery: "Gallery",
+      about: "About Us",
+      contact: "Contact",
+    },
+    menu: {
+      open: "Menu",
+      close: "Close",
+      call: "Call us",
+      whatsapp: "WhatsApp",
+      adminLogin: "Admin login",
+    },
+    language: {
+      label: "Bahasa / Language",
+      ms: "Bahasa Melayu",
+      en: "English",
+    },
+    slideshow: {
+      play: "Play",
+      pause: "Pause",
+      playLabel: "Play the photo slideshow",
+      pauseLabel: "Pause the photo slideshow",
+    },
+    lightbox: {
+      open: "Open photo {n} full screen",
+      viewer: "Photo viewer",
+      counter: "{n} of {total}",
+      close: "Close",
+      previous: "← Previous",
+      next: "Next →",
+    },
+    packageGallery: {
+      label: "Photos of {title}",
+      slide: "Photo {n} of {total}",
+      alt: "{title} — photo {n} of {total}",
+      previous: "Previous photo",
+      next: "Next photo",
+      show: "Show photo {n}",
+    },
+    inquiry: {
+      fullName: "Full name",
+      phone: "Phone number",
+      email: "Email address",
+      emailPlaceholder: "name@gmail.com",
+      packageInterest: "Package you're interested in",
+      general: "Not sure yet / general question",
+      message: "Message",
+      optional: "(optional)",
+      messagePlaceholder: "e.g. how many people are travelling, preferred month, any questions",
+      send: "Send inquiry",
+      sending: "Sending…",
+      privacy: "We'll only use your details to reply to this inquiry.",
+      thanks: "Thank you, {name}!",
+      submitted: "Your inquiry has been submitted. We will contact you shortly.",
+      faster: "Need a faster answer? WhatsApp us",
+      browseMore: "Browse more packages",
+      banners: {
+        checkFields: "Please check the highlighted fields.",
+        captchaFailed: "Please complete the “I am human” check and try again.",
+      },
+      errors: {
+        nameRequired: "Please enter your name.",
+        nameTooLong: "Please keep your name under 100 characters.",
+        phoneRequired: "Please enter your phone number.",
+        phoneDigits: "Please enter a phone number using digits only.",
+        phoneIncomplete: "Please enter a full phone number, e.g. 012-345 6789.",
+        emailInvalid: "Please enter a valid email address, e.g. name@gmail.com.",
+        packageRequired: "Please choose a package, or “Not sure yet”.",
+        messageTooLong: "Please keep your message under 2,000 characters.",
+        captcha: "Please tick the box to show you're not a robot.",
+        invalid: "Please check this field.",
+      },
+    },
+  },
+};

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
+import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { SITE } from "@/lib/site";
 import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
@@ -17,20 +18,23 @@ const poppins = Poppins({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl()),
-  title: {
-    default: `${SITE.name} — Umrah, Ziarah, Tours & Cruises`,
-    template: `%s | ${SITE.name}`,
-  },
-  description:
-    "MOTAC-licensed Malaysian travel agency offering Umrah & Ziarah, outbound and inbound tours, and cruises.",
-  openGraph: { type: "website", siteName: SITE.name, locale: "en_MY" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getDictionary();
+  return {
+    metadataBase: new URL(siteUrl()),
+    title: {
+      default: `${SITE.name} — ${t.meta.siteTitle}`,
+      template: `%s | ${SITE.name}`,
+    },
+    description: t.meta.siteDescription,
+    openGraph: { type: "website", siteName: SITE.name, locale: t.meta.ogLocale },
+  };
+}
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+/** The page language follows the visitor's BM | EN choice (the admin portal marks itself English). */
+export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+    <html lang={await getLocale()} className={`${inter.variable} ${poppins.variable}`}>
       <body className="min-h-screen">{children}</body>
     </html>
   );

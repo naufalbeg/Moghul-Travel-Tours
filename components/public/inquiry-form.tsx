@@ -4,11 +4,15 @@ import HCaptcha from "@hcaptcha/react-hcaptcha";
 import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { submitInquiry } from "@/app/(public)/inquire/actions";
+import { useI18n } from "@/components/public/i18n-provider";
 import { Alert } from "@/components/ui/alert";
 import { AlertCircleIcon, CheckCircleIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { fmt } from "@/lib/i18n/config";
 import {
   GENERAL_INQUIRY,
   validateInquiry,
+  type InquiryBannerCode,
+  type InquiryErrorCode,
   type InquiryErrors,
   type InquiryInput,
 } from "@/lib/validation/inquiry";
@@ -43,6 +47,10 @@ export function InquiryForm({
   initialPackage: string;
   whatsappUrl: string;
 }) {
+  const { locale, t } = useI18n();
+  const text = t.inquiry;
+  /** Error code → sentence in the visitor's language. */
+  const say = (code?: InquiryErrorCode) => (code ? (text.errors[code] ?? text.errors.invalid) : undefined);
   const [values, setValues] = useState<InquiryInput>({
     fullName: "",
     phone: "",
@@ -51,7 +59,7 @@ export function InquiryForm({
     message: "",
   });
   const [errors, setErrors] = useState<InquiryErrors>({});
-  const [banner, setBanner] = useState<string | null>(null);
+  const [banner, setBanner] = useState<InquiryBannerCode | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -59,7 +67,7 @@ export function InquiryForm({
 
   const set = (key: keyof InquiryInput, value: string) => setValues((v) => ({ ...v, [key]: value }));
 
-  function fail(found: InquiryErrors, message: string) {
+  function fail(found: InquiryErrors, message: InquiryBannerCode) {
     setErrors(found);
     setBanner(message);
     document.getElementById("inquiry-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -68,8 +76,8 @@ export function InquiryForm({
   function submit() {
     const check = validateInquiry(values);
     const found: InquiryErrors = check.ok ? {} : { ...check.errors };
-    if (!token) found.captcha = "Please tick the box to show you're not a robot.";
-    if (Object.keys(found).length) return fail(found, "Please check the highlighted fields.");
+    if (!token) found.captcha = "captcha";
+    if (Object.keys(found).length) return fail(found, "checkFields");
 
     startTransition(async () => {
       const result = await submitInquiry(values, token);
@@ -88,9 +96,9 @@ export function InquiryForm({
     return (
       <div role="status" className="rounded-xl border border-line bg-white px-6 py-10 text-center sm:px-10">
         <CheckCircleIcon className="mx-auto mb-4 size-14 text-success" />
-        <h2 className="mb-2 text-2xl text-primary-dark">Thank you, {sentTo}!</h2>
+        <h2 className="mb-2 text-2xl text-primary-dark">{fmt(text.thanks, { name: sentTo })}</h2>
         <p className="mx-auto mb-7 max-w-[460px] text-[17px] text-muted">
-          Your inquiry has been submitted. We will contact you shortly.
+          {text.submitted}
         </p>
         <div className="flex flex-col justify-center gap-3 sm:flex-row">
           <a
@@ -100,13 +108,13 @@ export function InquiryForm({
             className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#1f9d55] px-6 font-bold text-white"
           >
             <WhatsAppIcon className="size-5" />
-            Need a faster answer? WhatsApp us
+            {text.faster}
           </a>
           <Link
             href="/packages"
             className="inline-flex min-h-12 items-center justify-center rounded-lg border-[1.5px] border-primary px-6 font-bold text-primary"
           >
-            Browse more packages
+            {text.browseMore}
           </Link>
         </div>
       </div>
@@ -127,14 +135,14 @@ export function InquiryForm({
     >
       {banner && (
         <div className="mb-6">
-          <Alert tone="error" title={banner} />
+          <Alert tone="error" title={text.banners[banner]} />
         </div>
       )}
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label htmlFor="fullName" className="mb-2 block font-semibold">
-            Full name
+            {text.fullName}
           </label>
           <input
             id="fullName"
@@ -145,12 +153,12 @@ export function InquiryForm({
             aria-describedby={describe("fullName")}
             className={inputClass(errors.fullName)}
           />
-          <InlineError id="fullName-error" message={errors.fullName} />
+          <InlineError id="fullName-error" message={say(errors.fullName)} />
         </div>
 
         <div>
           <label htmlFor="phone" className="mb-2 block font-semibold">
-            Phone number
+            {text.phone}
           </label>
           <input
             id="phone"
@@ -164,30 +172,30 @@ export function InquiryForm({
             aria-describedby={describe("phone")}
             className={inputClass(errors.phone)}
           />
-          <InlineError id="phone-error" message={errors.phone} />
+          <InlineError id="phone-error" message={say(errors.phone)} />
         </div>
 
         <div>
           <label htmlFor="email" className="mb-2 block font-semibold">
-            Email address
+            {text.email}
           </label>
           <input
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="name@gmail.com"
+            placeholder={text.emailPlaceholder}
             value={values.email}
             onChange={(e) => set("email", e.target.value)}
             aria-invalid={Boolean(errors.email)}
             aria-describedby={describe("email")}
             className={inputClass(errors.email)}
           />
-          <InlineError id="email-error" message={errors.email} />
+          <InlineError id="email-error" message={say(errors.email)} />
         </div>
 
         <div className="sm:col-span-2">
           <label htmlFor="packageInterest" className="mb-2 block font-semibold">
-            Package you&apos;re interested in
+            {text.packageInterest}
           </label>
           <select
             id="packageInterest"
@@ -197,37 +205,38 @@ export function InquiryForm({
             aria-describedby={describe("packageInterest")}
             className={inputClass(errors.packageInterest)}
           >
-            <option value={GENERAL_INQUIRY}>Not sure yet / general question</option>
+            <option value={GENERAL_INQUIRY}>{text.general}</option>
             {packages.map((title) => (
               <option key={title} value={title}>
                 {title}
               </option>
             ))}
           </select>
-          <InlineError id="packageInterest-error" message={errors.packageInterest} />
+          <InlineError id="packageInterest-error" message={say(errors.packageInterest)} />
         </div>
 
         <div className="sm:col-span-2">
           <label htmlFor="message" className="mb-2 block font-semibold">
-            Message <span className="font-normal text-muted">(optional)</span>
+            {text.message} <span className="font-normal text-muted">{text.optional}</span>
           </label>
           <textarea
             id="message"
             rows={5}
-            placeholder="e.g. how many people are travelling, preferred month, any questions"
+            placeholder={text.messagePlaceholder}
             value={values.message}
             onChange={(e) => set("message", e.target.value)}
             aria-invalid={Boolean(errors.message)}
             aria-describedby={describe("message")}
             className={`${inputClass(errors.message)} resize-y leading-relaxed`}
           />
-          <InlineError id="message-error" message={errors.message} />
+          <InlineError id="message-error" message={say(errors.message)} />
         </div>
 
         <div className="sm:col-span-2">
           <HCaptcha
             ref={captchaRef}
             sitekey={SITE_KEY}
+            languageOverride={locale}
             onVerify={(t) => {
               setToken(t);
               setErrors((e) => ({ ...e, captcha: undefined }));
@@ -235,7 +244,7 @@ export function InquiryForm({
             onExpire={() => setToken(null)}
             onError={() => setToken(null)}
           />
-          <InlineError id="captcha-error" message={errors.captcha} />
+          <InlineError id="captcha-error" message={say(errors.captcha)} />
         </div>
       </div>
 
@@ -244,10 +253,10 @@ export function InquiryForm({
         disabled={pending}
         className="mt-7 min-h-14 w-full rounded-[10px] bg-accent px-6 text-lg font-bold text-white hover:bg-accent-dark disabled:opacity-60 sm:w-auto sm:min-w-60"
       >
-        {pending ? "Sending…" : "Send inquiry"}
+        {pending ? text.sending : text.send}
       </button>
       <p className="mt-4 text-sm text-muted">
-        We&apos;ll only use your details to reply to this inquiry.
+        {text.privacy}
       </p>
     </form>
   );

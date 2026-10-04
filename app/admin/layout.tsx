@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/** The admin portal is English, whatever language the visitor picked for the public site. */
 export default function AdminRootLayout({ children }: LayoutProps<"/admin">) {
-  return children;
+  return <div lang="en">{children}</div>;
 }

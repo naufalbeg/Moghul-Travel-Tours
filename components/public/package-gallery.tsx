@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { useI18n } from "@/components/public/i18n-provider";
 import { PackageImage } from "@/components/public/package-image";
+import { fmt } from "@/lib/i18n/config";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/icons";
 
 /** A horizontal swipe longer than this (px) moves to the next/previous photo. */
@@ -17,6 +19,7 @@ const arrowButton =
  * thumbnails. No auto-advance. Photos are 16:9, the shape admins crop to.
  */
 export function PackageGallery({ images, title }: { images: { id: string; url: string }[]; title: string }) {
+  const { t } = useI18n();
   const [current, setCurrent] = useState(0);
   const touchStartX = useRef<number | null>(null);
 
@@ -32,7 +35,7 @@ export function PackageGallery({ images, title }: { images: { id: string; url: s
       <div
         role="region"
         aria-roledescription="carousel"
-        aria-label={`Photos of ${title}`}
+        aria-label={fmt(t.packageGallery.label, { title })}
         onKeyDown={(e) => {
           if (e.key === "ArrowLeft") go(current - 1);
           if (e.key === "ArrowRight") go(current + 1);
@@ -57,13 +60,13 @@ export function PackageGallery({ images, title }: { images: { id: string; url: s
               key={image.id}
               role="group"
               aria-roledescription="slide"
-              aria-label={`Photo ${i + 1} of ${count}`}
+              aria-label={fmt(t.packageGallery.slide, { n: i + 1, total: count })}
               aria-hidden={i !== current}
               className="relative aspect-video w-full shrink-0"
             >
               <Image
                 src={image.url}
-                alt={i === current ? `${title} — photo ${i + 1} of ${count}` : ""}
+                alt={i === current ? fmt(t.packageGallery.alt, { title, n: i + 1, total: count }) : ""}
                 fill
                 sizes="(min-width: 1160px) 1096px, 100vw"
                 // The first photo is above the fold; neighbours load early so a slide never shows a blank.
@@ -81,7 +84,7 @@ export function PackageGallery({ images, title }: { images: { id: string; url: s
               type="button"
               onClick={() => go(current - 1)}
               disabled={current === 0}
-              aria-label="Previous photo"
+              aria-label={t.packageGallery.previous}
               className={`${arrowButton} left-3 sm:left-4`}
             >
               <ChevronLeftIcon className="size-6 sm:size-7" />
@@ -90,7 +93,7 @@ export function PackageGallery({ images, title }: { images: { id: string; url: s
               type="button"
               onClick={() => go(current + 1)}
               disabled={current === count - 1}
-              aria-label="Next photo"
+              aria-label={t.packageGallery.next}
               className={`${arrowButton} right-3 sm:right-4`}
             >
               <ChevronRightIcon className="size-6 sm:size-7" />
@@ -112,7 +115,7 @@ export function PackageGallery({ images, title }: { images: { id: string; url: s
               <button
                 type="button"
                 onClick={() => go(i)}
-                aria-label={`Show photo ${i + 1}`}
+                aria-label={fmt(t.packageGallery.show, { n: i + 1 })}
                 aria-pressed={i === current}
                 className={`block w-full overflow-hidden rounded-[10px] border-2 ${
                   i === current ? "border-accent" : "border-transparent hover:border-line"

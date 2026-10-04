@@ -3,6 +3,7 @@ import { cache } from "react";
 import { connection } from "next/server";
 import type { PackageCategory, Prisma } from "@/generated/prisma/client";
 import { todayInMalaysia } from "@/lib/format";
+import { INTL_LOCALE, type Locale } from "@/lib/i18n/config";
 import { startingPrice, toPriceCells } from "@/lib/package-prices";
 import { prisma } from "@/lib/prisma";
 
@@ -127,16 +128,16 @@ export const getPublishedPackage = cache(async (slug: string) => {
 });
 
 /**
- * Next 12 months as { value: "2027-03", label: "March 2027" } for the
- * homepage "Month" search field.
+ * Next 12 months as { value: "2027-03", label: "Mac 2027" / "March 2027" }
+ * for the homepage "Month" search field.
  */
-export function upcomingMonths(count = 12) {
+export function upcomingMonths(locale: Locale, count = 12) {
   const today = todayInMalaysia();
   return Array.from({ length: count }, (_, i) => {
     const d = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + i, 1));
     return {
       value: `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`,
-      label: d.toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }),
+      label: d.toLocaleDateString(INTL_LOCALE[locale], { month: "long", year: "numeric", timeZone: "UTC" }),
     };
   });
 }

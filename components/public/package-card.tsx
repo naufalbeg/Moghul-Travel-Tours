@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { PackageImage } from "@/components/public/package-image";
 import { formatPrice } from "@/lib/format";
-import { CATEGORY_LABEL, PACKAGE_AVAILABILITY } from "@/lib/package-labels";
+import { getDictionary } from "@/lib/i18n/server";
+import { PACKAGE_AVAILABILITY } from "@/lib/package-labels";
 import type { PackageCardData } from "@/lib/packages";
 import { inquireHref } from "@/lib/site-content";
 
-export function PackageCard({ pkg }: { pkg: PackageCardData }) {
+export async function PackageCard({ pkg }: { pkg: PackageCardData }) {
+  const t = await getDictionary();
   const href = `/packages/${pkg.slug}`;
   const availability = pkg.availability === "OPEN" ? null : PACKAGE_AVAILABILITY[pkg.availability];
 
@@ -23,11 +25,11 @@ export function PackageCard({ pkg }: { pkg: PackageCardData }) {
       <div className="flex flex-1 flex-col p-[22px]">
         <div className="mb-2 flex items-center justify-between gap-3">
           <span className="text-[13px] font-bold tracking-wide text-accent-dark">
-            {CATEGORY_LABEL[pkg.category]}
+            {t.categories[pkg.category]}
           </span>
           {availability && (
             <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${availability.className}`}>
-              {availability.label}
+              {t.availability[pkg.availability]}
             </span>
           )}
         </div>
@@ -39,17 +41,17 @@ export function PackageCard({ pkg }: { pkg: PackageCardData }) {
         </h3>
         {pkg.fromPrice !== null ? (
           <p className="mb-3 leading-tight">
-            <span className="block text-[13px] font-bold text-muted">Starts from</span>
+            <span className="block text-[13px] font-bold text-muted">{t.prices.startsFrom}</span>
             <span className="font-heading text-xl font-bold text-primary">{formatPrice(pkg.fromPrice)}</span>{" "}
-            <span className="text-sm font-medium text-muted">per pax</span>
+            <span className="text-sm font-medium text-muted">{t.prices.perPax}</span>
           </p>
         ) : (
-          <p className="mb-3 text-base font-bold text-primary">Ask us for the price</p>
+          <p className="mb-3 text-base font-bold text-primary">{t.prices.askForPrice}</p>
         )}
 
         {pkg.highlights.length > 0 && (
           <>
-            <p className="mb-1.5 text-[13px] font-bold text-muted">Highlights</p>
+            <p className="mb-1.5 text-[13px] font-bold text-muted">{t.card.highlights}</p>
             <ul className="mb-5 space-y-1.5">
               {pkg.highlights.slice(0, 3).map((h) => (
                 <li
@@ -68,13 +70,13 @@ export function PackageCard({ pkg }: { pkg: PackageCardData }) {
             href={href}
             className="flex min-h-12 flex-1 items-center justify-center rounded-lg border-[1.5px] border-primary px-3 text-[15px] font-bold text-primary hover:bg-primary-pale"
           >
-            View details
+            {t.card.viewDetails}
           </Link>
           <Link
             href={inquireHref(pkg.slug)}
             className="flex min-h-12 flex-1 items-center justify-center rounded-lg bg-accent px-3 text-[15px] font-bold text-white hover:bg-accent-dark"
           >
-            Inquire
+            {t.card.inquire}
           </Link>
         </div>
       </div>

@@ -7,10 +7,12 @@ import { PackageSearch } from "@/components/public/package-search";
 import { ShieldIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { LogoMark } from "@/components/ui/logo-mark";
 import { getBannerImages } from "@/lib/banner-images";
+import { fmt } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/server";
 import { listPublishedPackages } from "@/lib/packages";
 import { prisma } from "@/lib/prisma";
 import { SITE } from "@/lib/site";
-import { getSiteContent } from "@/lib/site-config";
+import { getPublicContent } from "@/lib/site-config";
 import { whatsappHref } from "@/lib/site-content";
 
 /** Homepage — mockup "moghul-homepage-mockup-v2". */
@@ -18,7 +20,7 @@ export default async function HomePage() {
   // listPublishedPackages opts the page into per-request rendering, so the
   // other queries below are fresh too.
   const featured = await listPublishedPackages({ take: 3 });
-  const [photos, testimonial, content, bannerImages] = await Promise.all([
+  const [photos, testimonial, content, bannerImages, t] = await Promise.all([
     prisma.galleryImage.findMany({
       orderBy: { createdAt: "desc" },
       take: 4,
@@ -28,8 +30,9 @@ export default async function HomePage() {
       orderBy: { createdAt: "desc" },
       select: { customerName: true, tripName: true, reviewText: true, starRating: true },
     }),
-    getSiteContent(),
+    getPublicContent(),
     getBannerImages("home"),
+    getDictionary(),
   ]);
 
   return (
@@ -49,12 +52,12 @@ export default async function HomePage() {
       </div>
 
       <section className="mx-auto max-w-[1160px] px-4 pt-14 pb-16 text-center sm:px-8">
-        <h2 className="mb-2.5 text-[26px] text-primary-dark sm:text-[28px]">Featured travel packages</h2>
+        <h2 className="mb-2.5 text-[26px] text-primary-dark sm:text-[28px]">{t.home.featured}</h2>
         <p className="mb-8 text-lg tracking-[3px] text-accent" aria-hidden="true">
           ★★★★★
         </p>
         <div className="mb-9">
-          <CategoryPills active={null} allLabel="All" fromHomepage />
+          <CategoryPills active={null} allLabel={t.home.all} fromHomepage />
         </div>
 
         {featured.length > 0 ? (
@@ -64,23 +67,20 @@ export default async function HomePage() {
               href="/packages"
               className="mt-10 inline-flex min-h-12 items-center rounded-lg border-[1.5px] border-primary px-7 font-bold text-primary hover:bg-primary-pale"
             >
-              View all packages
+              {t.home.viewAll}
             </Link>
           </>
         ) : (
           <div className="mx-auto max-w-[560px] rounded-xl border border-line bg-white px-6 py-10">
-            <p className="mb-6 text-muted">
-              Our upcoming packages are being finalised. Message us and we&apos;ll share the latest
-              Umrah, Ziarah and tour dates with you.
-            </p>
+            <p className="mb-6 text-muted">{t.home.noPackages}</p>
             <a
-              href={whatsappHref(content, "Hi Moghul Travel & Tours, I'd like to know about your upcoming packages.")}
+              href={whatsappHref(content, t.whatsapp.askUpcoming)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[#1f9d55] px-6 font-bold text-white"
             >
               <WhatsAppIcon className="size-5" />
-              Ask us on WhatsApp
+              {t.home.askWhatsApp}
             </a>
           </div>
         )}
@@ -90,7 +90,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-[1160px]">
           {(photos.length > 0 || testimonial) && (
             <h2 className="mb-10 text-center text-[26px] text-primary-dark sm:text-[28px]">
-              Our journeys &amp; client feedback
+              {t.home.journeysHeading}
             </h2>
           )}
 
@@ -109,13 +109,13 @@ export default async function HomePage() {
                   </li>
                 ))}
               </ul>
-              <p className="mb-7 text-center text-[15px] text-muted">Capturing memories from our clients&apos; journeys</p>
+              <p className="mb-7 text-center text-[15px] text-muted">{t.home.photosCaption}</p>
               <div className="text-center">
                 <Link
                   href="/gallery"
                   className="inline-flex min-h-12 items-center rounded-lg border-[1.5px] border-primary px-7 text-[15px] font-bold text-primary hover:bg-primary-pale"
                 >
-                  View full gallery
+                  {t.home.viewGallery}
                 </Link>
               </div>
             </div>
@@ -128,10 +128,10 @@ export default async function HomePage() {
                 &ldquo;
               </p>
               <p className="mt-1.5 mb-3.5 font-heading text-xl font-bold text-primary-dark">
-                What our travellers say
+                {t.home.reviewHeading}
               </p>
               <blockquote className="mb-3.5 text-lg italic sm:text-[19px]">{testimonial.reviewText}</blockquote>
-              <p className="mb-2.5 text-[17px] tracking-[3px] text-accent" aria-label={`${testimonial.starRating} out of 5 stars`}>
+              <p className="mb-2.5 text-[17px] tracking-[3px] text-accent" aria-label={fmt(t.home.stars, { n: testimonial.starRating })}>
                 {"★".repeat(testimonial.starRating)}
               </p>
               <figcaption className="text-[15px] font-semibold text-muted">
@@ -140,7 +140,7 @@ export default async function HomePage() {
             </figure>
             <p className="text-center">
               <Link href="/testimonials" className="text-[15px] font-semibold text-primary hover:underline">
-                See all reviews →
+                {t.home.allReviews}
               </Link>
             </p>
             </div>
@@ -149,14 +149,15 @@ export default async function HomePage() {
           <div className="flex flex-col items-center gap-6 rounded-[14px] bg-canvas px-6 py-7 text-center sm:flex-row sm:gap-8 sm:px-8 sm:text-left">
             <LogoMark className="h-24 shadow-sm sm:h-28" />
             <div>
-              <h2 className="mb-2 text-[19px] text-primary-dark">About {SITE.name}</h2>
+              <h2 className="mb-2 text-[19px] text-primary-dark">{fmt(t.home.aboutHeading, { name: SITE.name })}</h2>
               <p className="mb-3 text-base text-muted">{content.about_summary}</p>
               <p className="mb-3 flex items-center justify-center gap-2 text-sm font-semibold text-primary-dark sm:justify-start">
                 <ShieldIcon className="size-4 text-primary" />
-                MOTAC License No. {content.motac_license} · Co. Reg. No. {content.company_reg}
+                {fmt(t.footer.motac, { value: content.motac_license })} ·{" "}
+                {fmt(t.footer.companyReg, { value: content.company_reg })}
               </p>
               <Link href="/about" className="text-[15px] font-bold text-accent-dark hover:underline">
-                Read our story →
+                {t.home.readStory}
               </Link>
             </div>
           </div>

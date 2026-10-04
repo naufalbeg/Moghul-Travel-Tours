@@ -1,3 +1,5 @@
+import { INTL_LOCALE, type Locale } from "@/lib/i18n/config";
+
 const ringgit = new Intl.NumberFormat("en-MY", {
   minimumFractionDigits: 0,
   maximumFractionDigits: 2,
@@ -10,10 +12,11 @@ export function formatPrice(value: number | { toString(): string }) {
 
 /**
  * Formats a calendar date (Postgres DATE, stored as UTC midnight) as
- * "14 Mar 2027" without shifting it across time zones.
+ * "14 Mar 2027" ("14 Mac 2027" in Malay) without shifting it across time
+ * zones. The admin portal uses English.
  */
-export function formatDate(date: Date, options: Intl.DateTimeFormatOptions = {}) {
-  return date.toLocaleDateString("en-GB", {
+export function formatDate(date: Date, options: Intl.DateTimeFormatOptions = {}, locale: Locale = "en") {
+  return date.toLocaleDateString(INTL_LOCALE[locale], {
     day: "2-digit",
     month: "short",
     year: "numeric",

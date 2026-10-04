@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useState } from "react";
 import { CloseIcon, MenuIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { useI18n } from "@/components/public/i18n-provider";
 import { ActiveNavList } from "@/components/public/nav-links";
 import { telHref, whatsappHref } from "@/lib/site-content";
 
 export function MobileMenu({ phone, whatsapp }: { phone: string; whatsapp: string }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
@@ -20,13 +22,13 @@ export function MobileMenu({ phone, whatsapp }: { phone: string; whatsapp: strin
         className="flex min-h-12 items-center gap-2 rounded-lg border-[1.5px] border-line px-4 font-semibold text-primary-dark"
       >
         {open ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
-        {open ? "Close" : "Menu"}
+        {open ? t.menu.close : t.menu.open}
       </button>
 
       {open && (
         <nav
           id="mobile-menu"
-          aria-label="Main"
+          aria-label={t.nav.label}
           className="absolute inset-x-0 top-full z-40 border-b border-line bg-white px-4 pt-3 pb-5 shadow-lg"
         >
           <ActiveNavList variant="mobile" onNavigate={close} />
@@ -37,7 +39,7 @@ export function MobileMenu({ phone, whatsapp }: { phone: string; whatsapp: strin
               className="flex min-h-13 items-center justify-center gap-2 rounded-lg border-[1.5px] border-primary font-bold text-primary"
             >
               <PhoneIcon className="size-5" />
-              Call us
+              {t.menu.call}
             </a>
             <a
               href={whatsappHref({ whatsapp })}
@@ -46,7 +48,7 @@ export function MobileMenu({ phone, whatsapp }: { phone: string; whatsapp: strin
               className="flex min-h-13 items-center justify-center gap-2 rounded-lg bg-[#1f9d55] font-bold text-white"
             >
               <WhatsAppIcon className="size-5" />
-              WhatsApp
+              {t.menu.whatsapp}
             </a>
           </div>
 
@@ -55,7 +57,7 @@ export function MobileMenu({ phone, whatsapp }: { phone: string; whatsapp: strin
             onClick={close}
             className="mt-4 block text-center text-[13px] font-medium text-muted hover:text-primary"
           >
-            Admin login
+            {t.menu.adminLogin}
           </Link>
         </nav>
       )}

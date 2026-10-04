@@ -7,10 +7,11 @@ export const SITE = {
   legalName: "Moghul Travel & Tours Sdn Bhd",
 } as const;
 
+/** Top menu. Labels come from the visitor's dictionary (client.nav). */
 export const PUBLIC_NAV = [
-  { href: "/", label: "Home" },
-  { href: "/packages", label: "Packages" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/about", label: "About Us" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", key: "home" },
+  { href: "/packages", key: "packages" },
+  { href: "/gallery", key: "gallery" },
+  { href: "/about", key: "about" },
+  { href: "/contact", key: "contact" },
 ] as const;

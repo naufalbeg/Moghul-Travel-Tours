@@ -74,11 +74,7 @@ export function priceTable(cells: readonly PriceCell[]) {
   return rows.length > 0 ? { rooms, rows } : null;
 }
 
-/** "Twin or triple room" from the room types that have prices, or null. */
-export function roomOptionsLabel(cells: readonly PriceCell[]) {
-  const rooms = ROOMS.filter((r) => cells.some((c) => c.room === r.key && c.amount > 0)).map((r) => r.key);
-  if (rooms.length === 0) return null;
-  const names = rooms.map((key) => key.toLowerCase());
-  const joined = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} or ${names.at(-1)}`;
-  return `${joined.charAt(0).toUpperCase()}${joined.slice(1)} room`;
+/** Room types that have at least one price, in display order. */
+export function offeredRooms(cells: readonly PriceCell[]): RoomKey[] {
+  return ROOMS.filter((r) => cells.some((c) => c.room === r.key && c.amount > 0)).map((r) => r.key);
 }

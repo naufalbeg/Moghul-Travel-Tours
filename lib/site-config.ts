@@ -1,8 +1,9 @@
 import "server-only";
 import { connection } from "next/server";
 import { cache } from "react";
+import { getLocale } from "@/lib/i18n/server";
 import { prisma } from "@/lib/prisma";
-import { SITE_CONTENT_DEFAULTS, SITE_CONTENT_KEYS, type SiteContent } from "@/lib/site-content";
+import { SITE_CONTENT_DEFAULTS, SITE_CONTENT_KEYS, localizeContent, type SiteContent } from "@/lib/site-content";
 
 /**
  * ContentController.getContent (SDD 4.2.6): saved site_config values merged
@@ -25,3 +26,8 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
   }
   return content;
 });
+
+/** Site content in the visitor's language — what public pages show. */
+export const getPublicContent = cache(async (): Promise<SiteContent> =>
+  localizeContent(await getSiteContent(), await getLocale()),
+);

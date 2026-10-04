@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useI18n } from "@/components/public/i18n-provider";
 import { PUBLIC_NAV } from "@/lib/site";
 
 type NavHref = (typeof PUBLIC_NAV)[number]["href"];
@@ -39,13 +40,14 @@ export function NavList({
   isActive?: (href: NavHref) => boolean;
   onNavigate?: () => void;
 }) {
+  const { t } = useI18n();
   const s = linkStyles[variant];
   // Menu items to the right of the current page slide the content in from
   // the right, items to the left from the left (app/(public)/template.tsx).
   const current = PUBLIC_NAV.findIndex(({ href }) => isActive(href));
   return (
     <ul className={variant === "desktop" ? "flex flex-wrap justify-center gap-x-7 gap-y-2" : "space-y-1"}>
-      {PUBLIC_NAV.map(({ href, label }, i) => {
+      {PUBLIC_NAV.map(({ href, key }, i) => {
         const active = i === current;
         return (
           <li key={href}>
@@ -56,7 +58,7 @@ export function NavList({
               aria-current={active ? "page" : undefined}
               className={`${s.base} ${active ? s.active : s.idle}`}
             >
-              {label}
+              {t.nav[key]}
             </Link>
           </li>
         );

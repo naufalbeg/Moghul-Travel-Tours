@@ -18,7 +18,8 @@ Business facts that override the mockups: the agency has been operating for
 (mockup filler). Umrah and Ziarah are **one** category everywhere: enum `UMRAH_ZIARAH`,
 label "Umrah & Ziarah", URL `/packages?category=umrah-ziarah` (`umrah` /
 `ziarah` are kept as URL aliases). Footer credit is "Developed by MNB"
-(Mirza Naufal Beg).
+("Dibangunkan oleh MNB" in Malay; Mirza Naufal Beg). The public site is
+**Malay-first** (owner's request, 2026-10-05) — see "Languages" below.
 
 Target audience skews older (40s–60s, families, Hajj/Umrah pilgrims, retired
 couples) — legibility and simplicity are design requirements, not nice-to-haves.
@@ -295,11 +296,44 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
     manager), then set EMAIL_FROM on Vercel so invite/reset emails reach any
     address. Later: point moghultt.com at Vercel.
 
+## Languages (Malay-first, BM | EN switch)
+- Modelled on jomventures.my: Malay for every visitor by default (not
+  browser-language based); a "BM | EN" pill (components/public/
+  language-switch.tsx) at the end of the desktop menu bar / beside the
+  phone Menu button saves the choice in the `lang` cookie via the
+  `setLanguage` server action (app/(public)/actions.ts), which re-renders
+  the page. Same URLs in both languages — no /en prefix.
+- Strings: lib/i18n/ms.ts is the master dictionary (`Dictionary` type);
+  en.ts must match it. `{name}` placeholders + `fmt()` (lib/i18n/config.ts).
+  Server components: `await getDictionary()` / `getLocale()`
+  (lib/i18n/server.ts, cached per request). Client components:
+  `useI18n()` — the public layout (and app/not-found.tsx) wrap pages in
+  `<I18nProvider>` with only `dict.client`. New public text goes in BOTH
+  dictionaries — never hard-code English in public code.
+- Root layout sets `<html lang>` and the metadata from the locale; every
+  public page uses `generateMetadata` with the dictionary. Dates/months:
+  `formatDate(date, opts, locale)`, `upcomingMonths(locale)` ("14 Mac
+  2027"). hCaptcha (`languageOverride`) and the Google map (`hl=`) follow.
+- Translated: everything the site itself says, category/availability
+  labels (Luar Negara, Dalam Negara, Kapal Persiaran…), price table,
+  durations ("Hari 2–4"), WhatsApp pre-filled messages, form errors
+  (validation returns codes — lib/validation/inquiry.ts). NOT translated:
+  admin-typed content (packages, announcements, gallery tags, reviews) —
+  shown as entered, like Jom Ventures.
+- The admin portal stays English (app/admin/layout.tsx wraps it in
+  `lang="en"`); lib/package-labels.ts / package-prices.ts labels are the
+  admin's English ones.
+
 ## Editable content (Module 6)
 - The homepage banner (hero_title / hero_message), contact details, office
   hours, licence numbers, About text and social links live in `site_config` (keys in lib/site-content.ts). Never hard-code
-  them — read `getSiteContent()` in a server component and pass values down.
+  them — public pages read `getPublicContent()` (lib/site-config.ts: the
+  content in the visitor's language); admin code reads `getSiteContent()`.
   The public layout already loads it once per request.
+- TRANSLATED_KEYS (hero_title, hero_message, about_summary, about_story,
+  price_note, office_hours) are Malay; each has an optional English twin
+  `<key>_en` — blank = English visitors see the Malay text. The editor
+  shows them as "— Bahasa Melayu" / "— English" pairs (`bilingual()`).
 - Missing keys fall back to SITE_CONTENT_DEFAULTS; empty optional fields
   (mobile, alt email, MATTA, social links) are hidden on the site.
 - Admin editor: /admin/content → updateSiteContent (writes only changed

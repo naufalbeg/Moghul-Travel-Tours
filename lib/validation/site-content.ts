@@ -18,6 +18,9 @@ const malaysianPhone = z
 
 const optionalPhone = z.union([z.literal(""), malaysianPhone]);
 
+/** English version of a translated text — may be left blank (Malay is shown instead). */
+const english = (max: number) => z.string().trim().max(max, `Keep this under ${max} characters.`);
+
 const optionalUrl = z.union([
   z.literal(""),
   z.url({ protocol: /^https?$/, error: "Enter the full link, starting with https://" }).max(300),
@@ -28,14 +31,20 @@ export const siteContentSchema = z.object({
   hero_message: required(250),
   about_summary: required(400),
   about_story: required(6000),
+  price_note: required(300),
+  office_hours: required(300),
+  hero_title_en: english(80),
+  hero_message_en: english(250),
+  about_summary_en: english(400),
+  about_story_en: english(6000),
+  price_note_en: english(300),
+  office_hours_en: english(300),
   address: required(300),
   phone: malaysianPhone,
   mobile: optionalPhone,
   whatsapp: malaysianPhone,
   email: z.email("Enter a valid email address.").max(120),
   alt_email: z.union([z.literal(""), z.email("Enter a valid email address.").max(120)]),
-  office_hours: required(300),
-  price_note: required(300),
   motac_license: required(40),
   company_reg: required(40),
   matta_member: z.string().trim().max(40),

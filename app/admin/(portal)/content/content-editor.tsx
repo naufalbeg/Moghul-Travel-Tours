@@ -3,7 +3,13 @@
 import { useEffect, useState, useTransition } from "react";
 import { Alert } from "@/components/ui/alert";
 import { AlertCircleIcon, ExternalIcon } from "@/components/ui/icons";
-import { OPTIONAL_CONTENT_KEYS, type SiteContent, type SiteContentKey } from "@/lib/site-content";
+import {
+  OPTIONAL_CONTENT_KEYS,
+  englishKey,
+  type SiteContent,
+  type SiteContentKey,
+  type TranslatedKey,
+} from "@/lib/site-content";
 import { validateSiteContent, type ContentErrors } from "@/lib/validation/site-content";
 import { updateSiteContent } from "./actions";
 
@@ -18,14 +24,31 @@ type Field = {
   placeholder?: string;
 };
 
+/**
+ * A text the public site shows in both languages: the Malay field (what most
+ * visitors see), then its English version for visitors who switch to EN.
+ */
+function bilingual(field: Field & { key: TranslatedKey }, english: Partial<Field> = {}): Field[] {
+  return [
+    { ...field, label: `${field.label} — Bahasa Melayu` },
+    {
+      ...field,
+      key: englishKey(field.key),
+      label: `${field.label} — English`,
+      hint: "Shown to visitors who switch the website to English. Leave blank to show the Malay text.",
+      ...english,
+    },
+  ];
+}
+
 const SECTIONS: { title: string; hint: string; preview?: string; fields: Field[] }[] = [
   {
     title: "Homepage banner",
     hint: "The big headline and message at the top of the homepage.",
     preview: "/",
     fields: [
-      { key: "hero_title", label: "Headline", wide: true, hint: "Keep it short. It's shown in capital letters automatically." },
-      { key: "hero_message", label: "Message", kind: "textarea", rows: 2, hint: "One or two sentences under the headline." },
+      ...bilingual({ key: "hero_title", label: "Headline", wide: true, hint: "Keep it short. It's shown in capital letters automatically." }),
+      ...bilingual({ key: "hero_message", label: "Message", kind: "textarea", rows: 2, hint: "One or two sentences under the headline." }),
     ],
   },
   {
@@ -33,8 +56,8 @@ const SECTIONS: { title: string; hint: string; preview?: string; fields: Field[]
     hint: "The company story on the About page, and the short summary on the homepage.",
     preview: "/about",
     fields: [
-      { key: "about_summary", label: "Short summary", kind: "textarea", rows: 3, hint: "One or two sentences. Shown on the homepage and at the top of the About page." },
-      { key: "about_story", label: "Full story", kind: "textarea", rows: 10, hint: "Leave an empty line between paragraphs." },
+      ...bilingual({ key: "about_summary", label: "Short summary", kind: "textarea", rows: 3, hint: "One or two sentences. Shown on the homepage and at the top of the About page." }),
+      ...bilingual({ key: "about_story", label: "Full story", kind: "textarea", rows: 10, hint: "Leave an empty line between paragraphs." }),
     ],
   },
   {
@@ -54,20 +77,23 @@ const SECTIONS: { title: string; hint: string; preview?: string; fields: Field[]
     title: "Office hours",
     hint: "One line per day or group of days.",
     fields: [
-      { key: "office_hours", label: "Office hours", kind: "textarea", rows: 4, placeholder: "Mon–Fri: 9am – 6pm\nSat: 9am – 1pm\nSun & public holidays: closed" },
+      ...bilingual(
+        { key: "office_hours", label: "Office hours", kind: "textarea", rows: 4, placeholder: "Isnin–Jumaat: 9 pagi – 6 petang\nSabtu: 9 pagi – 1 petang\nAhad & cuti umum: tutup" },
+        { placeholder: "Mon–Fri: 9am – 6pm\nSat: 9am – 1pm\nSun & public holidays: closed" },
+      ),
     ],
   },
   {
     title: "Package prices",
     hint: "A short note shown under the prices on every package page.",
     fields: [
-      {
+      ...bilingual({
         key: "price_note",
         label: "Price note",
         kind: "textarea",
         rows: 2,
         hint: "Explain that prices start from the amount shown, e.g. because airfares change.",
-      },
+      }),
     ],
   },
   {
@@ -178,7 +204,10 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
       <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <h2 className="mb-1 text-[23px]">Website content</h2>
-          <p className="text-muted">Changes appear on the public website as soon as you save.</p>
+          <p className="text-muted">
+            Changes appear on the public website as soon as you save. The website is in Bahasa Melayu; texts
+            marked &ldquo;English&rdquo; are for visitors who switch to English.
+          </p>
         </div>
         {actions}
       </div>

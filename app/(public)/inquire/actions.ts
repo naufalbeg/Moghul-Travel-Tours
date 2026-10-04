@@ -4,9 +4,16 @@ import { verifyCaptcha } from "@/lib/captcha";
 import { sendInquiryNotification } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import { SITE_CONTENT_DEFAULTS } from "@/lib/site-content";
-import { GENERAL_INQUIRY, validateInquiry, type InquiryErrors, type InquiryInput } from "@/lib/validation/inquiry";
+import {
+  GENERAL_INQUIRY,
+  validateInquiry,
+  type InquiryBannerCode,
+  type InquiryErrors,
+  type InquiryInput,
+} from "@/lib/validation/inquiry";
 
-export type SubmitInquiryResult = { ok: true } | { ok: false; message: string; errors?: InquiryErrors };
+/** `message` and `errors` are codes; the form shows them in the visitor's language. */
+export type SubmitInquiryResult = { ok: true } | { ok: false; message: InquiryBannerCode; errors?: InquiryErrors };
 
 /**
  * InquiryController.createInquiry (SDD 4.2.3) — REQ-MTT-003-002…006.
@@ -17,15 +24,11 @@ export type SubmitInquiryResult = { ok: true } | { ok: false; message: string; e
 export async function submitInquiry(input: InquiryInput, captchaToken: string | null): Promise<SubmitInquiryResult> {
   const result = validateInquiry(input);
   if (!result.ok) {
-    return { ok: false, message: "Please check the highlighted fields.", errors: result.errors };
+    return { ok: false, message: "checkFields", errors: result.errors };
   }
 
   if (!(await verifyCaptcha(captchaToken))) {
-    return {
-      ok: false,
-      message: "Please complete the “I am human” check and try again.",
-      errors: { captcha: "Please tick the box to show you're not a robot." },
-    };
+    return { ok: false, message: "captchaFailed", errors: { captcha: "captcha" } };
   }
 
   const v = result.values;
