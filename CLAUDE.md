@@ -127,11 +127,10 @@ counts). Public: "Prices per person" table at the bottom of the package page
 editable `price_note` (site_config). Admin form: a matching grid; publishing
 needs at least one adult price. Senior prices were dropped and "Baby" became
 "Child" (owner's calls).
-The old free-text room-sharing field is gone.
-**Pending: migration to `DROP COLUMN price_per_pax, room_sharing`** on
-packages — kept so the previously deployed code kept working (their values
-were copied to ADULT/TWIN). Add it once the price-table code is live; first
-check no package's `price_per_pax` changed after the copy.
+The old single price (`price_per_pax`, copied to ADULT/TWIN) and free-text
+`room_sharing` columns were dropped once this was live — the same
+expand-then-contract pattern any breaking schema change needs here, since
+dev and the live site share one database.
 No multi-currency or seasonal variation, no payment gateway in this version —
 all bookings/payment happen manually offline (bank details shared privately
 by Admin after a confirmed booking, never published on the site).
