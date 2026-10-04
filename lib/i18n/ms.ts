@@ -12,14 +12,14 @@ import type { InquiryBannerCode, InquiryErrorCode } from "@/lib/validation/inqui
 export const ms = {
   meta: {
     ogLocale: "ms_MY",
-    siteTitle: "Umrah, Ziarah, Pelancongan & Kapal Persiaran",
+    siteTitle: "Umrah, Ziarah, Pelancongan & Cruise",
     siteDescription:
-      "Agensi pelancongan berlesen MOTAC di Shah Alam yang menawarkan pakej Umrah & Ziarah, pelancongan luar dan dalam negara, serta kapal persiaran.",
+      "Agensi pelancongan berlesen MOTAC di Shah Alam yang menawarkan pakej Umrah & Ziarah, pelancongan luar dan dalam negara, serta cruise.",
     packagesTitle: "Pakej pelancongan",
-    packagesDescription: "Lihat pakej Umrah & Ziarah, luar negara, dalam negara dan kapal persiaran daripada Moghul Travel & Tours.",
+    packagesDescription: "Lihat pakej Umrah & Ziarah, luar negara, dalam negara dan cruise daripada Moghul Travel & Tours.",
     packageNotFound: "Pakej tidak dijumpai",
     galleryTitle: "Galeri",
-    galleryDescription: "Gambar daripada perjalanan bersama Moghul Travel & Tours — Umrah & Ziarah, pelancongan, kapal persiaran dan banyak lagi.",
+    galleryDescription: "Gambar daripada perjalanan bersama Moghul Travel & Tours — Umrah & Ziarah, pelancongan, cruise dan banyak lagi.",
     testimonialsTitle: "Ulasan pelanggan",
     testimonialsDescription: "Apa kata jemaah dan pelancong Umrah, Ziarah serta pelancongan kami tentang Moghul Travel & Tours.",
     aboutTitle: "Tentang kami",
@@ -31,7 +31,6 @@ export const ms = {
 
   layout: {
     skipToContent: "Langkau ke kandungan",
-    adminLogin: "Log masuk admin",
     homeLink: "{name} — laman utama",
     announcements: "Pengumuman",
     whatsappUs: "WhatsApp kami",
@@ -51,15 +50,12 @@ export const ms = {
   footer: {
     office: "Pejabat",
     telFax: "Tel/Faks",
-    mobile: "Bimbit",
     officeHours: "Waktu pejabat",
     motac: "No. Lesen MOTAC {value}",
     companyReg: "No. Pendaftaran Syarikat {value}",
     matta: "No. Ahli MATTA {value}",
     contactLink: "Hubungi & arah ke pejabat →",
     reviewsLink: "Ulasan pelanggan →",
-    rights: "Hak cipta terpelihara.",
-    credit: "Dibangunkan oleh MNB",
   },
 
   home: {
@@ -94,7 +90,7 @@ export const ms = {
     UMRAH_ZIARAH: "Umrah & Ziarah",
     OUTBOUND: "Luar Negara",
     INBOUND: "Dalam Negara",
-    CRUISE: "Kapal Persiaran",
+    CRUISE: "Cruise",
   },
 
   categoryPills: {
@@ -144,14 +140,14 @@ export const ms = {
 
   card: {
     highlights: "Tarikan utama",
-    viewDetails: "Lihat butiran",
+    viewDetails: "Lihat pakej",
     inquire: "Buat pertanyaan",
   },
 
   packages: {
     title: "Pakej pelancongan kami",
     categoryTitle: "Pakej {category}",
-    subtitle: "Lihat pakej Umrah & Ziarah, luar negara, dalam negara dan kapal persiaran kami.",
+    subtitle: "Lihat pakej Umrah & Ziarah, luar negara, dalam negara dan cruise kami.",
     matching: "Menunjukkan pakej untuk {terms}.",
     departingIn: "berlepas pada {month}",
     clearSearch: "Kosongkan carian",
@@ -256,18 +252,11 @@ export const ms = {
       close: "Tutup",
       call: "Telefon kami",
       whatsapp: "WhatsApp",
-      adminLogin: "Log masuk admin",
     },
     language: {
       label: "Bahasa / Language",
       ms: "Bahasa Melayu",
       en: "English",
-    },
-    slideshow: {
-      play: "Main",
-      pause: "Jeda",
-      playLabel: "Mainkan tayangan slaid gambar",
-      pauseLabel: "Jeda tayangan slaid gambar",
     },
     lightbox: {
       open: "Buka gambar {n} dalam skrin penuh",

@@ -44,15 +44,15 @@ export async function SiteFooter({ content }: { content: SiteContent }) {
             <a href={telHref(content.phone)} className="underline-offset-4 hover:underline">
               {content.phone}
             </a>
-            {content.mobile && (
-              <>
-                {" · "}
-                {t.footer.mobile}:{" "}
-                <a href={telHref(content.mobile)} className="underline-offset-4 hover:underline">
-                  {content.mobile}
-                </a>
-              </>
-            )}
+            {" · "}WhatsApp:{" "}
+            <a
+              href={whatsappHref(content)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline-offset-4 hover:underline"
+            >
+              {content.whatsapp}
+            </a>
           </p>
           <p>
             <a href={`mailto:${content.email}`} className="underline-offset-4 hover:underline">
@@ -101,10 +101,11 @@ export async function SiteFooter({ content }: { content: SiteContent }) {
       </div>
 
       <div className="mx-auto flex max-w-[1160px] flex-wrap justify-between gap-2.5 border-t border-white/15 pt-5 text-[13px] text-white/55">
-        <span>
-          © {new Date().getFullYear()} {SITE.name}. {t.footer.rights}
+        {/* These two stay in English in both languages (owner's choice). */}
+        <span lang="en">
+          © {new Date().getFullYear()} {SITE.name}. All rights reserved.
         </span>
-        <span>{t.footer.credit}</span>
+        <span lang="en">Developed by MNB</span>
       </div>
     </footer>
   );

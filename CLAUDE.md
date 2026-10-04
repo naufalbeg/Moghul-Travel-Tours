@@ -315,11 +315,15 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   `formatDate(date, opts, locale)`, `upcomingMonths(locale)` ("14 Mac
   2027"). hCaptcha (`languageOverride`) and the Google map (`hl=`) follow.
 - Translated: everything the site itself says, category/availability
-  labels (Luar Negara, Dalam Negara, Kapal Persiaran…), price table,
+  labels (Luar Negara, Dalam Negara; Cruise stays "Cruise"), price table,
   durations ("Hari 2–4"), WhatsApp pre-filled messages, form errors
   (validation returns codes — lib/validation/inquiry.ts). NOT translated:
   admin-typed content (packages, announcements, gallery tags, reviews) —
-  shown as entered, like Jom Ventures.
+  shown as entered, like Jom Ventures. Kept in English on purpose (owner,
+  2026-10-05): "Admin login", the footer's "© … All rights reserved." and "Developed by
+  MNB", and the banner slideshow's Play/Pause (marked `lang="en"`). The
+  footer's second number is "WhatsApp: <whatsapp>" (a wa.me link), not the
+  mobile number.
 - The admin portal stays English (app/admin/layout.tsx wraps it in
   `lang="en"`); lib/package-labels.ts / package-prices.ts labels are the
   admin's English ones.

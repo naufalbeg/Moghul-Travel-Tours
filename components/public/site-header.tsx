@@ -12,12 +12,13 @@ export async function SiteHeader({ content }: { content: SiteContent }) {
   const t = await getDictionary();
   return (
     <header className="relative border-b border-line bg-white">
-      {/* Deliberately low-key: staff need it, visitors shouldn't be drawn to it. */}
+      {/* Deliberately low-key: staff need it, visitors shouldn't be drawn to it. English in both languages. */}
       <Link
         href="/admin/login"
+        lang="en"
         className="absolute top-3 right-6 hidden text-[13px] font-medium text-muted/80 hover:text-primary hover:underline lg:block"
       >
-        {t.layout.adminLogin}
+        Admin login
       </Link>
       <div className="mx-auto flex max-w-[1160px] items-center justify-between gap-4 px-4 py-4 sm:px-8 lg:justify-center lg:pt-5 lg:pb-3">
         <Link href="/" aria-label={fmt(t.layout.homeLink, { name: SITE.name })} className="min-w-0">

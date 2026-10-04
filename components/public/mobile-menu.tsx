@@ -55,9 +55,10 @@ export function MobileMenu({ phone, whatsapp }: { phone: string; whatsapp: strin
           <Link
             href="/admin/login"
             onClick={close}
+            lang="en"
             className="mt-4 block text-center text-[13px] font-medium text-muted hover:text-primary"
           >
-            {t.menu.adminLogin}
+            Admin login
           </Link>
         </nav>
       )}

@@ -24,7 +24,6 @@ export const en: Dictionary = {
 
   layout: {
     skipToContent: "Skip to content",
-    adminLogin: "Admin login",
     homeLink: "{name} — home",
     announcements: "Announcements",
     whatsappUs: "WhatsApp us",
@@ -43,15 +42,12 @@ export const en: Dictionary = {
   footer: {
     office: "Office",
     telFax: "Tel/Fax",
-    mobile: "Mobile",
     officeHours: "Office hours",
     motac: "MOTAC License No. {value}",
     companyReg: "Co. Reg. No. {value}",
     matta: "MATTA Member No. {value}",
     contactLink: "Contact & directions →",
     reviewsLink: "Traveller reviews →",
-    rights: "All rights reserved.",
-    credit: "Developed by MNB",
   },
 
   home: {
@@ -246,18 +242,11 @@ export const en: Dictionary = {
       close: "Close",
       call: "Call us",
       whatsapp: "WhatsApp",
-      adminLogin: "Admin login",
     },
     language: {
       label: "Bahasa / Language",
       ms: "Bahasa Melayu",
       en: "English",
-    },
-    slideshow: {
-      play: "Play",
-      pause: "Pause",
-      playLabel: "Play the photo slideshow",
-      pauseLabel: "Pause the photo slideshow",
     },
     lightbox: {
       open: "Open photo {n} full screen",

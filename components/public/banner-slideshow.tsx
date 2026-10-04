@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { useI18n } from "@/components/public/i18n-provider";
 import { BANNER_SLIDE_MS } from "@/lib/banners";
 
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
@@ -19,10 +18,10 @@ function subscribeReducedMotion(onChange: () => void) {
  * overlay that keeps the white text readable. The owner asked for autoplay,
  * so it has a Pause button, stops while the tab is hidden, and doesn't
  * autoplay for visitors who turned on "reduce motion". Place it inside a
- * `relative isolate overflow-hidden` container.
+ * `relative isolate overflow-hidden` container. Play/Pause stays in English
+ * in both languages (owner's choice).
  */
 export function BannerSlideshow({ images }: { images: { id: string; url: string }[] }) {
-  const { t } = useI18n();
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
   const reducedMotion = useSyncExternalStore(
@@ -66,7 +65,8 @@ export function BannerSlideshow({ images }: { images: { id: string; url: string 
         <button
           type="button"
           onClick={() => setPaused((p) => !p)}
-          aria-label={paused ? t.slideshow.playLabel : t.slideshow.pauseLabel}
+          lang="en"
+          aria-label={paused ? "Play the photo slideshow" : "Pause the photo slideshow"}
           className="absolute top-3 right-3 flex min-h-10 items-center gap-1.5 rounded-full bg-navy/60 px-3.5 text-sm font-semibold text-white hover:bg-navy/80 sm:top-4 sm:right-4"
         >
           {paused ? (
@@ -78,7 +78,7 @@ export function BannerSlideshow({ images }: { images: { id: string; url: string 
               <path d="M7 5h4v14H7zM13 5h4v14h-4z" />
             </svg>
           )}
-          {paused ? t.slideshow.play : t.slideshow.pause}
+          {paused ? "Play" : "Pause"}
         </button>
       )}
     </>
