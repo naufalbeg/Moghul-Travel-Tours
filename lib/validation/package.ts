@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ROOM_KEYS, TRAVELLER_KEYS, gridToCells, startingPrice, type PriceGrid } from "@/lib/package-prices";
 import { IMAGE_BUCKETS, MAX_PACKAGE_IMAGES } from "@/lib/storage-config";
 
 // Shared by the admin package form (instant feedback) and the savePackage
@@ -9,6 +10,13 @@ export const AVAILABILITIES = ["OPEN", "ALMOST_FULL", "FULL", "COMING_SOON"] as 
 export const DEPARTURE_AVAILABILITIES = ["OPEN", "ALMOST_FULL", "FULL"] as const;
 
 const line = z.string().trim().min(1).max(200);
+
+/** A price per person in RM; null = not offered. */
+const price = z
+  .number("Enter a price in RM.")
+  .positive("Enter an amount above 0, or leave it blank.")
+  .max(9_999_999, "That price is too large.")
+  .nullable();
 
 /** Object paths we issue for package photos: "<uuid>.<ext>" inside the bucket. */
 export const PACKAGE_IMAGE_PATH = /^[0-9a-f-]{36}\.(jpg|png|webp)$/;
@@ -26,8 +34,8 @@ export const packageSchema = z.object({
   inclusions: z.array(line).max(20, "Up to 20 items."),
   durationDays: z.int("Enter whole days.").min(1).max(90).nullable(),
   durationNights: z.int("Enter whole nights.").min(0).max(90).nullable(),
-  roomSharing: z.string().trim().max(80),
-  price: z.number("Enter a price in RM.").min(0).max(9_999_999).nullable(),
+  // Every traveller × room cell, null when not offered (exhaustive records).
+  prices: z.record(z.enum(TRAVELLER_KEYS), z.record(z.enum(ROOM_KEYS), price)),
   availability: z.enum(AVAILABILITIES),
   itinerary: z
     .array(
@@ -82,7 +90,9 @@ export function validatePackage(input: PackageInput, intent: SaveIntent) {
 
   if (intent === "publish") {
     if (!input.description?.trim()) errors.description ??= "Add a short description before publishing.";
-    if (!input.price || input.price <= 0) errors.price ??= "Enter the price per person before publishing.";
+    if (startingPrice(gridToCells((input.prices ?? {}) as PriceGrid)) === null) {
+      errors.prices ??= "Enter at least one adult price before publishing.";
+    }
     if (!input.images?.length) errors.images ??= "At least one image is required.";
   }
 

@@ -7,6 +7,7 @@ import { EditIcon, ExternalIcon, PlusIcon } from "@/components/ui/icons";
 import { requireAdmin } from "@/lib/auth";
 import { formatPrice, todayInMalaysia } from "@/lib/format";
 import { CATEGORY_LABEL, PACKAGE_AVAILABILITY } from "@/lib/package-labels";
+import { startingPrice, toPriceCells } from "@/lib/package-prices";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = { title: "Manage packages" };
@@ -30,7 +31,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
       slug: true,
       title: true,
       category: true,
-      pricePerPax: true,
+      prices: { select: { traveller: true, room: true, amount: true } },
       status: true,
       availability: true,
       images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1, select: { url: true } },
@@ -93,6 +94,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
                 const isDraft = pkg.status === "DRAFT";
                 const upcoming = pkg._count.departures;
                 const availability = PACKAGE_AVAILABILITY[pkg.availability];
+                const fromPrice = startingPrice(toPriceCells(pkg.prices));
                 return (
                   <tr key={pkg.id} className={isDraft ? "bg-[#fafbfc]" : undefined}>
                     <td className="px-5 py-4">
@@ -111,7 +113,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
                       </div>
                     </td>
                     <td className="px-5 py-4 text-sm text-muted">
-                      {Number(pkg.pricePerPax) > 0 ? formatPrice(pkg.pricePerPax) : "Not set"}
+                      {fromPrice !== null ? `From ${formatPrice(fromPrice)}` : "Not set"}
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-col items-start gap-1">

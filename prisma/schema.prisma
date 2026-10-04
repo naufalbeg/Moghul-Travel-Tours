@@ -98,9 +98,6 @@ model Package {
   inclusions     String[]            @default([])
   durationDays   Int?                @map("duration_days") @db.SmallInt
   durationNights Int?                @map("duration_nights") @db.SmallInt
-  // Free text, e.g. "Twin / triple sharing".
-  roomSharing    String?             @map("room_sharing")
-  pricePerPax    Decimal             @map("price_per_pax") @db.Decimal(10, 2)
   status         PackageStatus       @default(DRAFT)
   availability   PackageAvailability @default(OPEN)
   createdById    String?             @map("created_by") @db.Uuid
@@ -112,6 +109,7 @@ model Package {
   images     PackageImage[]
   itinerary  PackageItineraryDay[]
   departures PackageDeparture[]
+  prices     PackagePrice[]
 
   @@index([status, category])
   @@map("packages")
@@ -143,6 +141,22 @@ model PackageDeparture {
 
   @@unique([packageId, departureDate])
   @@map("package_departures")
+}
+
+// One cell of a package's price table: the price per person for a kind of
+// traveller ("ADULT", "CHILD") in a room type ("TWIN", "TRIPLE"). Plain text
+// checked by the app (lib/package-prices.ts) rather than enums, so the table
+// can gain rows or columns without a migration. No row = not offered.
+model PackagePrice {
+  id        String  @id @default(uuid()) @db.Uuid
+  packageId String  @map("package_id") @db.Uuid
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  traveller String
+  room      String
+  amount    Decimal @db.Decimal(10, 2)
+
+  @@unique([packageId, traveller, room])
+  @@map("package_prices")
 }
 
 model PackageImage {

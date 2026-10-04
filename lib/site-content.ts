@@ -21,6 +21,9 @@ export const SITE_CONTENT_DEFAULTS = {
   email: "info@moghultt.com",
   alt_email: "moghultt@gmail.com",
   office_hours: "Mon–Fri, 9am–6pm",
+  // Under the prices on every package page.
+  price_note:
+    "Prices include flights. Because airfares change, these are starting prices — we'll confirm your final price when you contact us.",
   motac_license: "KPK/LN 9109",
   company_reg: "1273862-K",
   matta_member: "",

@@ -37,7 +37,15 @@ export function PackageCard({ pkg }: { pkg: PackageCardData }) {
             {pkg.title}
           </Link>
         </h3>
-        <p className="mb-3 text-base font-bold text-primary">From {formatPrice(pkg.price)} per pax</p>
+        {pkg.fromPrice !== null ? (
+          <p className="mb-3 leading-tight">
+            <span className="block text-[13px] font-bold text-muted">Starts from</span>
+            <span className="font-heading text-xl font-bold text-primary">{formatPrice(pkg.fromPrice)}</span>{" "}
+            <span className="text-sm font-medium text-muted">per pax</span>
+          </p>
+        ) : (
+          <p className="mb-3 text-base font-bold text-primary">Ask us for the price</p>
+        )}
 
         {pkg.highlights.length > 0 && (
           <>

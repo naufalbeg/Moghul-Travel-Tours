@@ -58,6 +58,19 @@ const SECTIONS: { title: string; hint: string; preview?: string; fields: Field[]
     ],
   },
   {
+    title: "Package prices",
+    hint: "A short note shown under the prices on every package page.",
+    fields: [
+      {
+        key: "price_note",
+        label: "Price note",
+        kind: "textarea",
+        rows: 2,
+        hint: "Explain that prices start from the amount shown, e.g. because airfares change.",
+      },
+    ],
+  },
+  {
     title: "Licences & memberships",
     hint: "Shown in the footer and on the About page to build trust.",
     fields: [

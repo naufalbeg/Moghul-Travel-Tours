@@ -103,8 +103,7 @@ Package design (changed from the SDD in migration
 - Departure dates are a child table with their own per-date availability
   (OPEN / ALMOST_FULL / FULL); "upcoming" = `departureDate >= today`
 - `slug` (unique) for public URLs, plus `highlights[]` (card bullets),
-  `inclusions[]` ("What's included"), `durationDays`/`durationNights`,
-  `roomSharing`
+  `inclusions[]` ("What's included"), `durationDays`/`durationNights`
 - Saving a package replaces its itinerary and departure rows in one
   transaction
 
@@ -114,10 +113,28 @@ DB on drift): edit schema → `prisma migrate diff --from-config-datasource
 → review the SQL → `prisma migrate deploy` → `prisma generate` (all with
 `--config prisma7.config.ts`).
 
-Pricing: flat rate per pax, `NUMERIC(10,2)`, no multi-currency or seasonal
-variation, no payment gateway in this version — all bookings/payment happen
-manually offline (bank details shared privately by Admin after a confirmed
-booking, never published on the site).
+Pricing (owner's request, 2026-10-05; **provisional** — the owner expects
+one more change once the business rules are settled): prices aren't fixed —
+airfares are included and change — so the site always says **"Starts from
+RM X"**. Each package has a price table in `package_prices`: one row per
+cell, traveller (`ADULT`, `CHILD`) × room (`TWIN`, `TRIPLE`),
+`amount` NUMERIC(10,2) per pax; no row = not offered. Keys are text checked
+by the app, not enums — TRAVELLERS / ROOMS in lib/package-prices.ts are the
+single source, so adding a row (e.g. senior) or column (quad) is a code-only
+change. "Starts from" = lowest ADULT price (`startingPrice()`; child never
+counts). Public: "Prices per person" table at the bottom of the package page
+(only rows/columns with a price; an empty cell says "Ask us") plus the
+editable `price_note` (site_config). Admin form: a matching grid; publishing
+needs at least one adult price. Senior prices were dropped and "Baby" became
+"Child" (owner's calls).
+The old free-text room-sharing field is gone.
+**Pending: migration to `DROP COLUMN price_per_pax, room_sharing`** on
+packages — kept so the previously deployed code kept working (their values
+were copied to ADULT/TWIN). Add it once the price-table code is live; first
+check no package's `price_per_pax` changed after the copy.
+No multi-currency or seasonal variation, no payment gateway in this version —
+all bookings/payment happen manually offline (bank details shared privately
+by Admin after a confirmed booking, never published on the site).
 
 ## Design system (from approved mockups — match these exactly)
 - **Colors:** Primary blue `#1B5FA8`, darker blue `#123A66`, admin sidebar blue
@@ -362,7 +379,7 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   `createPackageImageUploads`, `savePackage(id, input, "draft"|"publish")`,
   `deletePackage` (soft delete). Validation shared with the form:
   lib/validation/package.ts — drafts need only a title; publishing needs
-  description, price > 0 and ≥1 image.
+  description, at least one adult price and ≥1 image.
 - Package photos are 16:9 everywhere (`aspect-video`; PACKAGE_IMAGE_ASPECT in
   lib/storage-config.ts). Every upload goes through ImageCropDialog
   (components/admin/image-crop-dialog.tsx, react-easy-crop): the admin drags

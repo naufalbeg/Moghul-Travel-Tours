@@ -35,6 +35,7 @@ export const siteContentSchema = z.object({
   email: z.email("Enter a valid email address.").max(120),
   alt_email: z.union([z.literal(""), z.email("Enter a valid email address.").max(120)]),
   office_hours: required(300),
+  price_note: required(300),
   motac_license: required(40),
   company_reg: required(40),
   matta_member: z.string().trim().max(40),

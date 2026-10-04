@@ -7,7 +7,17 @@ import { PackageImageField, type ImageItem } from "@/components/admin/package-im
 import { Alert } from "@/components/ui/alert";
 import { AlertCircleIcon } from "@/components/ui/icons";
 import type { DepartureAvailability, PackageAvailability, PackageCategory } from "@/generated/prisma/enums";
+import { formatPrice } from "@/lib/format";
 import { CATEGORY_LABEL, DEPARTURE_AVAILABILITY, PACKAGE_AVAILABILITY } from "@/lib/package-labels";
+import {
+  ROOMS,
+  TRAVELLERS,
+  buildGrid,
+  gridToCells,
+  startingPrice,
+  type RoomKey,
+  type TravellerKey,
+} from "@/lib/package-prices";
 import {
   AVAILABILITIES,
   CATEGORIES,
@@ -31,8 +41,8 @@ export type PackageFormState = {
   inclusions: string;
   durationDays: string;
   durationNights: string;
-  roomSharing: string;
-  price: string;
+  /** Price per person in RM for each traveller × room, as typed; blank = not offered. */
+  prices: Record<TravellerKey, Record<RoomKey, string>>;
   availability: PackageAvailability;
   itinerary: ItineraryRow[];
   departures: DepartureRow[];
@@ -50,8 +60,7 @@ const emptyPackageForm = (): PackageFormState => ({
   inclusions: "",
   durationDays: "",
   durationNights: "",
-  roomSharing: "",
-  price: "",
+  prices: buildGrid(() => ""),
   availability: "OPEN",
   // Fixed key: this row is rendered on the server too, so it must match on hydration.
   itinerary: [{ key: "first-day", dayStart: "1", dayEnd: "", title: "", description: "" }],
@@ -59,7 +68,7 @@ const emptyPackageForm = (): PackageFormState => ({
   images: [],
 });
 
-const toInt = (s: string) => (s.trim() === "" ? null : Number(s));
+const toNumber = (s: string) => (s.trim() === "" ? null : Number(s));
 const toLines = (s: string) =>
   s
     .split("\n")
@@ -75,16 +84,15 @@ function toInput(s: PackageFormState): PackageInput {
     description: s.description,
     highlights: toLines(s.highlights),
     inclusions: toLines(s.inclusions),
-    durationDays: toInt(s.durationDays),
-    durationNights: toInt(s.durationNights),
-    roomSharing: s.roomSharing,
-    price: s.price.trim() === "" ? null : Number(s.price),
+    durationDays: toNumber(s.durationDays),
+    durationNights: toNumber(s.durationNights),
+    prices: buildGrid((traveller, room) => toNumber(s.prices[traveller][room])),
     availability: s.availability,
     itinerary: s.itinerary
       .filter((d) => d.title.trim() || d.description.trim())
       .map((d) => ({
-        dayStart: toInt(d.dayStart) ?? 0,
-        dayEnd: toInt(d.dayEnd),
+        dayStart: toNumber(d.dayStart) ?? 0,
+        dayEnd: toNumber(d.dayEnd),
         title: d.title,
         description: d.description,
       })),
@@ -157,6 +165,14 @@ export function PackageForm({
     });
   }
 
+  function updatePrice(traveller: TravellerKey, room: RoomKey, value: string) {
+    setDirty(true);
+    setState((s) => ({
+      ...s,
+      prices: { ...s.prices, [traveller]: { ...s.prices[traveller], [room]: value } },
+    }));
+  }
+
   function updateRow<K extends "itinerary" | "departures">(
     key: K,
     rowKey: string,
@@ -178,7 +194,7 @@ export function PackageForm({
     setDirty(true);
     setState((s) => {
       const last = s.itinerary.at(-1);
-      const next = last ? (toInt(last.dayEnd) ?? toInt(last.dayStart) ?? 0) + 1 : 1;
+      const next = last ? (toNumber(last.dayEnd) ?? toNumber(last.dayStart) ?? 0) + 1 : 1;
       return {
         ...s,
         itinerary: [...s.itinerary, { key: newKey(), dayStart: String(next), dayEnd: "", title: "", description: "" }],
@@ -192,6 +208,7 @@ export function PackageForm({
   }
 
   const uploading = state.images.some((img) => img.status === "uploading");
+  const fromPrice = startingPrice(gridToCells(toInput(state).prices));
 
   function submit(intent: SaveIntent) {
     if (uploading) {
@@ -227,6 +244,8 @@ export function PackageForm({
   }
 
   const err = (key: string) => errors[key];
+  // A specific cell's error first — fixing it often fixes the general one too.
+  const priceError = Object.entries(errors).find(([k]) => k.startsWith("prices."))?.[1] ?? err("prices");
   const describedBy = (key: string) => (errors[key] ? `${key}-error` : undefined);
 
   // Itinerary/departure errors are keyed by the index among the rows we send
@@ -413,7 +432,7 @@ export function PackageForm({
               </div>
             </div>
 
-            <div className="mt-5 grid gap-5 sm:grid-cols-[9rem_9rem_minmax(0,1fr)] xl:grid-cols-[9rem_9rem_minmax(0,28rem)]">
+            <div className="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-[9rem_9rem]">
               <div>
                 <label htmlFor="durationDays" className="mb-2 block text-sm font-semibold">
                   Days
@@ -447,18 +466,6 @@ export function PackageForm({
                   className={inputClass(err("durationNights"))}
                 />
                 <FieldError id="durationNights-error" message={err("durationNights")} />
-              </div>
-              <div>
-                <label htmlFor="roomSharing" className="mb-2 block text-sm font-semibold">
-                  Room sharing
-                </label>
-                <input
-                  id="roomSharing"
-                  value={state.roomSharing}
-                  onChange={(e) => update("roomSharing", e.target.value)}
-                  placeholder="Twin / triple sharing"
-                  className={inputClass(err("roomSharing"))}
-                />
               </div>
             </div>
           </Section>
@@ -544,49 +551,99 @@ export function PackageForm({
             </button>
           </Section>
 
-          <Section title="Pricing & availability" hint="Base price per person and current booking status.">
-            <div className="grid gap-5 sm:grid-cols-2 xl:max-w-3xl">
-              <div>
-                <label htmlFor="price" className="mb-2 block text-sm font-semibold">
-                  Price per person
-                </label>
-                <div className="flex items-stretch">
-                  <span className="flex items-center rounded-l-lg border-[1.5px] border-r-0 border-line bg-canvas px-3.5 font-bold text-muted">
-                    RM
-                  </span>
-                  <input
-                    id="price"
-                    type="number"
-                    inputMode="decimal"
-                    min={0}
-                    step="0.01"
-                    value={state.price}
-                    onChange={(e) => update("price", e.target.value)}
-                    placeholder="9800"
-                    aria-invalid={Boolean(err("price"))}
-                    aria-describedby={describedBy("price")}
-                    className={`${inputClass(err("price"))} rounded-l-none`}
-                  />
-                </div>
-                <FieldError id="price-error" message={err("price")} />
-              </div>
-              <div>
-                <label htmlFor="availability" className="mb-2 block text-sm font-semibold">
-                  Availability status
-                </label>
-                <select
-                  id="availability"
-                  value={state.availability}
-                  onChange={(e) => update("availability", e.target.value as PackageAvailability)}
-                  className={inputClass()}
-                >
-                  {AVAILABILITIES.map((a) => (
-                    <option key={a} value={a}>
-                      {PACKAGE_AVAILABILITY[a].label}
-                    </option>
+          <Section
+            title="Prices & availability"
+            hint="Prices are per person, in RM. Fill in the ones this package offers and leave the rest blank — blank prices don't appear on the website."
+          >
+            <table className="w-full max-w-2xl">
+              <thead>
+                <tr>
+                  <td className="w-16 sm:w-28" />
+                  {ROOMS.map((room) => (
+                    <th
+                      key={room.key}
+                      id={`room-${room.key}`}
+                      scope="col"
+                      className="px-1.5 pb-2 text-left align-bottom text-sm font-semibold sm:px-2.5"
+                    >
+                      {room.label}
+                      <span className="block font-normal text-muted">{room.hint}</span>
+                    </th>
                   ))}
-                </select>
-              </div>
+                </tr>
+              </thead>
+              <tbody>
+                {TRAVELLERS.map((traveller) => (
+                  <tr key={traveller.key}>
+                    <th
+                      id={`traveller-${traveller.key}`}
+                      scope="row"
+                      className="py-1.5 pr-2 text-left text-sm font-semibold"
+                    >
+                      {traveller.label}
+                    </th>
+                    {ROOMS.map((room) => {
+                      const key = `prices.${traveller.key}.${room.key}`;
+                      return (
+                        <td key={room.key} className="px-1.5 py-1.5 sm:px-2.5">
+                          <div className="flex items-stretch">
+                            {/* No room for the RM tag on phones; the section hint says "in RM". */}
+                            <span className="hidden items-center rounded-l-lg border-[1.5px] border-r-0 border-line bg-canvas px-3.5 text-sm font-bold text-muted sm:flex">
+                              RM
+                            </span>
+                            <input
+                              id={key}
+                              type="number"
+                              inputMode="decimal"
+                              min={0}
+                              step="0.01"
+                              value={state.prices[traveller.key][room.key]}
+                              onChange={(e) => updatePrice(traveller.key, room.key, e.target.value)}
+                              aria-labelledby={`traveller-${traveller.key} room-${room.key}`}
+                              aria-invalid={Boolean(err(key))}
+                              aria-describedby={err(key) || err("prices") ? "prices-error" : undefined}
+                              className={`${inputClass(err(key))} min-w-0 sm:rounded-l-none`}
+                            />
+                          </div>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <FieldError id="prices-error" message={priceError} />
+
+            <p className="mt-5 rounded-lg bg-primary-pale px-4 py-3 text-[14.5px] text-ink">
+              {fromPrice !== null ? (
+                <>
+                  The website shows <strong>Starts from {formatPrice(fromPrice)}</strong> per person — the lowest
+                  adult price.
+                </>
+              ) : (
+                <>
+                  The website shows the lowest adult price as the &ldquo;Starts from&rdquo; price. Fill in at least
+                  one adult price before publishing.
+                </>
+              )}
+            </p>
+
+            <div className="mt-5 sm:max-w-sm">
+              <label htmlFor="availability" className="mb-2 block text-sm font-semibold">
+                Availability status
+              </label>
+              <select
+                id="availability"
+                value={state.availability}
+                onChange={(e) => update("availability", e.target.value as PackageAvailability)}
+                className={inputClass()}
+              >
+                {AVAILABILITIES.map((a) => (
+                  <option key={a} value={a}>
+                    {PACKAGE_AVAILABILITY[a].label}
+                  </option>
+                ))}
+              </select>
             </div>
           </Section>
 

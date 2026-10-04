@@ -11,6 +11,7 @@ import {
   dayLabel,
   durationLabel,
 } from "@/lib/package-labels";
+import { priceTable, roomOptionsLabel } from "@/lib/package-prices";
 import { getPublishedPackage } from "@/lib/packages";
 import { getSiteContent } from "@/lib/site-config";
 import { inquireHref, telHref } from "@/lib/site-content";
@@ -31,6 +32,8 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
   if (!pkg) notFound();
 
   const duration = durationLabel(pkg.durationDays, pkg.durationNights);
+  const rooms = roomOptionsLabel(pkg.prices);
+  const prices = priceTable(pkg.prices);
   const availability = PACKAGE_AVAILABILITY[pkg.availability];
   const isBookable = pkg.availability !== "FULL";
 
@@ -72,10 +75,10 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
                 {duration}
               </li>
             )}
-            {pkg.roomSharing && (
+            {rooms && (
               <li className="flex items-center gap-1.5">
                 <UserIcon className="size-[17px] text-primary" />
-                {pkg.roomSharing}
+                {rooms}
               </li>
             )}
             <li className="flex items-center gap-1.5">
@@ -87,8 +90,23 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
 
         <aside className="lg:sticky lg:top-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
           <div className="rounded-[14px] border border-line bg-white p-6 sm:p-[26px]">
-            <p className="font-heading text-[30px] font-bold text-primary-dark">{formatPrice(pkg.price)}</p>
-            <p className="mb-5 text-sm text-muted">per person</p>
+            {pkg.fromPrice !== null ? (
+              <>
+                <p className="text-[15px] font-bold text-muted">Starts from</p>
+                <p className="font-heading text-[30px] leading-tight font-bold text-primary-dark">
+                  {formatPrice(pkg.fromPrice)}
+                </p>
+                <p className="text-sm text-muted">per person</p>
+                <a
+                  href="#prices"
+                  className="mb-4 inline-flex min-h-10 items-center text-[15px] font-semibold text-primary hover:underline"
+                >
+                  See price details
+                </a>
+              </>
+            ) : (
+              <p className="mb-5 font-heading text-xl font-bold text-primary-dark">Ask us for the price</p>
+            )}
 
             {pkg.availability !== "OPEN" && (
               <p className={`mb-5 rounded-lg px-3.5 py-2.5 text-sm font-bold ${availability.className}`}>
@@ -160,7 +178,7 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
           )}
 
           {pkg.itinerary.length > 0 && (
-            <section>
+            <section className="mb-8">
               <h2 className="mb-2 text-xl text-primary-dark">Itinerary</h2>
               <ol className="divide-y divide-line">
                 {pkg.itinerary.map((day) => (
@@ -177,6 +195,54 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
                   </li>
                 ))}
               </ol>
+            </section>
+          )}
+
+          {prices && (
+            <section id="prices" className="scroll-mt-6">
+              <h2 className="mb-3.5 text-xl text-primary-dark">Prices per person</h2>
+              <div className="overflow-x-auto rounded-xl border border-line bg-white">
+                <table className="w-full text-left">
+                  <thead className="bg-primary-pale">
+                    <tr>
+                      <th scope="col" className="px-3 py-3 sm:px-5">
+                        <span className="sr-only">Traveller</span>
+                      </th>
+                      {prices.rooms.map((room) => (
+                        <th
+                          key={room.key}
+                          scope="col"
+                          className="px-3 py-3 text-right text-[15px] font-bold text-primary-dark sm:px-5"
+                        >
+                          {room.label}
+                          <span className="block text-[13px] font-medium text-muted">{room.hint}</span>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {prices.rows.map((row) => (
+                      <tr key={row.key}>
+                        <th scope="row" className="px-3 py-3.5 font-semibold sm:px-5">
+                          {row.label}
+                        </th>
+                        {row.amounts.map((amount, i) => (
+                          <td key={prices.rooms[i].key} className="px-3 py-3.5 text-right whitespace-nowrap sm:px-5">
+                            {amount !== null ? (
+                              <span className="font-heading text-lg font-bold text-primary-dark">
+                                {formatPrice(amount)}
+                              </span>
+                            ) : (
+                              <span className="text-muted">Ask us</span>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-3 leading-relaxed text-muted">{content.price_note}</p>
             </section>
           )}
         </div>

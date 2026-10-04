@@ -3,6 +3,7 @@ import { cache } from "react";
 import { connection } from "next/server";
 import type { PackageCategory, Prisma } from "@/generated/prisma/client";
 import { todayInMalaysia } from "@/lib/format";
+import { startingPrice, toPriceCells } from "@/lib/package-prices";
 import { prisma } from "@/lib/prisma";
 
 // Public read side of PackageController (SDD 4.2.2): only published,
@@ -20,7 +21,7 @@ const cardSelect = {
   title: true,
   category: true,
   highlights: true,
-  pricePerPax: true,
+  prices: { where: { traveller: "ADULT" }, select: { traveller: true, room: true, amount: true } },
   availability: true,
   durationDays: true,
   images: { orderBy: primaryImageFirst, take: 1, select: { url: true } },
@@ -32,7 +33,8 @@ export type PackageCardData = {
   title: string;
   category: PackageCategory;
   highlights: string[];
-  price: number;
+  /** "Starts from" price per person; null if no adult price is set. */
+  fromPrice: number | null;
   availability: Prisma.PackageGetPayload<{ select: typeof cardSelect }>["availability"];
   durationDays: number | null;
   imageUrl: string | null;
@@ -45,7 +47,7 @@ function toCard(p: Prisma.PackageGetPayload<{ select: typeof cardSelect }>): Pac
     title: p.title,
     category: p.category,
     highlights: p.highlights,
-    price: Number(p.pricePerPax),
+    fromPrice: startingPrice(toPriceCells(p.prices)),
     availability: p.availability,
     durationDays: p.durationDays,
     imageUrl: p.images[0]?.url ?? null,
@@ -115,12 +117,13 @@ export const getPublishedPackage = cache(async (slug: string) => {
         where: { departureDate: { gte: todayInMalaysia() } },
         orderBy: { departureDate: "asc" },
       },
+      prices: { select: { traveller: true, room: true, amount: true } },
     },
   });
   if (!pkg) return null;
 
-  const { pricePerPax, ...rest } = pkg;
-  return { ...rest, price: Number(pricePerPax) };
+  const prices = toPriceCells(pkg.prices);
+  return { ...pkg, prices, fromPrice: startingPrice(prices) };
 });
 
 /**

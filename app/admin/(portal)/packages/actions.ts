@@ -7,6 +7,7 @@ import { logAudit } from "@/lib/audit";
 import { authorize } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createSignedImageUploads, removeImages } from "@/lib/image-uploads";
+import { gridToCells } from "@/lib/package-prices";
 import { MAX_PACKAGE_IMAGES, publicImageUrl } from "@/lib/storage-config";
 import {
   PACKAGE_BUCKET,
@@ -112,8 +113,6 @@ export async function savePackage(
     inclusions: v.inclusions,
     durationDays: v.durationDays,
     durationNights: v.durationNights,
-    roomSharing: v.roomSharing || null,
-    pricePerPax: v.price ?? 0,
     availability: v.availability,
     status: intent === "publish" ? ("PUBLISHED" as const) : ("DRAFT" as const),
   };
@@ -127,6 +126,7 @@ export async function savePackage(
         availability: d.availability,
       })),
     },
+    prices: { create: gridToCells(v.prices) },
     images: {
       create: v.images.map((img, i) => ({
         storagePath: img.storagePath,
@@ -143,6 +143,7 @@ export async function savePackage(
         // form always submits the complete list.
         await tx.packageItineraryDay.deleteMany({ where: { packageId: existing.id } });
         await tx.packageDeparture.deleteMany({ where: { packageId: existing.id } });
+        await tx.packagePrice.deleteMany({ where: { packageId: existing.id } });
         await tx.packageImage.deleteMany({ where: { packageId: existing.id } });
         return tx.package.update({ where: { id: existing.id }, data: { ...data, ...children } });
       })
