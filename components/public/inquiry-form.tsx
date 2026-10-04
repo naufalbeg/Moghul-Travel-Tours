@@ -1,38 +1,21 @@
 "use client";
 
-import HCaptcha from "@hcaptcha/react-hcaptcha";
+import type HCaptcha from "@hcaptcha/react-hcaptcha";
 import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { submitInquiry } from "@/app/(public)/inquire/actions";
+import { CaptchaField, ContactFields, InlineError, inputClass, useErrorText } from "@/components/public/form-fields";
 import { useI18n } from "@/components/public/i18n-provider";
 import { Alert } from "@/components/ui/alert";
-import { AlertCircleIcon, CheckCircleIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { CheckCircleIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { fmt } from "@/lib/i18n/config";
 import {
   GENERAL_INQUIRY,
   validateInquiry,
-  type InquiryBannerCode,
-  type InquiryErrorCode,
+  type FormBannerCode,
   type InquiryErrors,
   type InquiryInput,
 } from "@/lib/validation/inquiry";
-
-const SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY ?? "";
-
-const inputClass = (error?: string) =>
-  `w-full rounded-lg border-[1.5px] px-4 py-3.5 text-[17px] text-ink focus:border-primary focus:outline-none ${
-    error ? "border-danger bg-danger-pale" : "border-line bg-white"
-  }`;
-
-function InlineError({ id, message }: { id: string; message?: string }) {
-  if (!message) return null;
-  return (
-    <p id={id} className="mt-2 flex items-center gap-1.5 text-[15px] font-semibold text-danger">
-      <AlertCircleIcon className="size-4 shrink-0" />
-      {message}
-    </p>
-  );
-}
 
 /**
  * InquiryFormPage [PKG-MTT-003-001] — mockup-free, following the site's
@@ -47,10 +30,9 @@ export function InquiryForm({
   initialPackage: string;
   whatsappUrl: string;
 }) {
-  const { locale, t } = useI18n();
+  const { t } = useI18n();
   const text = t.inquiry;
-  /** Error code → sentence in the visitor's language. */
-  const say = (code?: InquiryErrorCode) => (code ? (text.errors[code] ?? text.errors.invalid) : undefined);
+  const say = useErrorText();
   const [values, setValues] = useState<InquiryInput>({
     fullName: "",
     phone: "",
@@ -59,15 +41,18 @@ export function InquiryForm({
     message: "",
   });
   const [errors, setErrors] = useState<InquiryErrors>({});
-  const [banner, setBanner] = useState<InquiryBannerCode | null>(null);
+  const [banner, setBanner] = useState<FormBannerCode | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const captchaRef = useRef<HCaptcha>(null);
 
-  const set = (key: keyof InquiryInput, value: string) => setValues((v) => ({ ...v, [key]: value }));
+  const set = (key: keyof InquiryInput, value: string) => {
+    setValues((v) => ({ ...v, [key]: value }));
+    setErrors((e) => ({ ...e, [key]: undefined }));
+  };
 
-  function fail(found: InquiryErrors, message: InquiryBannerCode) {
+  function fail(found: InquiryErrors, message: FormBannerCode) {
     setErrors(found);
     setBanner(message);
     document.getElementById("inquiry-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -97,9 +82,7 @@ export function InquiryForm({
       <div role="status" className="rounded-xl border border-line bg-white px-6 py-10 text-center sm:px-10">
         <CheckCircleIcon className="mx-auto mb-4 size-14 text-success" />
         <h2 className="mb-2 text-2xl text-primary-dark">{fmt(text.thanks, { name: sentTo })}</h2>
-        <p className="mx-auto mb-7 max-w-[460px] text-[17px] text-muted">
-          {text.submitted}
-        </p>
+        <p className="mx-auto mb-7 max-w-[460px] text-[17px] text-muted">{text.submitted}</p>
         <div className="flex flex-col justify-center gap-3 sm:flex-row">
           <a
             href={whatsappUrl}
@@ -135,63 +118,12 @@ export function InquiryForm({
     >
       {banner && (
         <div className="mb-6">
-          <Alert tone="error" title={text.banners[banner]} />
+          <Alert tone="error" title={t.formBanners[banner]} />
         </div>
       )}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <div className="sm:col-span-2">
-          <label htmlFor="fullName" className="mb-2 block font-semibold">
-            {text.fullName}
-          </label>
-          <input
-            id="fullName"
-            autoComplete="name"
-            value={values.fullName}
-            onChange={(e) => set("fullName", e.target.value)}
-            aria-invalid={Boolean(errors.fullName)}
-            aria-describedby={describe("fullName")}
-            className={inputClass(errors.fullName)}
-          />
-          <InlineError id="fullName-error" message={say(errors.fullName)} />
-        </div>
-
-        <div>
-          <label htmlFor="phone" className="mb-2 block font-semibold">
-            {text.phone}
-          </label>
-          <input
-            id="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            placeholder="012-345 6789"
-            value={values.phone}
-            onChange={(e) => set("phone", e.target.value)}
-            aria-invalid={Boolean(errors.phone)}
-            aria-describedby={describe("phone")}
-            className={inputClass(errors.phone)}
-          />
-          <InlineError id="phone-error" message={say(errors.phone)} />
-        </div>
-
-        <div>
-          <label htmlFor="email" className="mb-2 block font-semibold">
-            {text.email}
-          </label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            placeholder={text.emailPlaceholder}
-            value={values.email}
-            onChange={(e) => set("email", e.target.value)}
-            aria-invalid={Boolean(errors.email)}
-            aria-describedby={describe("email")}
-            className={inputClass(errors.email)}
-          />
-          <InlineError id="email-error" message={say(errors.email)} />
-        </div>
+        <ContactFields values={values} errors={errors} onChange={set} />
 
         <div className="sm:col-span-2">
           <label htmlFor="packageInterest" className="mb-2 block font-semibold">
@@ -233,18 +165,14 @@ export function InquiryForm({
         </div>
 
         <div className="sm:col-span-2">
-          <HCaptcha
-            ref={captchaRef}
-            sitekey={SITE_KEY}
-            languageOverride={locale}
-            onVerify={(t) => {
-              setToken(t);
-              setErrors((e) => ({ ...e, captcha: undefined }));
+          <CaptchaField
+            captchaRef={captchaRef}
+            error={errors.captcha}
+            onToken={(next) => {
+              setToken(next);
+              if (next) setErrors((e) => ({ ...e, captcha: undefined }));
             }}
-            onExpire={() => setToken(null)}
-            onError={() => setToken(null)}
           />
-          <InlineError id="captcha-error" message={say(errors.captcha)} />
         </div>
       </div>
 
@@ -255,9 +183,7 @@ export function InquiryForm({
       >
         {pending ? text.sending : text.send}
       </button>
-      <p className="mt-4 text-sm text-muted">
-        {text.privacy}
-      </p>
+      <p className="mt-4 text-sm text-muted">{text.privacy}</p>
     </form>
   );
 }

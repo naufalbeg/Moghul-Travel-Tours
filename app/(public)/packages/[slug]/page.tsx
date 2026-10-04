@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BookingForm, type BookingDeparture, type BookingOption } from "@/components/public/booking-form";
 import { PackageGallery } from "@/components/public/package-gallery";
 import { CheckIcon, ClockIcon, PhoneIcon, ShieldIcon, UserIcon } from "@/components/ui/icons";
-import { formatDate, formatPrice } from "@/lib/format";
+import { formatDate, formatPrice, formatTripDates } from "@/lib/format";
 import { fmt } from "@/lib/i18n/config";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { DEPARTURE_AVAILABILITY, PACKAGE_AVAILABILITY, dayLabel, durationLabel } from "@/lib/package-labels";
-import { offeredRooms, priceTable } from "@/lib/package-prices";
+import { ROOMS, TRAVELLERS, offeredRooms, priceCellKey, priceTable } from "@/lib/package-prices";
 import { getPublishedPackage } from "@/lib/packages";
 import { getPublicContent } from "@/lib/site-config";
 import { inquireHref, telHref } from "@/lib/site-content";
+import { canBookOnline } from "@/lib/validation/booking";
 
 export async function generateMetadata({ params }: PageProps<"/packages/[slug]">): Promise<Metadata> {
   const pkg = await getPublishedPackage((await params).slug);
@@ -43,6 +45,29 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
       : null;
   const roomsLabel = rooms && `${rooms.charAt(0).toUpperCase()}${rooms.slice(1)}`;
   const prices = priceTable(pkg.prices);
+
+  // Booking form: one option per price in the table, dates as "11–21 Sep 2027".
+  const canBook = canBookOnline(pkg.availability, pkg.departures) && pkg.fromPrice !== null;
+  const bookingOptions: BookingOption[] = TRAVELLERS.flatMap((traveller) =>
+    ROOMS.flatMap((room) => {
+      const amount = pkg.prices.find((c) => c.traveller === traveller.key && c.room === room.key && c.amount > 0)?.amount;
+      if (!amount) return [];
+      const r = t.prices.rooms[room.key];
+      return [
+        {
+          key: priceCellKey(traveller.key, room.key),
+          label: fmt(t.client.booking.option, { traveller: t.prices.travellers[traveller.key], room: r.label }),
+          hint: r.hint,
+          amount,
+        },
+      ];
+    }),
+  );
+  const bookingDepartures: BookingDeparture[] = pkg.departures.map((d) => ({
+    date: d.departureDate.toISOString().slice(0, 10),
+    label: formatTripDates(d.departureDate, pkg.durationDays, locale),
+    availability: d.availability,
+  }));
 
   return (
     <>
@@ -142,12 +167,30 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
               </p>
             )}
 
-            <Link
-              href={inquireHref(pkg.slug)}
-              className="mb-3.5 flex min-h-14 items-center justify-center rounded-[10px] bg-accent px-5 text-[17px] font-bold text-white hover:bg-accent-dark"
-            >
-              {isBookable ? t.detail.inquireNow : t.detail.askNextTrip}
-            </Link>
+            {canBook ? (
+              <>
+                {/* Book (the form at the bottom), or just ask a question first. */}
+                <a
+                  href="#tempahan"
+                  className="mb-3 flex min-h-14 items-center justify-center rounded-[10px] bg-accent px-5 text-[17px] font-bold text-white hover:bg-accent-dark"
+                >
+                  {t.detail.bookNow}
+                </a>
+                <Link
+                  href={inquireHref(pkg.slug)}
+                  className="mb-3.5 flex min-h-12 items-center justify-center rounded-[10px] border-[1.5px] border-primary px-5 font-bold text-primary hover:bg-primary-pale"
+                >
+                  {t.detail.inquire}
+                </Link>
+              </>
+            ) : (
+              <Link
+                href={inquireHref(pkg.slug)}
+                className="mb-3.5 flex min-h-14 items-center justify-center rounded-[10px] bg-accent px-5 text-[17px] font-bold text-white hover:bg-accent-dark"
+              >
+                {isBookable ? t.detail.inquireNow : t.detail.askNextTrip}
+              </Link>
+            )}
             <a
               href={telHref(content.phone)}
               className="mb-[18px] flex items-center justify-center gap-2 text-[15px] font-semibold text-primary"
@@ -249,6 +292,20 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
                 </table>
               </div>
               <p className="mt-3 leading-relaxed text-muted">{content.price_note}</p>
+            </section>
+          )}
+
+          {canBook && (
+            <section id="tempahan" className="mt-10 scroll-mt-6">
+              <h2 className="mb-2 text-xl text-primary-dark">{t.client.booking.heading}</h2>
+              <p className="mb-5 text-muted">{t.client.booking.intro}</p>
+              <BookingForm
+                slug={pkg.slug}
+                title={pkg.title}
+                departures={bookingDepartures}
+                options={bookingOptions}
+                whatsapp={content.whatsapp}
+              />
             </section>
           )}
         </div>

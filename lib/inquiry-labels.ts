@@ -1,4 +1,14 @@
-import type { InquiryStatus } from "@/generated/prisma/enums";
+import type { InquiryKind, InquiryStatus } from "@/generated/prisma/enums";
+import { bookedTravellers } from "@/lib/package-prices";
+
+/** Booking requests from a package page's booking form stand out in the admin lists. */
+export const INQUIRY_KIND: Record<InquiryKind, { label: string; className: string }> = {
+  INQUIRY: { label: "Inquiry", className: "bg-canvas text-muted" },
+  BOOKING: { label: "Booking request", className: "bg-primary text-white" },
+};
+
+/** Total people on a booking request (inquiries.travellers JSON). */
+export const bookedPax = (travellers: unknown) => bookedTravellers(travellers).reduce((sum, t) => sum + t.count, 0);
 
 export const INQUIRY_STATUS: Record<InquiryStatus, { label: string; className: string }> = {
   NEW: { label: "New", className: "bg-accent-pale text-accent-dark" },

@@ -25,6 +25,21 @@ export function formatDate(date: Date, options: Intl.DateTimeFormatOptions = {},
   });
 }
 
+/**
+ * A trip's dates from its departure and length: "11–21 Sep 2027". Just the
+ * departure date when the length isn't known.
+ */
+export function formatTripDates(departure: Date, days: number | null, locale: Locale = "en") {
+  if (!days || days < 2) return formatDate(departure, {}, locale);
+  const end = new Date(departure.getTime() + (days - 1) * 86_400_000);
+  return new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).formatRange(departure, end);
+}
+
 /** Today's calendar date in Malaysia, as UTC midnight (comparable to DATE columns). */
 export function todayInMalaysia() {
   const ymd = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kuala_Lumpur" }).format(

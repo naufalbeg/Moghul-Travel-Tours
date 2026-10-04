@@ -3,17 +3,17 @@
 import { verifyCaptcha } from "@/lib/captcha";
 import { sendInquiryNotification } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
-import { SITE_CONTENT_DEFAULTS } from "@/lib/site-content";
+import { inquiryNotifyEmail } from "@/lib/site-config";
 import {
   GENERAL_INQUIRY,
   validateInquiry,
-  type InquiryBannerCode,
+  type FormBannerCode,
   type InquiryErrors,
   type InquiryInput,
 } from "@/lib/validation/inquiry";
 
 /** `message` and `errors` are codes; the form shows them in the visitor's language. */
-export type SubmitInquiryResult = { ok: true } | { ok: false; message: InquiryBannerCode; errors?: InquiryErrors };
+export type SubmitInquiryResult = { ok: true } | { ok: false; message: FormBannerCode; errors?: InquiryErrors };
 
 /**
  * InquiryController.createInquiry (SDD 4.2.3) — REQ-MTT-003-002…006.
@@ -42,11 +42,7 @@ export async function submitInquiry(input: InquiryInput, captchaToken: string | 
     },
   });
 
-  const recipient =
-    (await prisma.siteConfig.findUnique({ where: { key: "inquiry_notify_email" }, select: { value: true } }))?.value ||
-    SITE_CONTENT_DEFAULTS.inquiry_notify_email;
-
-  if (await sendInquiryNotification(recipient, inquiry)) {
+  if (await sendInquiryNotification(await inquiryNotifyEmail(), inquiry)) {
     await prisma.inquiry.update({ where: { id: inquiry.id }, data: { notifiedAt: new Date() } });
   }
 

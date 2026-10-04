@@ -51,6 +51,13 @@ enum InquiryStatus {
   RESOLVED
 }
 
+// A general question (inquiry form) or a booking request (the booking form
+// on a package page). Both land in the admin's Inquiries list.
+enum InquiryKind {
+  INQUIRY
+  BOOKING
+}
+
 enum AnnouncementStatus {
   ACTIVE
   EXPIRED
@@ -110,6 +117,7 @@ model Package {
   itinerary  PackageItineraryDay[]
   departures PackageDeparture[]
   prices     PackagePrice[]
+  bookings   Inquiry[]
 
   @@index([status, category])
   @@map("packages")
@@ -180,6 +188,15 @@ model Inquiry {
   email           String
   packageInterest String?       @map("package_interest")
   message         String
+  kind            InquiryKind   @default(INQUIRY)
+  // Booking requests only: the package and departure, and the travellers
+  // as priced at the time — [{ traveller, room, count, amount }], amount per
+  // person — so later price changes don't rewrite what the customer saw.
+  packageId       String?       @map("package_id") @db.Uuid
+  package         Package?      @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  departureDate   DateTime?     @map("departure_date") @db.Date
+  travellers      Json?
+  estimatedTotal  Decimal?      @map("estimated_total") @db.Decimal(10, 2)
   status          InquiryStatus @default(NEW)
   // When the admin email alert was sent; null = not sent (email failure
   // never blocks saving the inquiry — SRS E2).

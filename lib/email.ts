@@ -24,6 +24,8 @@ export type InquiryEmail = {
   email: string;
   packageInterest: string | null;
   message: string;
+  /** Set for booking requests from a package page's booking form. */
+  booking?: { departure: string; travellers: string[]; total: string };
 };
 
 /**
@@ -38,19 +40,25 @@ export async function sendInquiryNotification(to: string, inquiry: InquiryEmail)
   }
 
   const pkg = inquiry.packageInterest ?? "General inquiry";
+  const booking = inquiry.booking;
+  const heading = booking ? "New booking request from the website" : "New inquiry from the website";
+  const messageLabel = booking ? "Notes" : "Message";
   const adminLink = `${siteUrl()}/admin/inquiries/${inquiry.id}`;
   const row = (label: string, value: string) =>
     `<tr><td style="padding:6px 12px 6px 0;color:#5b6b7a;vertical-align:top;white-space:nowrap">${label}</td><td style="padding:6px 0;color:#1a2733">${value}</td></tr>`;
 
   const html = `
     <div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#1a2733;max-width:560px">
-      <h2 style="color:#123a66;margin:0 0 12px">New inquiry from the website</h2>
+      <h2 style="color:#123a66;margin:0 0 12px">${heading}</h2>
       <table style="border-collapse:collapse">
         ${row("Name", escape(inquiry.fullName))}
         ${row("Phone", escape(inquiry.phone))}
         ${row("Email", `<a href="mailto:${escape(inquiry.email)}">${escape(inquiry.email)}</a>`)}
         ${row("Package", escape(pkg))}
-        ${row("Message", inquiry.message ? escape(inquiry.message).replace(/\n/g, "<br>") : "<em>No message</em>")}
+        ${booking ? row("Departure", `<strong>${escape(booking.departure)}</strong>`) : ""}
+        ${booking ? row("Travellers", booking.travellers.map(escape).join("<br>")) : ""}
+        ${booking ? row("Estimated total", `<strong>${escape(booking.total)}</strong> (starting prices)`) : ""}
+        ${row(messageLabel, inquiry.message ? escape(inquiry.message).replace(/\n/g, "<br>") : `<em>No ${messageLabel.toLowerCase()}</em>`)}
       </table>
       <p style="margin:20px 0">
         <a href="${adminLink}" style="background:#f07c1e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">Open in the admin dashboard</a>
@@ -63,15 +71,20 @@ export async function sendInquiryNotification(to: string, inquiry: InquiryEmail)
       from: FROM,
       to,
       replyTo: inquiry.email,
-      subject: `New inquiry: ${inquiry.fullName} — ${pkg}`,
+      subject: booking
+        ? `New booking request: ${inquiry.fullName} — ${pkg} (${booking.departure})`
+        : `New inquiry: ${inquiry.fullName} — ${pkg}`,
       html,
       text: [
-        `New inquiry from the website`,
+        heading,
         `Name: ${inquiry.fullName}`,
         `Phone: ${inquiry.phone}`,
         `Email: ${inquiry.email}`,
         `Package: ${pkg}`,
-        `Message: ${inquiry.message || "(none)"}`,
+        ...(booking
+          ? [`Departure: ${booking.departure}`, `Travellers:`, ...booking.travellers.map((t) => `  ${t}`), `Estimated total: ${booking.total} (starting prices)`]
+          : []),
+        `${messageLabel}: ${inquiry.message || "(none)"}`,
         ``,
         `Open in the admin dashboard: ${adminLink}`,
       ].join("\n"),

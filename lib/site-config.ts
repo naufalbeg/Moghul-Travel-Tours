@@ -31,3 +31,9 @@ export const getSiteContent = cache(async (): Promise<SiteContent> => {
 export const getPublicContent = cache(async (): Promise<SiteContent> =>
   localizeContent(await getSiteContent(), await getLocale()),
 );
+
+/** Where new inquiry and booking alerts are emailed (Content pages setting, else the default). */
+export async function inquiryNotifyEmail() {
+  const row = await prisma.siteConfig.findUnique({ where: { key: "inquiry_notify_email" }, select: { value: true } });
+  return row?.value || SITE_CONTENT_DEFAULTS.inquiry_notify_email;
+}

@@ -392,6 +392,33 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 - Admin: /admin/inquiries (status tabs, newest first), /admin/inquiries/[id]
   (WhatsApp/call/email shortcuts, status New/In progress/Resolved, delete only
   when resolved). Sidebar shows the count of NEW inquiries.
+- Testing without mailing anyone: run `next start` with `RESEND_API_KEY=`
+  (empty → email skipped, "Not sent" in admin) — no need to touch the live
+  inquiry_notify_email.
+
+## Booking requests ("Borang Tempahan", owner's request 2026-10-05)
+- Modelled on jomventures.my: a booking form at the bottom of each package
+  page (`#tempahan`, components/public/booking-form.tsx). The sidebar's
+  main button is "Tempah sekarang" (jumps to it); "Buat pertanyaan" stays
+  as the second button for window shoppers.
+- Shown only when `canBookOnline()` (lib/validation/booking.ts): package
+  OPEN or ALMOST_FULL with an upcoming date that isn't FULL, and an adult
+  price. Otherwise the old inquiry-only button.
+- Fields: contact (shared `ContactFields` in components/public/
+  form-fields.tsx — same rules as the inquiry form), departure date (shown
+  as "1–8 Jun 2027" via `formatTripDates`; FULL dates disabled), −/+
+  counters per price cell (keys `priceCellKey` "ADULT.TWIN", ≤20 each,
+  ≤50 total, ≥1 adult), running estimated total, notes, hCaptcha. No
+  payment — "Tiada bayaran dikenakan sehingga tempahan disahkan".
+- `submitBooking` (app/(public)/packages/[slug]/actions.ts) re-checks the
+  package, date and prices from the database (never the browser's totals)
+  and saves an Inquiry with kind BOOKING + package_id, departure_date,
+  travellers JSON snapshot `[{traveller, room, count, amount}]` and
+  estimated_total. Prices edited meanwhile → "pageOutdated" banner.
+- Same email alert (subject "New booking request: …") and the same admin
+  Inquiries list: "Booking request" badge, "Departs … · N pax", and a
+  traveller/price table on the detail page. Form errors are codes shared
+  with the inquiry form (`FormErrorCode` → dictionary `client.formErrors`).
 
 ## SEO
 - app/sitemap.ts (dynamic, includes published packages), app/robots.ts

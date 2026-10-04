@@ -1,4 +1,4 @@
-import type { InquiryBannerCode, InquiryErrorCode } from "@/lib/validation/inquiry";
+import type { FormBannerCode, FormErrorCode } from "@/lib/validation/inquiry";
 
 // Bahasa Melayu — the public site's main language and the master copy: the
 // English dictionary (en.ts) must have exactly the same entries. "{name}"
@@ -164,6 +164,8 @@ export const ms = {
     motacPackage: "Pakej berlesen MOTAC",
     departures: "Tarikh berlepas akan datang",
     noDepartures: "Tarikh baharu sedang diatur — tanya kami untuk jadual terkini.",
+    bookNow: "Tempah sekarang",
+    inquire: "Buat pertanyaan",
     inquireNow: "Buat pertanyaan sekarang",
     askNextTrip: "Tanya tentang trip seterusnya",
     orCall: "Atau hubungi {phone}",
@@ -291,23 +293,57 @@ export const ms = {
       submitted: "Pertanyaan anda telah dihantar. Kami akan menghubungi anda tidak lama lagi.",
       faster: "Mahu jawapan lebih cepat? WhatsApp kami",
       browseMore: "Lihat pakej lain",
-      banners: {
-        checkFields: "Sila semak ruangan yang ditandakan.",
-        captchaFailed: "Sila lengkapkan semakan “Saya manusia” dan cuba lagi.",
-      } satisfies Record<InquiryBannerCode, string>,
-      errors: {
-        nameRequired: "Sila masukkan nama anda.",
-        nameTooLong: "Nama terlalu panjang — maksimum 100 aksara.",
-        phoneRequired: "Sila masukkan nombor telefon anda.",
-        phoneDigits: "Sila masukkan nombor telefon menggunakan angka sahaja.",
-        phoneIncomplete: "Sila masukkan nombor telefon yang lengkap, cth. 012-345 6789.",
-        emailInvalid: "Sila masukkan alamat e-mel yang sah, cth. nama@gmail.com.",
-        packageRequired: "Sila pilih pakej, atau “Belum pasti”.",
-        messageTooLong: "Mesej terlalu panjang — maksimum 2,000 aksara.",
-        captcha: "Sila tandakan kotak untuk menunjukkan anda bukan robot.",
-        invalid: "Sila semak ruangan ini.",
-      } satisfies Record<InquiryErrorCode, string>,
     },
+    // Booking form at the bottom of a package page.
+    booking: {
+      heading: "Borang Tempahan",
+      intro: "Isi borang ini untuk menempah tempat. Tiada bayaran dikenakan sehingga tempahan anda disahkan oleh pasukan kami.",
+      departure: "Tarikh berlepas",
+      chooseDeparture: "— Pilih tarikh berlepas —",
+      almostFull: "Hampir penuh",
+      full: "Penuh",
+      travellers: "Bilangan peserta",
+      travellersHint: "Pilih bilangan orang untuk setiap jenis harga.",
+      option: "{traveller}, {room}",
+      perPerson: "{price} seorang",
+      decrease: "Kurangkan {option}",
+      increase: "Tambah {option}",
+      line: "{n} × {option}",
+      total: "Anggaran jumlah",
+      estimateNote: "Berdasarkan harga bermula. Harga akhir disahkan semasa kami mengesahkan tempahan anda.",
+      notes: "Nota",
+      notesPlaceholder: "cth. permintaan bilik, keperluan khas, sebarang soalan",
+      submit: "Hantar tempahan",
+      sending: "Menghantar…",
+      noPayment: "Tiada bayaran dikenakan sehingga tempahan disahkan.",
+      thanks: "Terima kasih, {name}!",
+      received:
+        "Permohonan tempahan anda untuk {package} ({date}) telah diterima. Pasukan kami akan menghubungi anda untuk mengesahkan tempat dan cara pembayaran.",
+      whatsapp: "Sahkan lebih cepat di WhatsApp",
+      whatsappMessage: "Salam Moghul Travel & Tours, saya baru menghantar tempahan untuk {package}, berlepas {date}: {travellers}.",
+    },
+    formBanners: {
+      checkFields: "Sila semak ruangan yang ditandakan.",
+      captchaFailed: "Sila lengkapkan semakan “Saya manusia” dan cuba lagi.",
+      bookingUnavailable: "Pakej ini tidak lagi boleh ditempah dalam talian. Sila hubungi kami terus.",
+      pageOutdated: "Maklumat pakej ini baru dikemas kini. Sila muat semula halaman dan cuba lagi.",
+    } satisfies Record<FormBannerCode, string>,
+    formErrors: {
+      nameRequired: "Sila masukkan nama anda.",
+      nameTooLong: "Nama terlalu panjang — maksimum 100 aksara.",
+      phoneRequired: "Sila masukkan nombor telefon anda.",
+      phoneDigits: "Sila masukkan nombor telefon menggunakan angka sahaja.",
+      phoneIncomplete: "Sila masukkan nombor telefon yang lengkap, cth. 012-345 6789.",
+      emailInvalid: "Sila masukkan alamat e-mel yang sah, cth. nama@gmail.com.",
+      packageRequired: "Sila pilih pakej, atau “Belum pasti”.",
+      messageTooLong: "Mesej terlalu panjang — maksimum 2,000 aksara.",
+      departureRequired: "Sila pilih tarikh berlepas.",
+      departureUnavailable: "Tarikh ini sudah penuh atau tidak lagi tersedia — sila pilih tarikh lain.",
+      paxRequired: "Sila tambah sekurang-kurangnya seorang dewasa.",
+      paxTooMany: "Untuk kumpulan lebih 50 orang, sila hubungi kami terus.",
+      captcha: "Sila tandakan kotak untuk menunjukkan anda bukan robot.",
+      invalid: "Sila semak ruangan ini.",
+    } satisfies Record<FormErrorCode, string>,
   },
 };
 

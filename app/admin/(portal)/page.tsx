@@ -40,7 +40,7 @@ export default async function DashboardPage() {
       prisma.inquiry.findMany({
         orderBy: { createdAt: "desc" },
         take: 4,
-        select: { id: true, fullName: true, packageInterest: true, status: true },
+        select: { id: true, fullName: true, packageInterest: true, status: true, kind: true },
       }),
     ]);
 
@@ -97,6 +97,7 @@ export default async function DashboardPage() {
                         {inquiry.fullName}
                       </Link>
                       <div className="text-sm text-muted">
+                        {inquiry.kind === "BOOKING" && <strong className="text-primary">Booking · </strong>}
                         {inquiry.packageInterest ?? "General inquiry"}
                       </div>
                     </div>

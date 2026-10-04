@@ -78,3 +78,30 @@ export function priceTable(cells: readonly PriceCell[]) {
 export function offeredRooms(cells: readonly PriceCell[]): RoomKey[] {
   return ROOMS.filter((r) => cells.some((c) => c.room === r.key && c.amount > 0)).map((r) => r.key);
 }
+
+/** "ADULT.TWIN" — how the booking form names one price option. */
+export const priceCellKey = (traveller: string, room: string) => `${traveller}.${room}`;
+
+/** "Adult, Twin room" — English, for the admin portal and alert emails. */
+export function optionLabel(traveller: string, room: string) {
+  const t = TRAVELLERS.find((x) => x.key === traveller)?.label ?? traveller;
+  const r = ROOMS.find((x) => x.key === room)?.label ?? room;
+  return `${t}, ${r}`;
+}
+
+/** One line of a booking request, as priced when the customer booked. */
+export type BookedTraveller = { traveller: string; room: string; count: number; amount: number };
+
+/** Reads the travellers saved on a booking (inquiries.travellers JSON), skipping anything malformed. */
+export function bookedTravellers(json: unknown): BookedTraveller[] {
+  if (!Array.isArray(json)) return [];
+  return json.filter(
+    (x): x is BookedTraveller =>
+      typeof x === "object" &&
+      x !== null &&
+      typeof x.traveller === "string" &&
+      typeof x.room === "string" &&
+      Number.isInteger(x.count) &&
+      typeof x.amount === "number",
+  );
+}

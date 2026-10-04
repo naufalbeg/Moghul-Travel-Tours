@@ -4,7 +4,8 @@ import { PageHeader } from "@/components/admin/field";
 import { Alert } from "@/components/ui/alert";
 import type { InquiryStatus } from "@/generated/prisma/enums";
 import { requireAdmin } from "@/lib/auth";
-import { INQUIRY_STATUS, INQUIRY_STATUS_ORDER, formatReceived } from "@/lib/inquiry-labels";
+import { formatDate } from "@/lib/format";
+import { INQUIRY_KIND, INQUIRY_STATUS, INQUIRY_STATUS_ORDER, bookedPax, formatReceived } from "@/lib/inquiry-labels";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = { title: "Inquiries" };
@@ -24,7 +25,18 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
     prisma.inquiry.findMany({
       where: status ? { status } : undefined,
       orderBy: { createdAt: "desc" },
-      select: { id: true, fullName: true, email: true, phone: true, packageInterest: true, status: true, createdAt: true },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        packageInterest: true,
+        status: true,
+        createdAt: true,
+        kind: true,
+        departureDate: true,
+        travellers: true,
+      },
     }),
   ]);
   const countOf = (s: InquiryStatus) => counts.find((c) => c.status === s)?._count._all ?? 0;
@@ -41,7 +53,10 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
 
   return (
     <>
-      <PageHeader title="Inquiries" subtitle="Messages sent through the website's inquiry form, newest first." />
+      <PageHeader
+        title="Inquiries"
+        subtitle="Questions and booking requests sent through the website, newest first."
+      />
 
       {deleted && (
         <div className="mb-5">
@@ -101,7 +116,19 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
                         {q.phone} · {q.email}
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-sm">{q.packageInterest ?? <span className="text-muted">General inquiry</span>}</td>
+                    <td className="px-5 py-4 text-sm">
+                      {q.kind === "BOOKING" && (
+                        <span className={`mb-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${INQUIRY_KIND.BOOKING.className}`}>
+                          {INQUIRY_KIND.BOOKING.label}
+                        </span>
+                      )}
+                      <div>{q.packageInterest ?? <span className="text-muted">General inquiry</span>}</div>
+                      {q.kind === "BOOKING" && q.departureDate && (
+                        <div className="text-muted">
+                          Departs {formatDate(q.departureDate)} · {bookedPax(q.travellers)} pax
+                        </div>
+                      )}
+                    </td>
                     <td className="px-5 py-4 text-sm whitespace-nowrap text-muted">{formatReceived(q.createdAt)}</td>
                     <td className="px-5 py-4">
                       <span className={`rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap ${pill.className}`}>{pill.label}</span>
