@@ -137,9 +137,9 @@ dewasa"…) are standard industry meanings — owner to confirm.
 History: a traveller × room table (`package_prices`, Adult/Child ×
 Twin/Triple, 2026-10-05) came first; migration
 `20261006000000_package_price_list_and_exclusions` copied it (Adult/Twin →
-ADULT_TWIN, Child/Twin → CHILD_TWIN), and a contract migration drops
-`package_prices` and converts old booking snapshots once this code is
-live. Before that, a single `price_per_pax` + free-text `room_sharing` were
+ADULT_TWIN, Child/Twin → CHILD_TWIN), and once that code was live
+`20261006010000_drop_package_prices` dropped `package_prices` and
+converted old booking snapshots to `{type, count, amount}`. Before that, a single `price_per_pax` + free-text `room_sharing` were
 dropped the same way — expand-then-contract is how any breaking schema
 change is done here, since dev and the live site share one database.
 No multi-currency or seasonal variation, no payment gateway in this version —
