@@ -7,7 +7,7 @@ import { EditIcon, ExternalIcon, PlusIcon } from "@/components/ui/icons";
 import { requireAdmin } from "@/lib/auth";
 import { formatPrice, todayInMalaysia } from "@/lib/format";
 import { CATEGORY_LABEL, PACKAGE_AVAILABILITY } from "@/lib/package-labels";
-import { startingPrice, toPriceCells } from "@/lib/package-prices";
+import { startingPrice, toPriceItems } from "@/lib/package-prices";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = { title: "Manage packages" };
@@ -31,7 +31,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
       slug: true,
       title: true,
       category: true,
-      prices: { select: { traveller: true, room: true, amount: true } },
+      prices: { select: { type: true, amount: true } },
       status: true,
       availability: true,
       images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1, select: { url: true } },
@@ -94,7 +94,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
                 const isDraft = pkg.status === "DRAFT";
                 const upcoming = pkg._count.departures;
                 const availability = PACKAGE_AVAILABILITY[pkg.availability];
-                const fromPrice = startingPrice(toPriceCells(pkg.prices));
+                const fromPrice = startingPrice(toPriceItems(pkg.prices));
                 return (
                   <tr key={pkg.id} className={isDraft ? "bg-[#fafbfc]" : undefined}>
                     <td className="px-5 py-4">

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { DepartureAvailability, PackageAvailability } from "@/generated/prisma/enums";
+import { isAdultPrice } from "@/lib/package-prices";
 import { code, collectErrors, contactFields, messageField, type FormErrorCode } from "@/lib/validation/inquiry";
 
 // Booking form on a package page ("Borang Tempahan"). Shared by the form
@@ -27,7 +28,7 @@ export function canBookOnline(
 export const bookingSchema = z.object({
   ...contactFields,
   departureDate: z.iso.date(code("departureRequired")),
-  /** Travellers per price option, keyed "<TRAVELLER>.<ROOM>" (priceCellKey). */
+  /** Travellers per price, keyed by price type ("ADULT_TWIN", "INFANT"…). */
   travellers: z.record(
     z.string().max(40),
     z.int(code("invalid")).min(0, code("invalid")).max(MAX_PAX_PER_OPTION, code("paxTooMany")),
@@ -48,7 +49,7 @@ export function validateBooking(input: BookingInput) {
   if (travellers.success && !errors.travellers) {
     const counts = Object.entries(travellers.data);
     const total = counts.reduce((sum, [, n]) => sum + n, 0);
-    const adults = counts.filter(([key]) => key.startsWith("ADULT.")).reduce((sum, [, n]) => sum + n, 0);
+    const adults = counts.filter(([type]) => isAdultPrice(type)).reduce((sum, [, n]) => sum + n, 0);
     if (adults < 1) errors.travellers = "paxRequired";
     else if (total > MAX_PAX_TOTAL) errors.travellers = "paxTooMany";
   }

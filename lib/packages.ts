@@ -4,7 +4,7 @@ import { connection } from "next/server";
 import type { PackageCategory, Prisma } from "@/generated/prisma/client";
 import { todayInMalaysia } from "@/lib/format";
 import { INTL_LOCALE, type Locale } from "@/lib/i18n/config";
-import { startingPrice, toPriceCells } from "@/lib/package-prices";
+import { ADULT_PRICE_TYPES, startingPrice, toPriceItems } from "@/lib/package-prices";
 import { prisma } from "@/lib/prisma";
 
 // Public read side of PackageController (SDD 4.2.2): only published,
@@ -22,7 +22,7 @@ const cardSelect = {
   title: true,
   category: true,
   highlights: true,
-  prices: { where: { traveller: "ADULT" }, select: { traveller: true, room: true, amount: true } },
+  prices: { where: { type: { in: [...ADULT_PRICE_TYPES] } }, select: { type: true, amount: true } },
   availability: true,
   durationDays: true,
   images: { orderBy: primaryImageFirst, take: 1, select: { url: true } },
@@ -48,7 +48,7 @@ function toCard(p: Prisma.PackageGetPayload<{ select: typeof cardSelect }>): Pac
     title: p.title,
     category: p.category,
     highlights: p.highlights,
-    fromPrice: startingPrice(toPriceCells(p.prices)),
+    fromPrice: startingPrice(toPriceItems(p.prices)),
     availability: p.availability,
     durationDays: p.durationDays,
     imageUrl: p.images[0]?.url ?? null,
@@ -118,12 +118,12 @@ export const getPublishedPackage = cache(async (slug: string) => {
         where: { departureDate: { gte: todayInMalaysia() } },
         orderBy: { departureDate: "asc" },
       },
-      prices: { select: { traveller: true, room: true, amount: true } },
+      prices: { select: { type: true, amount: true } },
     },
   });
   if (!pkg) return null;
 
-  const prices = toPriceCells(pkg.prices);
+  const prices = toPriceItems(pkg.prices);
   return { ...pkg, prices, fromPrice: startingPrice(prices) };
 });
 

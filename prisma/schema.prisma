@@ -103,6 +103,8 @@ model Package {
   highlights     String[]            @default([])
   // Checklist shown under "What's included" on the detail page.
   inclusions     String[]            @default([])
+  // Shown under "Not included" on the detail page.
+  exclusions     String[]            @default([])
   durationDays   Int?                @map("duration_days") @db.SmallInt
   durationNights Int?                @map("duration_nights") @db.SmallInt
   status         PackageStatus       @default(DRAFT)
@@ -151,20 +153,19 @@ model PackageDeparture {
   @@map("package_departures")
 }
 
-// One cell of a package's price table: the price per person for a kind of
-// traveller ("ADULT", "CHILD") in a room type ("TWIN", "TRIPLE"). Plain text
-// checked by the app (lib/package-prices.ts) rather than enums, so the table
-// can gain rows or columns without a migration. No row = not offered.
+// One line of a package's price list: the price per person for one price
+// type ("ADULT_TWIN", "CHILD_NO_BED", "INFANT"…). Plain text checked by the
+// app (PRICE_TYPES in lib/package-prices.ts) rather than an enum, so a type
+// can be added without a migration. No row = not offered.
 model PackagePrice {
   id        String  @id @default(uuid()) @db.Uuid
   packageId String  @map("package_id") @db.Uuid
   package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
-  traveller String
-  room      String
+  type      String
   amount    Decimal @db.Decimal(10, 2)
 
-  @@unique([packageId, traveller, room])
-  @@map("package_prices")
+  @@unique([packageId, type])
+  @@map("package_price_list")
 }
 
 model PackageImage {
@@ -190,7 +191,7 @@ model Inquiry {
   message         String
   kind            InquiryKind   @default(INQUIRY)
   // Booking requests only: the package and departure, and the travellers
-  // as priced at the time — [{ traveller, room, count, amount }], amount per
+  // as priced at the time — [{ type, count, amount }], amount per
   // person — so later price changes don't rewrite what the customer saw.
   packageId       String?       @map("package_id") @db.Uuid
   package         Package?      @relation(fields: [packageId], references: [id], onDelete: SetNull)

@@ -1,3 +1,4 @@
+import type { PriceType } from "@/lib/package-prices";
 import type { FormBannerCode, FormErrorCode } from "@/lib/validation/inquiry";
 
 // Bahasa Melayu — the public site's main language and the master copy: the
@@ -127,13 +128,20 @@ export const ms = {
     askForPrice: "Hubungi kami untuk harga",
     seeDetails: "Lihat butiran harga",
     heading: "Harga seorang",
-    traveller: "Pelancong",
-    askUs: "Tanya kami",
-    travellers: { ADULT: "Dewasa", CHILD: "Kanak-kanak" },
-    rooms: {
-      TWIN: { label: "Bilik Twin", hint: "2 orang sebilik", short: "twin" },
-      TRIPLE: { label: "Bilik Triple", hint: "3 orang sebilik", short: "triple" },
-    },
+    type: "Jenis",
+    price: "Harga",
+    // Wording follows Malaysian agencies (e.g. jomventures.my).
+    types: {
+      ADULT_TWIN: { label: "Dewasa Twin", hint: "2 dewasa sebilik" },
+      ADULT_TRIPLE: { label: "Dewasa Triple", hint: "3 dewasa sebilik" },
+      SINGLE: { label: "Single", hint: "1 dewasa, bilik sendiri" },
+      CHILD_TWIN: { label: "Kanak-kanak Twin", hint: "Sebilik dengan 1 dewasa" },
+      CHILD_WITH_BED: { label: "Kanak-kanak dengan katil", hint: "Katil tambahan, sebilik dengan 2 dewasa" },
+      CHILD_NO_BED: { label: "Kanak-kanak tanpa katil", hint: "Tiada katil sendiri, sebilik dengan 2 dewasa" },
+      INFANT: { label: "Bayi", hint: "0–2 tahun" },
+    } satisfies Record<PriceType, { label: string; hint: string }>,
+    /** Room words for "Bilik twin, triple atau single" under the title. */
+    rooms: { ADULT_TWIN: "twin", ADULT_TRIPLE: "triple", SINGLE: "single" },
     roomsOffered: "Bilik {rooms}",
     or: "atau",
   },
@@ -172,6 +180,7 @@ export const ms = {
     trust: "Berlesen MOTAC ({licence}) — lebih sedekad membawa pelancong Malaysia ke destinasi impian.",
     about: "Tentang pakej ini",
     included: "Termasuk dalam pakej",
+    excluded: "Tidak termasuk",
     itinerary: "Itinerari",
   },
 
@@ -245,9 +254,11 @@ export const ms = {
       label: "Menu utama",
       home: "Utama",
       packages: "Pakej",
+      otherPackages: "Pakej Lain",
       gallery: "Galeri",
       about: "Tentang Kami",
       contact: "Hubungi",
+      newTab: "(dibuka dalam tab baharu)",
     },
     menu: {
       open: "Menu",
@@ -304,7 +315,6 @@ export const ms = {
       full: "Penuh",
       travellers: "Bilangan peserta",
       travellersHint: "Pilih bilangan orang untuk setiap jenis harga.",
-      option: "{traveller}, {room}",
       perPerson: "{price} seorang",
       decrease: "Kurangkan {option}",
       increase: "Tambah {option}",

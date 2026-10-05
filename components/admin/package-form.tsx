@@ -9,15 +9,7 @@ import { AlertCircleIcon } from "@/components/ui/icons";
 import type { DepartureAvailability, PackageAvailability, PackageCategory } from "@/generated/prisma/enums";
 import { formatPrice } from "@/lib/format";
 import { CATEGORY_LABEL, DEPARTURE_AVAILABILITY, PACKAGE_AVAILABILITY } from "@/lib/package-labels";
-import {
-  ROOMS,
-  TRAVELLERS,
-  buildGrid,
-  gridToCells,
-  startingPrice,
-  type RoomKey,
-  type TravellerKey,
-} from "@/lib/package-prices";
+import { PRICE_TYPES, buildPriceList, listToItems, startingPrice, type PriceType } from "@/lib/package-prices";
 import {
   AVAILABILITIES,
   CATEGORIES,
@@ -39,10 +31,11 @@ export type PackageFormState = {
   description: string;
   highlights: string;
   inclusions: string;
+  exclusions: string;
   durationDays: string;
   durationNights: string;
-  /** Price per person in RM for each traveller × room, as typed; blank = not offered. */
-  prices: Record<TravellerKey, Record<RoomKey, string>>;
+  /** Price per person in RM for each price type, as typed; blank = not offered. */
+  prices: Record<PriceType, string>;
   availability: PackageAvailability;
   itinerary: ItineraryRow[];
   departures: DepartureRow[];
@@ -58,9 +51,10 @@ const emptyPackageForm = (): PackageFormState => ({
   description: "",
   highlights: "",
   inclusions: "",
+  exclusions: "",
   durationDays: "",
   durationNights: "",
-  prices: buildGrid(() => ""),
+  prices: buildPriceList(() => ""),
   availability: "OPEN",
   // Fixed key: this row is rendered on the server too, so it must match on hydration.
   itinerary: [{ key: "first-day", dayStart: "1", dayEnd: "", title: "", description: "" }],
@@ -84,9 +78,10 @@ function toInput(s: PackageFormState): PackageInput {
     description: s.description,
     highlights: toLines(s.highlights),
     inclusions: toLines(s.inclusions),
+    exclusions: toLines(s.exclusions),
     durationDays: toNumber(s.durationDays),
     durationNights: toNumber(s.durationNights),
-    prices: buildGrid((traveller, room) => toNumber(s.prices[traveller][room])),
+    prices: buildPriceList((type) => toNumber(s.prices[type])),
     availability: s.availability,
     itinerary: s.itinerary
       .filter((d) => d.title.trim() || d.description.trim())
@@ -165,12 +160,9 @@ export function PackageForm({
     });
   }
 
-  function updatePrice(traveller: TravellerKey, room: RoomKey, value: string) {
+  function updatePrice(type: PriceType, value: string) {
     setDirty(true);
-    setState((s) => ({
-      ...s,
-      prices: { ...s.prices, [traveller]: { ...s.prices[traveller], [room]: value } },
-    }));
+    setState((s) => ({ ...s, prices: { ...s.prices, [type]: value } }));
   }
 
   function updateRow<K extends "itinerary" | "departures">(
@@ -208,7 +200,7 @@ export function PackageForm({
   }
 
   const uploading = state.images.some((img) => img.status === "uploading");
-  const fromPrice = startingPrice(gridToCells(toInput(state).prices));
+  const fromPrice = startingPrice(listToItems(toInput(state).prices));
 
   function submit(intent: SaveIntent) {
     if (uploading) {
@@ -244,7 +236,7 @@ export function PackageForm({
   }
 
   const err = (key: string) => errors[key];
-  // A specific cell's error first — fixing it often fixes the general one too.
+  // A specific price's error first — fixing it often fixes the general one too.
   const priceError = Object.entries(errors).find(([k]) => k.startsWith("prices."))?.[1] ?? err("prices");
   const describedBy = (key: string) => (errors[key] ? `${key}-error` : undefined);
 
@@ -400,7 +392,7 @@ export function PackageForm({
             <FieldError id="description-error" message={err("description")} />
 
             <div className="mt-5 grid gap-5 sm:grid-cols-2">
-              <div>
+              <div className="sm:col-span-2">
                 <label htmlFor="highlights" className="mb-2 block text-sm font-semibold">
                   Highlights <span className="font-normal text-muted">(one per line, shown on cards)</span>
                 </label>
@@ -429,6 +421,21 @@ export function PackageForm({
                   className={`${inputClass(err("inclusions"))} resize-y`}
                 />
                 <FieldError id="inclusions-error" message={err("inclusions")} />
+              </div>
+              <div>
+                <label htmlFor="exclusions" className="mb-2 block text-sm font-semibold">
+                  Not included <span className="font-normal text-muted">(one per line)</span>
+                </label>
+                <textarea
+                  id="exclusions"
+                  value={state.exclusions}
+                  onChange={(e) => update("exclusions", e.target.value)}
+                  rows={4}
+                  placeholder={"Travel insurance\nTipping for guide and driver"}
+                  aria-describedby={describedBy("exclusions")}
+                  className={`${inputClass(err("exclusions"))} resize-y`}
+                />
+                <FieldError id="exclusions-error" message={err("exclusions")} />
               </div>
             </div>
 
@@ -555,61 +562,50 @@ export function PackageForm({
             title="Prices & availability"
             hint="Prices are per person, in RM. Fill in the ones this package offers and leave the rest blank — blank prices don't appear on the website."
           >
-            <table className="w-full max-w-2xl">
+            <table className="w-full max-w-xl">
               <thead>
-                <tr>
-                  <td className="w-16 sm:w-28" />
-                  {ROOMS.map((room) => (
-                    <th
-                      key={room.key}
-                      id={`room-${room.key}`}
-                      scope="col"
-                      className="px-1.5 pb-2 text-left align-bottom text-sm font-semibold sm:px-2.5"
-                    >
-                      {room.label}
-                      <span className="block font-normal text-muted">{room.hint}</span>
-                    </th>
-                  ))}
+                <tr className="border-b border-line">
+                  <th scope="col" className="pb-2 text-left text-sm font-semibold">
+                    Price type
+                  </th>
+                  <th scope="col" className="pb-2 pl-3 text-left text-sm font-semibold">
+                    Price per person
+                  </th>
                 </tr>
               </thead>
-              <tbody>
-                {TRAVELLERS.map((traveller) => (
-                  <tr key={traveller.key}>
-                    <th
-                      id={`traveller-${traveller.key}`}
-                      scope="row"
-                      className="py-1.5 pr-2 text-left text-sm font-semibold"
-                    >
-                      {traveller.label}
-                    </th>
-                    {ROOMS.map((room) => {
-                      const key = `prices.${traveller.key}.${room.key}`;
-                      return (
-                        <td key={room.key} className="px-1.5 py-1.5 sm:px-2.5">
-                          <div className="flex items-stretch">
-                            {/* No room for the RM tag on phones; the section hint says "in RM". */}
-                            <span className="hidden items-center rounded-l-lg border-[1.5px] border-r-0 border-line bg-canvas px-3.5 text-sm font-bold text-muted sm:flex">
-                              RM
-                            </span>
-                            <input
-                              id={key}
-                              type="number"
-                              inputMode="decimal"
-                              min={0}
-                              step="0.01"
-                              value={state.prices[traveller.key][room.key]}
-                              onChange={(e) => updatePrice(traveller.key, room.key, e.target.value)}
-                              aria-labelledby={`traveller-${traveller.key} room-${room.key}`}
-                              aria-invalid={Boolean(err(key))}
-                              aria-describedby={err(key) || err("prices") ? "prices-error" : undefined}
-                              className={`${inputClass(err(key))} min-w-0 sm:rounded-l-none`}
-                            />
-                          </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-line">
+                {PRICE_TYPES.map((type) => {
+                  const key = `prices.${type.key}`;
+                  return (
+                    <tr key={type.key}>
+                      <th id={`price-${type.key}`} scope="row" className="py-2.5 pr-3 text-left text-sm font-semibold">
+                        {type.label}
+                        <span className="block font-normal text-muted">{type.hint}</span>
+                      </th>
+                      <td className="w-36 py-2.5 pl-3 sm:w-52">
+                        <div className="flex items-stretch">
+                          {/* No room for the RM tag on phones; the section hint says "in RM". */}
+                          <span className="hidden items-center rounded-l-lg border-[1.5px] border-r-0 border-line bg-canvas px-3.5 text-sm font-bold text-muted sm:flex">
+                            RM
+                          </span>
+                          <input
+                            id={key}
+                            type="number"
+                            inputMode="decimal"
+                            min={0}
+                            step="0.01"
+                            value={state.prices[type.key]}
+                            onChange={(e) => updatePrice(type.key, e.target.value)}
+                            aria-labelledby={`price-${type.key}`}
+                            aria-invalid={Boolean(err(key))}
+                            aria-describedby={err(key) || err("prices") ? "prices-error" : undefined}
+                            className={`${inputClass(err(key))} min-w-0 sm:rounded-l-none`}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
             <FieldError id="prices-error" message={priceError} />
@@ -618,12 +614,12 @@ export function PackageForm({
               {fromPrice !== null ? (
                 <>
                   The website shows <strong>Starts from {formatPrice(fromPrice)}</strong> per person — the lowest
-                  adult price.
+                  adult price (Adult Twin, Adult Triple or Single).
                 </>
               ) : (
                 <>
-                  The website shows the lowest adult price as the &ldquo;Starts from&rdquo; price. Fill in at least
-                  one adult price before publishing.
+                  The website shows the lowest adult price (Adult Twin, Adult Triple or Single) as the &ldquo;Starts
+                  from&rdquo; price. Fill in at least one before publishing.
                 </>
               )}
             </p>

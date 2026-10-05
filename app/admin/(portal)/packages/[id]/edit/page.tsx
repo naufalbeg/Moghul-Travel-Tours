@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { PackageForm, type PackageFormState } from "@/components/admin/package-form";
 import { requireAdmin } from "@/lib/auth";
-import { buildGrid } from "@/lib/package-prices";
+import { buildPriceList } from "@/lib/package-prices";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = { title: "Edit package" };
@@ -24,8 +24,7 @@ export default async function EditPackagePage({ params }: PageProps<"/admin/pack
   });
   if (!pkg) notFound();
 
-  const priceOf = (traveller: string, room: string) =>
-    pkg.prices.find((p) => p.traveller === traveller && p.room === room)?.amount.toString() ?? "";
+  const priceOf = (type: string) => pkg.prices.find((p) => p.type === type)?.amount.toString() ?? "";
   const initial: PackageFormState = {
     title: pkg.title,
     slug: pkg.slug,
@@ -33,9 +32,10 @@ export default async function EditPackagePage({ params }: PageProps<"/admin/pack
     description: pkg.description,
     highlights: pkg.highlights.join("\n"),
     inclusions: pkg.inclusions.join("\n"),
+    exclusions: pkg.exclusions.join("\n"),
     durationDays: pkg.durationDays?.toString() ?? "",
     durationNights: pkg.durationNights?.toString() ?? "",
-    prices: buildGrid(priceOf),
+    prices: buildPriceList(priceOf),
     availability: pkg.availability,
     itinerary: pkg.itinerary.map((d) => ({
       key: d.id,

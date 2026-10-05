@@ -9,7 +9,7 @@ import { MailIcon, PhoneIcon, TrashIcon, WhatsAppIcon } from "@/components/ui/ic
 import { requireAdmin } from "@/lib/auth";
 import { formatPrice, formatTripDates } from "@/lib/format";
 import { INQUIRY_KIND, INQUIRY_STATUS, formatReceived } from "@/lib/inquiry-labels";
-import { bookedTravellers, optionLabel } from "@/lib/package-prices";
+import { bookedTravellers, priceTypeLabel } from "@/lib/package-prices";
 import { prisma } from "@/lib/prisma";
 import { telHref, whatsappHref } from "@/lib/site-content";
 import { deleteInquiry } from "../actions";
@@ -99,9 +99,9 @@ export default async function InquiryDetailPage({ params }: PageProps<"/admin/in
                   </thead>
                   <tbody className="divide-y divide-line">
                     {travellers.map((t) => (
-                      <tr key={`${t.traveller}.${t.room}`}>
+                      <tr key={t.type}>
                         <td className="px-4 py-2.5">
-                          <strong>{t.count} ×</strong> {optionLabel(t.traveller, t.room)}
+                          <strong>{t.count} ×</strong> {priceTypeLabel(t.type)}
                         </td>
                         <td className="px-4 py-2.5 text-right whitespace-nowrap">{formatPrice(t.amount)}</td>
                         <td className="px-4 py-2.5 text-right font-semibold whitespace-nowrap">

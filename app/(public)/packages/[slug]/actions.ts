@@ -3,7 +3,7 @@
 import { verifyCaptcha } from "@/lib/captcha";
 import { sendInquiryNotification } from "@/lib/email";
 import { formatPrice, formatTripDates, todayInMalaysia } from "@/lib/format";
-import { optionLabel, priceCellKey, toPriceCells, type BookedTraveller } from "@/lib/package-prices";
+import { priceTypeLabel, toPriceItems, type BookedTraveller } from "@/lib/package-prices";
 import { prisma } from "@/lib/prisma";
 import { inquiryNotifyEmail } from "@/lib/site-config";
 import { canBookOnline, validateBooking, type BookingErrors, type BookingInput } from "@/lib/validation/booking";
@@ -45,7 +45,7 @@ export async function submitBooking(
               where: { departureDate: { gte: todayInMalaysia() } },
               select: { departureDate: true, availability: true },
             },
-            prices: { select: { traveller: true, room: true, amount: true } },
+            prices: { select: { type: true, amount: true } },
           },
         })
       : null;
@@ -57,14 +57,14 @@ export async function submitBooking(
   }
 
   // Price each traveller from the database, not from the browser.
-  const prices = toPriceCells(pkg.prices);
+  const prices = toPriceItems(pkg.prices);
   const travellers: BookedTraveller[] = [];
-  for (const [key, count] of Object.entries(v.travellers)) {
+  for (const [type, count] of Object.entries(v.travellers)) {
     if (count === 0) continue;
-    const cell = prices.find((c) => priceCellKey(c.traveller, c.room) === key && c.amount > 0);
+    const price = prices.find((p) => p.type === type && p.amount > 0);
     // The page offered a price that has since been removed — it was edited meanwhile.
-    if (!cell) return { ok: false, message: "pageOutdated" };
-    travellers.push({ traveller: cell.traveller, room: cell.room, count, amount: cell.amount });
+    if (!price) return { ok: false, message: "pageOutdated" };
+    travellers.push({ type: price.type, count, amount: price.amount });
   }
   const total = travellers.reduce((sum, t) => sum + t.count * t.amount, 0);
 
@@ -87,7 +87,7 @@ export async function submitBooking(
     ...inquiry,
     booking: {
       departure: formatTripDates(departure.departureDate, pkg.durationDays),
-      travellers: travellers.map((t) => `${t.count} × ${optionLabel(t.traveller, t.room)} @ ${formatPrice(t.amount)}`),
+      travellers: travellers.map((t) => `${t.count} × ${priceTypeLabel(t.type)} @ ${formatPrice(t.amount)}`),
       total: formatPrice(total),
     },
   });

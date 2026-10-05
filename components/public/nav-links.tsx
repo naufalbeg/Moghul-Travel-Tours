@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/components/public/i18n-provider";
+import { ExternalIcon } from "@/components/ui/icons";
 import { PUBLIC_NAV } from "@/lib/site";
 
 type NavHref = (typeof PUBLIC_NAV)[number]["href"];
@@ -47,7 +48,21 @@ export function NavList({
   const current = PUBLIC_NAV.findIndex(({ href }) => isActive(href));
   return (
     <ul className={variant === "desktop" ? "flex flex-wrap justify-center gap-x-7 gap-y-2" : "space-y-1"}>
-      {PUBLIC_NAV.map(({ href, key }, i) => {
+      {PUBLIC_NAV.map((item, i) => {
+        const { href, key } = item;
+        if ("external" in item) {
+          return (
+            <li key={href}>
+              <a href={href} target="_blank" rel="noopener" onClick={onNavigate} className={`${s.base} ${s.idle}`}>
+                <span className="inline-flex items-center gap-1.5">
+                  {t.nav[key]}
+                  <ExternalIcon className="size-4 shrink-0" />
+                </span>
+                <span className="sr-only"> {t.nav.newTab}</span>
+              </a>
+            </li>
+          );
+        }
         const active = i === current;
         return (
           <li key={href}>

@@ -88,8 +88,8 @@ dashboard directly) before relying on it.
 ## Database schema
 Full schema already exists at `prisma/schema.prisma` and is migrated live to
 Supabase — do not regenerate from scratch; schema changes go in new
-migrations. Twelve tables: `users`, `packages`, `package_images`,
-`package_itinerary_days`, `package_departures`, `inquiries`, `gallery_images`,
+migrations. Thirteen tables: `users`, `packages`, `package_images`,
+`package_itinerary_days`, `package_departures`, `package_price_list`, `inquiries`, `gallery_images`,
 `banner_images`, `testimonials`, `site_config`, `announcements`, `audit_log`. The SDD Section
 3.5 Data Dictionary is now out of date for packages — schema.prisma is the
 authoritative, current version.
@@ -104,7 +104,9 @@ Package design (changed from the SDD in migration
 - Departure dates are a child table with their own per-date availability
   (OPEN / ALMOST_FULL / FULL); "upcoming" = `departureDate >= today`
 - `slug` (unique) for public URLs, plus `highlights[]` (card bullets),
-  `inclusions[]` ("What's included"), `durationDays`/`durationNights`
+  `inclusions[]` ("What's included" / "Termasuk dalam pakej", green ticks),
+  `exclusions[]` ("Not included" / "Tidak termasuk", red crosses; owner's
+  request 2026-10-06), `durationDays`/`durationNights`
 - Saving a package replaces its itinerary and departure rows in one
   transaction
 
@@ -114,24 +116,32 @@ DB on drift): edit schema → `prisma migrate diff --from-config-datasource
 → review the SQL → `prisma migrate deploy` → `prisma generate` (all with
 `--config prisma7.config.ts`).
 
-Pricing (owner's request, 2026-10-05; **provisional** — the owner expects
-one more change once the business rules are settled): prices aren't fixed —
-airfares are included and change — so the site always says **"Starts from
-RM X"**. Each package has a price table in `package_prices`: one row per
-cell, traveller (`ADULT`, `CHILD`) × room (`TWIN`, `TRIPLE`),
-`amount` NUMERIC(10,2) per pax; no row = not offered. Keys are text checked
-by the app, not enums — TRAVELLERS / ROOMS in lib/package-prices.ts are the
-single source, so adding a row (e.g. senior) or column (quad) is a code-only
-change. "Starts from" = lowest ADULT price (`startingPrice()`; child never
-counts). Public: "Prices per person" table at the bottom of the package page
-(only rows/columns with a price; an empty cell says "Ask us") plus the
-editable `price_note` (site_config). Admin form: a matching grid; publishing
-needs at least one adult price. Senior prices were dropped and "Baby" became
-"Child" (owner's calls).
-The old single price (`price_per_pax`, copied to ADULT/TWIN) and free-text
-`room_sharing` columns were dropped once this was live — the same
-expand-then-contract pattern any breaking schema change needs here, since
-dev and the live site share one database.
+Pricing (owner's settled list, 2026-10-06): prices aren't fixed — airfares
+are included and change — so the site always says **"Starts from RM X"**.
+Each package has a price list in `package_price_list`: one row per price
+type, `amount` NUMERIC(10,2) per person; no row = not offered. The seven
+types, in display order: `ADULT_TWIN`, `ADULT_TRIPLE`, `SINGLE`,
+`CHILD_TWIN`, `CHILD_WITH_BED`, `CHILD_NO_BED`, `INFANT` (0–2 years).
+They're text checked by the app, not an enum — PRICE_TYPES in
+lib/package-prices.ts is the single source (plus `prices.types` wording in
+both dictionaries), so adding a type is a code-only change. Adult types =
+Adult Twin, Adult Triple, Single: "Starts from" is the lowest of those
+(`startingPrice()`; child/infant never count) and publishing needs at least
+one. Public: a two-column "Jenis | Harga" table (label + short hint, price)
+at the bottom of the package page — only types with a price — plus the
+editable `price_note` (site_config), and a "Bilik twin, triple atau single"
+line under the title from the adult types offered. Admin form: the same
+seven rows with an RM input each. Malay labels follow jomventures.my
+("Kanak-kanak dengan/tanpa katil", "Bayi"); the hints ("Sebilik dengan 1
+dewasa"…) are standard industry meanings — owner to confirm.
+History: a traveller × room table (`package_prices`, Adult/Child ×
+Twin/Triple, 2026-10-05) came first; migration
+`20261006000000_package_price_list_and_exclusions` copied it (Adult/Twin →
+ADULT_TWIN, Child/Twin → CHILD_TWIN), and a contract migration drops
+`package_prices` and converts old booking snapshots once this code is
+live. Before that, a single `price_per_pax` + free-text `room_sharing` were
+dropped the same way — expand-then-contract is how any breaking schema
+change is done here, since dev and the live site share one database.
 No multi-currency or seasonal variation, no payment gateway in this version —
 all bookings/payment happen manually offline (bank details shared privately
 by Admin after a confirmed booking, never published on the site).
@@ -407,13 +417,13 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 - Fields: contact (shared `ContactFields` in components/public/
   form-fields.tsx — same rules as the inquiry form), departure date (shown
   as "1–8 Jun 2027" via `formatTripDates`; FULL dates disabled), −/+
-  counters per price cell (keys `priceCellKey` "ADULT.TWIN", ≤20 each,
-  ≤50 total, ≥1 adult), running estimated total, notes, hCaptcha. No
+  counters per price type (keys "ADULT_TWIN", "INFANT"…, ≤20 each,
+  ≤50 total, ≥1 adult — Single counts), running estimated total, notes, hCaptcha. No
   payment — "Tiada bayaran dikenakan sehingga tempahan disahkan".
 - `submitBooking` (app/(public)/packages/[slug]/actions.ts) re-checks the
   package, date and prices from the database (never the browser's totals)
   and saves an Inquiry with kind BOOKING + package_id, departure_date,
-  travellers JSON snapshot `[{traveller, room, count, amount}]` and
+  travellers JSON snapshot `[{type, count, amount}]` and
   estimated_total. Prices edited meanwhile → "pageOutdated" banner.
 - Same email alert (subject "New booking request: …") and the same admin
   Inquiries list: "Booking request" badge, "Departs … · N pax", and a
@@ -477,6 +487,13 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   `domestic` still resolve — lib/package-labels.ts.
 - The top nav has a single "Packages" link (owner's request); categories
   are only the pills on /packages and the homepage, plus the hero search.
+- "Other Packages" / "Pakej Lain" (after Packages; owner's request
+  2026-10-06) opens Moghul's agent page on Muslim Travel Bug's booking
+  portal — `OTHER_PACKAGES_URL` in lib/site.ts
+  (app.travelcrm.co/destinations/moghultt-gmail-2; Moghul is a certified
+  Muslim Travel Bug agent). PUBLIC_NAV items with `external: true` render
+  as a plain `<a target="_blank">` with an external-link icon and a
+  screen-reader "(opens in a new tab)", and never slide.
 - Page slides: top-menu links and category pills carry `transitionTypes`
   nav-forward / nav-back (item right / left of the current one —
   components/public/nav-links.tsx, category-pills.tsx; homepage pills always

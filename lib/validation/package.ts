@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ROOM_KEYS, TRAVELLER_KEYS, gridToCells, startingPrice, type PriceGrid } from "@/lib/package-prices";
+import { PRICE_TYPE_KEYS, listToItems, startingPrice, type PriceList } from "@/lib/package-prices";
 import { IMAGE_BUCKETS, MAX_PACKAGE_IMAGES } from "@/lib/storage-config";
 
 // Shared by the admin package form (instant feedback) and the savePackage
@@ -32,10 +32,11 @@ export const packageSchema = z.object({
   description: z.string().trim().max(5000, "Keep the description under 5,000 characters."),
   highlights: z.array(line).max(6, "Up to 6 highlights."),
   inclusions: z.array(line).max(20, "Up to 20 items."),
+  exclusions: z.array(line).max(20, "Up to 20 items."),
   durationDays: z.int("Enter whole days.").min(1).max(90).nullable(),
   durationNights: z.int("Enter whole nights.").min(0).max(90).nullable(),
-  // Every traveller × room cell, null when not offered (exhaustive records).
-  prices: z.record(z.enum(TRAVELLER_KEYS), z.record(z.enum(ROOM_KEYS), price)),
+  // Every price type, null when not offered (an exhaustive record).
+  prices: z.record(z.enum(PRICE_TYPE_KEYS), price),
   availability: z.enum(AVAILABILITIES),
   itinerary: z
     .array(
@@ -90,8 +91,8 @@ export function validatePackage(input: PackageInput, intent: SaveIntent) {
 
   if (intent === "publish") {
     if (!input.description?.trim()) errors.description ??= "Add a short description before publishing.";
-    if (startingPrice(gridToCells((input.prices ?? {}) as PriceGrid)) === null) {
-      errors.prices ??= "Enter at least one adult price before publishing.";
+    if (startingPrice(listToItems((input.prices ?? {}) as PriceList)) === null) {
+      errors.prices ??= "Enter at least one adult price (Adult Twin, Adult Triple or Single) before publishing.";
     }
     if (!input.images?.length) errors.images ??= "At least one image is required.";
   }

@@ -7,7 +7,7 @@ import { logAudit } from "@/lib/audit";
 import { authorize } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createSignedImageUploads, removeImages } from "@/lib/image-uploads";
-import { gridToCells } from "@/lib/package-prices";
+import { listToItems } from "@/lib/package-prices";
 import { MAX_PACKAGE_IMAGES, publicImageUrl } from "@/lib/storage-config";
 import {
   PACKAGE_BUCKET,
@@ -111,6 +111,7 @@ export async function savePackage(
     description: v.description,
     highlights: v.highlights,
     inclusions: v.inclusions,
+    exclusions: v.exclusions,
     durationDays: v.durationDays,
     durationNights: v.durationNights,
     availability: v.availability,
@@ -126,7 +127,7 @@ export async function savePackage(
         availability: d.availability,
       })),
     },
-    prices: { create: gridToCells(v.prices) },
+    prices: { create: listToItems(v.prices) },
     images: {
       create: v.images.map((img, i) => ({
         storagePath: img.storagePath,

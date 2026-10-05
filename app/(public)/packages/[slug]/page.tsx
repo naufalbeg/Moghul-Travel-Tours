@@ -3,12 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookingForm, type BookingDeparture, type BookingOption } from "@/components/public/booking-form";
 import { PackageGallery } from "@/components/public/package-gallery";
-import { CheckIcon, ClockIcon, PhoneIcon, ShieldIcon, UserIcon } from "@/components/ui/icons";
+import { CheckIcon, ClockIcon, CloseIcon, PhoneIcon, ShieldIcon, UserIcon } from "@/components/ui/icons";
 import { formatDate, formatPrice, formatTripDates } from "@/lib/format";
 import { fmt } from "@/lib/i18n/config";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { DEPARTURE_AVAILABILITY, PACKAGE_AVAILABILITY, dayLabel, durationLabel } from "@/lib/package-labels";
-import { ROOMS, TRAVELLERS, offeredRooms, priceCellKey, priceTable } from "@/lib/package-prices";
+import { offeredPrices } from "@/lib/package-prices";
 import { getPublishedPackage } from "@/lib/packages";
 import { getPublicContent } from "@/lib/site-config";
 import { inquireHref, telHref } from "@/lib/site-content";
@@ -37,32 +37,30 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
   const duration = durationLabel(pkg.durationDays, pkg.durationNights, t.duration);
   const availability = PACKAGE_AVAILABILITY[pkg.availability];
   const isBookable = pkg.availability !== "FULL";
-  const roomKeys = offeredRooms(pkg.prices);
-  // "Twin or triple room" / "Bilik twin atau triple"
+  const prices = offeredPrices(pkg.prices);
+  // "Twin, triple or single room" / "Bilik twin, triple atau single" — from the adult prices.
+  const roomNames = prices.flatMap((p) =>
+    p.type in t.prices.rooms ? [t.prices.rooms[p.type as keyof typeof t.prices.rooms]] : [],
+  );
   const rooms =
-    roomKeys.length > 0
-      ? fmt(t.prices.roomsOffered, { rooms: roomKeys.map((r) => t.prices.rooms[r].short).join(` ${t.prices.or} `) })
+    roomNames.length > 0
+      ? fmt(t.prices.roomsOffered, {
+          rooms:
+            roomNames.length > 1
+              ? `${roomNames.slice(0, -1).join(", ")} ${t.prices.or} ${roomNames.at(-1)}`
+              : roomNames[0],
+        })
       : null;
   const roomsLabel = rooms && `${rooms.charAt(0).toUpperCase()}${rooms.slice(1)}`;
-  const prices = priceTable(pkg.prices);
 
-  // Booking form: one option per price in the table, dates as "11–21 Sep 2027".
+  // Booking form: one option per price in the list, dates as "11–21 Sep 2027".
   const canBook = canBookOnline(pkg.availability, pkg.departures) && pkg.fromPrice !== null;
-  const bookingOptions: BookingOption[] = TRAVELLERS.flatMap((traveller) =>
-    ROOMS.flatMap((room) => {
-      const amount = pkg.prices.find((c) => c.traveller === traveller.key && c.room === room.key && c.amount > 0)?.amount;
-      if (!amount) return [];
-      const r = t.prices.rooms[room.key];
-      return [
-        {
-          key: priceCellKey(traveller.key, room.key),
-          label: fmt(t.client.booking.option, { traveller: t.prices.travellers[traveller.key], room: r.label }),
-          hint: r.hint,
-          amount,
-        },
-      ];
-    }),
-  );
+  const bookingOptions: BookingOption[] = prices.map((p) => ({
+    key: p.type,
+    label: t.prices.types[p.type].label,
+    hint: t.prices.types[p.type].hint,
+    amount: p.amount,
+  }));
   const bookingDepartures: BookingDeparture[] = pkg.departures.map((d) => ({
     date: d.departureDate.toISOString().slice(0, 10),
     label: formatTripDates(d.departureDate, pkg.durationDays, locale),
@@ -226,6 +224,20 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
             </section>
           )}
 
+          {pkg.exclusions.length > 0 && (
+            <section className="mb-8">
+              <h2 className="mb-3.5 text-xl text-primary-dark">{t.detail.excluded}</h2>
+              <ul className="grid gap-x-7 gap-y-3 sm:grid-cols-2">
+                {pkg.exclusions.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 font-medium">
+                    <CloseIcon className="mt-1 size-[19px] shrink-0 text-danger" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           {pkg.itinerary.length > 0 && (
             <section className="mb-8">
               <h2 className="mb-2 text-xl text-primary-dark">{t.detail.itinerary}</h2>
@@ -247,45 +259,31 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
             </section>
           )}
 
-          {prices && (
+          {prices.length > 0 && (
             <section id="prices" className="scroll-mt-6">
               <h2 className="mb-3.5 text-xl text-primary-dark">{t.prices.heading}</h2>
               <div className="overflow-x-auto rounded-xl border border-line bg-white">
                 <table className="w-full text-left">
                   <thead className="bg-primary-pale">
-                    <tr>
-                      <th scope="col" className="px-3 py-3 sm:px-5">
-                        <span className="sr-only">{t.prices.traveller}</span>
+                    <tr className="text-[15px] font-bold text-primary-dark">
+                      <th scope="col" className="px-4 py-3 sm:px-5">
+                        {t.prices.type}
                       </th>
-                      {prices.rooms.map((room) => (
-                        <th
-                          key={room.key}
-                          scope="col"
-                          className="px-3 py-3 text-right text-[15px] font-bold text-primary-dark sm:px-5"
-                        >
-                          {t.prices.rooms[room.key].label}
-                          <span className="block text-[13px] font-medium text-muted">{t.prices.rooms[room.key].hint}</span>
-                        </th>
-                      ))}
+                      <th scope="col" className="px-4 py-3 text-right sm:px-5">
+                        {t.prices.price}
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-line">
-                    {prices.rows.map((row) => (
-                      <tr key={row.key}>
-                        <th scope="row" className="px-3 py-3.5 font-semibold sm:px-5">
-                          {t.prices.travellers[row.key]}
+                    {prices.map((p) => (
+                      <tr key={p.type}>
+                        <th scope="row" className="px-4 py-3.5 font-semibold sm:px-5">
+                          {t.prices.types[p.type].label}
+                          <span className="block text-[15px] font-normal text-muted">{t.prices.types[p.type].hint}</span>
                         </th>
-                        {row.amounts.map((amount, i) => (
-                          <td key={prices.rooms[i].key} className="px-3 py-3.5 text-right whitespace-nowrap sm:px-5">
-                            {amount !== null ? (
-                              <span className="font-heading text-lg font-bold text-primary-dark">
-                                {formatPrice(amount)}
-                              </span>
-                            ) : (
-                              <span className="text-muted">{t.prices.askUs}</span>
-                            )}
-                          </td>
-                        ))}
+                        <td className="px-4 py-3.5 text-right whitespace-nowrap sm:px-5">
+                          <span className="font-heading text-lg font-bold text-primary-dark">{formatPrice(p.amount)}</span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
