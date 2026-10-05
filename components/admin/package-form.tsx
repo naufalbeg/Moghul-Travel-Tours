@@ -5,7 +5,7 @@ import { useEffect, useState, useTransition, type ReactNode } from "react";
 import { savePackage } from "@/app/admin/(portal)/packages/actions";
 import { PackageImageField, type ImageItem } from "@/components/admin/package-image-field";
 import { Alert } from "@/components/ui/alert";
-import { AlertCircleIcon } from "@/components/ui/icons";
+import { AlertCircleIcon, LockIcon } from "@/components/ui/icons";
 import type { DepartureAvailability, PackageAvailability, PackageCategory } from "@/generated/prisma/enums";
 import { formatPrice } from "@/lib/format";
 import { CATEGORY_LABEL, DEPARTURE_AVAILABILITY, PACKAGE_AVAILABILITY } from "@/lib/package-labels";
@@ -32,6 +32,8 @@ export type PackageFormState = {
   highlights: string;
   inclusions: string;
   exclusions: string;
+  /** Admins only, never on the website (e.g. "Suka Travels package"). */
+  adminNote: string;
   durationDays: string;
   durationNights: string;
   /** Price per person in RM for each price type, as typed; blank = not offered. */
@@ -52,6 +54,7 @@ const emptyPackageForm = (): PackageFormState => ({
   highlights: "",
   inclusions: "",
   exclusions: "",
+  adminNote: "",
   durationDays: "",
   durationNights: "",
   prices: buildPriceList(() => ""),
@@ -79,6 +82,7 @@ function toInput(s: PackageFormState): PackageInput {
     highlights: toLines(s.highlights),
     inclusions: toLines(s.inclusions),
     exclusions: toLines(s.exclusions),
+    adminNote: s.adminNote,
     durationDays: toNumber(s.durationDays),
     durationNights: toNumber(s.durationNights),
     prices: buildPriceList((type) => toNumber(s.prices[type])),
@@ -375,6 +379,27 @@ export function PackageForm({
                 ))}
               </div>
             </fieldset>
+
+            <div className="mt-5 rounded-[10px] bg-canvas p-4">
+              <label htmlFor="adminNote" className="mb-1 flex items-center gap-1.5 text-sm font-semibold">
+                <LockIcon className="size-3.5 shrink-0 text-muted" />
+                Admin note
+              </label>
+              <p id="adminNote-hint" className="mb-2 text-[13px] text-muted">
+                Only admins see this — it never appears on the website. Shown beside Delete in the package list.
+              </p>
+              <textarea
+                id="adminNote"
+                rows={2}
+                value={state.adminNote}
+                onChange={(e) => update("adminNote", e.target.value)}
+                placeholder="e.g. Our own package / Suka Travels package"
+                aria-invalid={Boolean(err("adminNote"))}
+                aria-describedby={describedBy("adminNote") ?? "adminNote-hint"}
+                className={`${inputClass(err("adminNote"))} resize-y field-sizing-content`}
+              />
+              <FieldError id="adminNote-error" message={err("adminNote")} />
+            </div>
           </Section>
 
           <Section title="Description" hint="A short overview shown at the top of the package page.">

@@ -105,6 +105,9 @@ model Package {
   inclusions     String[]            @default([])
   // Shown under "Not included" on the detail page.
   exclusions     String[]            @default([])
+  // Admins only, never on the website — e.g. whose package it is (Moghul's
+  // own or a partner's, like Suka Travels). Shown beside Delete in the list.
+  adminNote      String              @default("") @map("admin_note")
   durationDays   Int?                @map("duration_days") @db.SmallInt
   durationNights Int?                @map("duration_nights") @db.SmallInt
   status         PackageStatus       @default(DRAFT)

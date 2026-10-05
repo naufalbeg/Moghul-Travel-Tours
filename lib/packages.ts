@@ -111,6 +111,7 @@ export const getPublishedPackage = cache(async (slug: string) => {
 
   const pkg = await prisma.package.findFirst({
     where: { ...PUBLIC, slug },
+    omit: { adminNote: true }, // admins only — never load it for visitors
     include: {
       images: { orderBy: primaryImageFirst, select: { id: true, url: true } },
       itinerary: { orderBy: [{ sortOrder: "asc" }, { dayStart: "asc" }] },

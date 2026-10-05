@@ -33,6 +33,7 @@ export const packageSchema = z.object({
   highlights: z.array(line).max(6, "Up to 6 highlights."),
   inclusions: z.array(line).max(20, "Up to 20 items."),
   exclusions: z.array(line).max(20, "Up to 20 items."),
+  adminNote: z.string().trim().max(300, "Keep the note under 300 characters."),
   durationDays: z.int("Enter whole days.").min(1).max(90).nullable(),
   durationNights: z.int("Enter whole nights.").min(0).max(90).nullable(),
   // Every price type, null when not offered (an exhaustive record).

@@ -32,6 +32,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
       title: true,
       category: true,
       prices: { select: { type: true, amount: true } },
+      adminNote: true,
       status: true,
       availability: true,
       images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1, select: { url: true } },
@@ -79,7 +80,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-line bg-white">
-          <table className="w-full min-w-[760px] border-collapse text-left">
+          <table className="w-full min-w-[920px] border-collapse text-left">
             <thead>
               <tr className="border-b border-line bg-canvas text-[13px] font-bold tracking-wide text-muted">
                 <th scope="col" className="px-5 py-4">Package</th>
@@ -87,6 +88,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
                 <th scope="col" className="px-5 py-4">Status</th>
                 <th scope="col" className="px-5 py-4">Departures</th>
                 <th scope="col" className="px-5 py-4">Actions</th>
+                <th scope="col" className="px-5 py-4">Admin note</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
@@ -155,6 +157,16 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
                         )}
                         <DeletePackageButton id={pkg.id} title={pkg.title} />
                       </div>
+                    </td>
+                    {/* Admins only (e.g. our own package or Suka Travels') — never on the website. */}
+                    <td className="px-5 py-4 text-sm">
+                      {pkg.adminNote ? (
+                        <p className="max-w-60 rounded-md bg-accent-pale px-2.5 py-1.5 break-words whitespace-pre-line text-ink">
+                          {pkg.adminNote}
+                        </p>
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )}
                     </td>
                   </tr>
                 );

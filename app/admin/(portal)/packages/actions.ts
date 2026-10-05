@@ -112,6 +112,7 @@ export async function savePackage(
     highlights: v.highlights,
     inclusions: v.inclusions,
     exclusions: v.exclusions,
+    adminNote: v.adminNote,
     durationDays: v.durationDays,
     durationNights: v.durationNights,
     availability: v.availability,

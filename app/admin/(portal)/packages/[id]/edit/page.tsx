@@ -33,6 +33,7 @@ export default async function EditPackagePage({ params }: PageProps<"/admin/pack
     highlights: pkg.highlights.join("\n"),
     inclusions: pkg.inclusions.join("\n"),
     exclusions: pkg.exclusions.join("\n"),
+    adminNote: pkg.adminNote,
     durationDays: pkg.durationDays?.toString() ?? "",
     durationNights: pkg.durationNights?.toString() ?? "",
     prices: buildPriceList(priceOf),
