@@ -5,7 +5,7 @@ import { z } from "zod";
 import { ConfirmActionButton } from "@/components/admin/confirm-action-button";
 import { centeredPage } from "@/components/admin/field";
 import { InquiryStatusControl } from "@/components/admin/inquiry-status-control";
-import { MailIcon, PhoneIcon, TrashIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { LockIcon, MailIcon, PhoneIcon, TrashIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { requireAdmin } from "@/lib/auth";
 import { formatPrice, formatTripDates } from "@/lib/format";
 import { INQUIRY_KIND, INQUIRY_STATUS, formatReceived } from "@/lib/inquiry-labels";
@@ -23,7 +23,7 @@ export default async function InquiryDetailPage({ params }: PageProps<"/admin/in
   if (!z.uuid().safeParse(id).success) notFound();
   const q = await prisma.inquiry.findUnique({
     where: { id },
-    include: { package: { select: { slug: true, durationDays: true, deletedAt: true, status: true } } },
+    include: { package: { select: { slug: true, durationDays: true, deletedAt: true, status: true, adminNote: true } } },
   });
   if (!q) notFound();
 
@@ -66,6 +66,18 @@ export default async function InquiryDetailPage({ params }: PageProps<"/admin/in
                 pkg
               )}
             </dd>
+            {/* The package's admins-only note (e.g. "Suka Travels package"), as it reads now. */}
+            {q.package?.adminNote && (
+              <>
+                <dt className="text-muted">Admin note</dt>
+                <dd>
+                  <span className="inline-flex items-start gap-1.5 rounded-md bg-accent-pale px-2.5 py-1.5 break-words whitespace-pre-line">
+                    <LockIcon className="mt-1 size-3.5 shrink-0 text-muted" />
+                    {q.package.adminNote}
+                  </span>
+                </dd>
+              </>
+            )}
             <dt className="text-muted">Phone</dt>
             <dd className="font-semibold">{q.phone}</dd>
             <dt className="text-muted">Email</dt>

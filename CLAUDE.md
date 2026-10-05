@@ -470,7 +470,9 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   2026-10-06): an admins-only note — mainly whose package it is, Moghul's
   own or a partner's like Suka Travels. Edited in "Basic details" (grey box
   with a lock icon), shown in the package list's last column, right beside
-  Delete. Never public: public queries `select` their fields, and
+  Delete, and under "Package" on a booking request's page in Inquiries
+  (the note as it reads now; plain inquiries have no package link, so
+  none). Never public: public queries `select` their fields, and
   getPublishedPackage (the one `include`) has `omit: { adminNote: true }` —
   keep it that way in any new public query.
 - Audit actions: CREATE_PACKAGE, UPDATE_PACKAGE, PUBLISH_PACKAGE,
