@@ -349,7 +349,12 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   `<key>_en` — blank = English visitors see the Malay text. The editor
   shows them as "— Bahasa Melayu" / "— English" pairs (`bilingual()`).
 - Missing keys fall back to SITE_CONTENT_DEFAULTS; empty optional fields
-  (mobile, alt email, MATTA, social links) are hidden on the site.
+  (mobile, alt email, MATTA / MITA / PAPUH, social links) are hidden on the site.
+- Membership numbers (footer badges + About "Licensed & registered"):
+  MOTAC licence, company reg., MATTA (MA 5895, set by the owner), MITA
+  (default A924) and PAPUH (default PP 276) — owner, 2026-10-06. No fax
+  anywhere (the office line is gone; `phone` currently holds the mobile
+  number, same as WhatsApp — owner's explanation, leave it).
 - Admin editor: /admin/content → updateSiteContent (writes only changed
   keys, audit action UPDATE_CONTENT). Validation in
   lib/validation/site-content.ts (Malaysian phone, https:// links).

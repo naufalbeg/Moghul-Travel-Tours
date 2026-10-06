@@ -48,6 +48,8 @@ export const siteContentSchema = z.object({
   motac_license: required(40),
   company_reg: required(40),
   matta_member: z.string().trim().max(40),
+  mita_member: z.string().trim().max(40),
+  papuh_member: z.string().trim().max(40),
   facebook_url: optionalUrl,
   instagram_url: optionalUrl,
   tiktok_url: optionalUrl,

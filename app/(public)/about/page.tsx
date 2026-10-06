@@ -20,6 +20,8 @@ export default async function AboutPage() {
     fmt(t.about.motac, { value: content.motac_license }),
     fmt(t.about.companyReg, { value: content.company_reg }),
     content.matta_member && fmt(t.about.matta, { value: content.matta_member }),
+    content.mita_member && fmt(t.about.mita, { value: content.mita_member }),
+    content.papuh_member && fmt(t.about.papuh, { value: content.papuh_member }),
     t.about.basedIn,
   ].filter(Boolean) as string[];
 

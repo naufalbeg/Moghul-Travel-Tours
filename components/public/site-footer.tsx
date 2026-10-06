@@ -40,7 +40,7 @@ export async function SiteFooter({ content }: { content: SiteContent }) {
             ))}
           </p>
           <p>
-            {t.footer.telFax}:{" "}
+            {t.footer.tel}:{" "}
             <a href={telHref(content.phone)} className="underline-offset-4 hover:underline">
               {content.phone}
             </a>
@@ -91,6 +91,8 @@ export async function SiteFooter({ content }: { content: SiteContent }) {
           <span className={badge}>{fmt(t.footer.motac, { value: content.motac_license })}</span>
           <span className={badge}>{fmt(t.footer.companyReg, { value: content.company_reg })}</span>
           {content.matta_member && <span className={badge}>{fmt(t.footer.matta, { value: content.matta_member })}</span>}
+          {content.mita_member && <span className={badge}>{fmt(t.footer.mita, { value: content.mita_member })}</span>}
+          {content.papuh_member && <span className={badge}>{fmt(t.footer.papuh, { value: content.papuh_member })}</span>}
           <Link href="/contact" className="mt-2 text-sm font-semibold text-white/85 underline-offset-4 hover:underline">
             {t.footer.contactLink}
           </Link>

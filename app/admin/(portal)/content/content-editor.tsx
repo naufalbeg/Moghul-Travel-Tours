@@ -66,7 +66,7 @@ const SECTIONS: { title: string; hint: string; preview?: string; fields: Field[]
     preview: "/contact",
     fields: [
       { key: "address", label: "Office address", kind: "textarea", rows: 3, hint: "Put each line of the address on its own line. The map uses this address." },
-      { key: "phone", label: "Office phone (tel/fax)", kind: "tel", placeholder: "03-5888 3401" },
+      { key: "phone", label: "Office phone", kind: "tel", placeholder: "03-5888 3401" },
       { key: "mobile", label: "Mobile", kind: "tel", placeholder: "012-588 5590" },
       { key: "whatsapp", label: "WhatsApp number", kind: "tel", placeholder: "012-588 5590", hint: "Every WhatsApp button on the site opens a chat with this number." },
       { key: "email", label: "Main email", kind: "email" },
@@ -103,6 +103,8 @@ const SECTIONS: { title: string; hint: string; preview?: string; fields: Field[]
       { key: "motac_license", label: "MOTAC licence number", placeholder: "KPK/LN 9109" },
       { key: "company_reg", label: "Company registration number", placeholder: "1273862-K" },
       { key: "matta_member", label: "MATTA membership number", hint: "Leave blank if not a MATTA member." },
+      { key: "mita_member", label: "MITA membership number", placeholder: "A924", hint: "Leave blank if not a MITA member." },
+      { key: "papuh_member", label: "PAPUH membership number", placeholder: "PP 276", hint: "Leave blank if not a PAPUH member." },
     ],
   },
   {
