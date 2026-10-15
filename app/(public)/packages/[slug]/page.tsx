@@ -210,6 +210,22 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
             <p className="leading-relaxed whitespace-pre-line text-muted">{pkg.description}</p>
           </section>
 
+          {pkg.highlights.length > 0 && (
+            <section className="mb-8">
+              <h2 className="mb-3.5 text-xl text-primary-dark">{t.detail.highlights}</h2>
+              <ul className="space-y-2.5">
+                {pkg.highlights.map((item, i) => (
+                  <li
+                    key={i}
+                    className="relative pl-5 leading-relaxed before:absolute before:left-0.5 before:font-bold before:text-accent before:content-['•']"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           {pkg.inclusions.length > 0 && (
             <section className="mb-8">
               <h2 className="mb-3.5 text-xl text-primary-dark">{t.detail.included}</h2>

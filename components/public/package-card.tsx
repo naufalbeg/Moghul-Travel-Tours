@@ -56,7 +56,7 @@ export async function PackageCard({ pkg }: { pkg: PackageCardData }) {
               {pkg.highlights.slice(0, 3).map((h) => (
                 <li
                   key={h}
-                  className="relative pl-4 text-[15px] leading-snug text-muted before:absolute before:left-0 before:text-accent before:content-['•']"
+                  className="relative line-clamp-2 pl-4 text-[15px] leading-snug text-muted before:absolute before:left-0 before:text-accent before:content-['•']"
                 >
                   {h}
                 </li>

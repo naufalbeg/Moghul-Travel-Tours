@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, useTransition, type ReactNode } from "react";
 import { savePackage } from "@/app/admin/(portal)/packages/actions";
 import { PackageImageField, type ImageItem } from "@/components/admin/package-image-field";
+import { PointListField } from "@/components/admin/point-list-field";
 import { Alert } from "@/components/ui/alert";
 import { AlertCircleIcon, LockIcon } from "@/components/ui/icons";
 import type { DepartureAvailability, PackageAvailability, PackageCategory } from "@/generated/prisma/enums";
@@ -14,6 +15,8 @@ import {
   AVAILABILITIES,
   CATEGORIES,
   DEPARTURE_AVAILABILITIES,
+  MAX_HIGHLIGHTS,
+  MAX_LIST_POINTS,
   slugify,
   validatePackage,
   type FieldErrors,
@@ -29,9 +32,10 @@ export type PackageFormState = {
   slug: string;
   category: PackageCategory;
   description: string;
-  highlights: string;
-  inclusions: string;
-  exclusions: string;
+  /** One string per point, as typed (blank points are dropped on save). */
+  highlights: string[];
+  inclusions: string[];
+  exclusions: string[];
   /** Admins only, never on the website (e.g. "Suka Travels package"). */
   adminNote: string;
   durationDays: string;
@@ -51,9 +55,9 @@ const emptyPackageForm = (): PackageFormState => ({
   slug: "",
   category: "UMRAH_ZIARAH",
   description: "",
-  highlights: "",
-  inclusions: "",
-  exclusions: "",
+  highlights: [],
+  inclusions: [],
+  exclusions: [],
   adminNote: "",
   durationDays: "",
   durationNights: "",
@@ -66,11 +70,7 @@ const emptyPackageForm = (): PackageFormState => ({
 });
 
 const toNumber = (s: string) => (s.trim() === "" ? null : Number(s));
-const toLines = (s: string) =>
-  s
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean);
+const toPoints = (points: string[]) => points.map((p) => p.trim()).filter(Boolean);
 
 /** Converts form state to the shape savePackage validates. Blank rows are dropped. */
 function toInput(s: PackageFormState): PackageInput {
@@ -79,9 +79,9 @@ function toInput(s: PackageFormState): PackageInput {
     slug: s.slug,
     category: s.category,
     description: s.description,
-    highlights: toLines(s.highlights),
-    inclusions: toLines(s.inclusions),
-    exclusions: toLines(s.exclusions),
+    highlights: toPoints(s.highlights),
+    inclusions: toPoints(s.inclusions),
+    exclusions: toPoints(s.exclusions),
     adminNote: s.adminNote,
     durationDays: toNumber(s.durationDays),
     durationNights: toNumber(s.durationNights),
@@ -418,50 +418,35 @@ export function PackageForm({
 
             <div className="mt-5 grid gap-5 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label htmlFor="highlights" className="mb-2 block text-sm font-semibold">
-                  Highlights <span className="font-normal text-muted">(one per line, shown on cards)</span>
-                </label>
-                <textarea
+                <PointListField
                   id="highlights"
-                  value={state.highlights}
-                  onChange={(e) => update("highlights", e.target.value)}
-                  rows={4}
-                  placeholder={"Makkah & Madinah, 4-star hotels\nExperienced group leader"}
-                  aria-describedby={describedBy("highlights")}
-                  className={`${inputClass(err("highlights"))} resize-y`}
+                  label="Highlights"
+                  hint="The first 3 show on package cards; all of them show on the package page."
+                  items={state.highlights}
+                  onChange={(items) => update("highlights", items)}
+                  max={MAX_HIGHLIGHTS}
+                  placeholder="Makkah & Madinah, 4-star hotels"
+                  errors={errors}
                 />
-                <FieldError id="highlights-error" message={err("highlights")} />
               </div>
-              <div>
-                <label htmlFor="inclusions" className="mb-2 block text-sm font-semibold">
-                  What&apos;s included <span className="font-normal text-muted">(one per line)</span>
-                </label>
-                <textarea
-                  id="inclusions"
-                  value={state.inclusions}
-                  onChange={(e) => update("inclusions", e.target.value)}
-                  rows={4}
-                  placeholder={"Return flights from Kuala Lumpur\nVisa processing"}
-                  aria-describedby={describedBy("inclusions")}
-                  className={`${inputClass(err("inclusions"))} resize-y`}
-                />
-                <FieldError id="inclusions-error" message={err("inclusions")} />
-              </div>
-              <div>
-                <label htmlFor="exclusions" className="mb-2 block text-sm font-semibold">
-                  Not included <span className="font-normal text-muted">(one per line)</span>
-                </label>
-                <textarea
-                  id="exclusions"
-                  value={state.exclusions}
-                  onChange={(e) => update("exclusions", e.target.value)}
-                  rows={4}
-                  placeholder={"Travel insurance\nTipping for guide and driver"}
-                  aria-describedby={describedBy("exclusions")}
-                  className={`${inputClass(err("exclusions"))} resize-y`}
-                />
-                <FieldError id="exclusions-error" message={err("exclusions")} />
-              </div>
+              <PointListField
+                id="inclusions"
+                label="What's included"
+                items={state.inclusions}
+                onChange={(items) => update("inclusions", items)}
+                max={MAX_LIST_POINTS}
+                placeholder="Return flights from Kuala Lumpur"
+                errors={errors}
+              />
+              <PointListField
+                id="exclusions"
+                label="Not included"
+                items={state.exclusions}
+                onChange={(items) => update("exclusions", items)}
+                max={MAX_LIST_POINTS}
+                placeholder="Travel insurance"
+                errors={errors}
+              />
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-5 sm:grid-cols-[9rem_9rem]">

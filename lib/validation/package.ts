@@ -9,7 +9,12 @@ export const CATEGORIES = ["UMRAH_ZIARAH", "OUTBOUND", "INBOUND", "CRUISE"] as c
 export const AVAILABILITIES = ["OPEN", "ALMOST_FULL", "FULL", "COMING_SOON"] as const;
 export const DEPARTURE_AVAILABILITIES = ["OPEN", "ALMOST_FULL", "FULL"] as const;
 
-const line = z.string().trim().min(1).max(200);
+export const MAX_HIGHLIGHTS = 15;
+/** Limit for "What's included" and "Not included". */
+export const MAX_LIST_POINTS = 20;
+
+/** One point in a list; it may wrap over several lines. */
+const point = z.string().trim().min(1).max(500, "Keep each point under 500 characters.");
 
 /** A price per person in RM; null = not offered. */
 const price = z
@@ -30,9 +35,9 @@ export const packageSchema = z.object({
     .regex(/^([a-z0-9]+(-[a-z0-9]+)*)?$/, "Use lowercase letters, numbers and single dashes only."),
   category: z.enum(CATEGORIES, "Choose a category."),
   description: z.string().trim().max(5000, "Keep the description under 5,000 characters."),
-  highlights: z.array(line).max(6, "Up to 6 highlights."),
-  inclusions: z.array(line).max(20, "Up to 20 items."),
-  exclusions: z.array(line).max(20, "Up to 20 items."),
+  highlights: z.array(point).max(MAX_HIGHLIGHTS, `Up to ${MAX_HIGHLIGHTS} highlights.`),
+  inclusions: z.array(point).max(MAX_LIST_POINTS, `Up to ${MAX_LIST_POINTS} points.`),
+  exclusions: z.array(point).max(MAX_LIST_POINTS, `Up to ${MAX_LIST_POINTS} points.`),
   adminNote: z.string().trim().max(300, "Keep the note under 300 characters."),
   durationDays: z.int("Enter whole days.").min(1).max(90).nullable(),
   durationNights: z.int("Enter whole nights.").min(0).max(90).nullable(),

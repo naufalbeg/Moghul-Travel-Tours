@@ -468,6 +468,15 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   canvas works) and swaps its path once the new upload succeeds.
 - Public package page: components/public/package-gallery.tsx — a sliding
   strip with ← → buttons, swipe, arrow keys and thumbnails; no auto-advance.
+- Highlights / What's included / Not included use `PointListField`
+  (components/admin/point-list-field.tsx; owner's request 2026-10-16): one
+  auto-growing box per point, so a point can wrap over several lines. Enter
+  = new point, Backspace at the start joins it to the one above, pasting
+  several lines (bullets stripped) makes one point each. Limits: 15
+  highlights, 20 included / not included, 500 chars per point
+  (lib/validation/package.ts); per-point errors show on that point. Cards
+  show the first 3 highlights (2 lines each); the package page shows them all
+  under "Tarikan utama".
 - Saving replaces itinerary/departure/image rows wholesale in a transaction;
   photos removed in an edit are deleted from Storage. Soft-deleted packages
   keep their photos.

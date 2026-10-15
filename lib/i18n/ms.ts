@@ -181,6 +181,7 @@ export const ms = {
     orCall: "Atau hubungi {phone}",
     trust: "Berlesen MOTAC ({licence}) — lebih sedekad membawa pelancong Malaysia ke destinasi impian.",
     about: "Tentang pakej ini",
+    highlights: "Tarikan utama",
     included: "Termasuk dalam pakej",
     excluded: "Tidak termasuk",
     itinerary: "Itinerari",

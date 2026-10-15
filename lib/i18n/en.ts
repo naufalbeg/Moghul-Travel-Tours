@@ -170,6 +170,7 @@ export const en: Dictionary = {
     orCall: "Or call {phone}",
     trust: "MOTAC licensed ({licence}) — over a decade of guiding Malaysian travellers.",
     about: "About this package",
+    highlights: "Highlights",
     included: "What's included",
     excluded: "Not included",
     itinerary: "Itinerary",
