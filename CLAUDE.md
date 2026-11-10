@@ -551,7 +551,12 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   accessibility, seo, web-design-guidelines, transitions-dev,
   transitions-polish, supabase-postgres-best-practices, webapp-testing
   (Python Playwright) and pick-ui-library (manual only). Added 2026-11-11
-  from `Documents\MOGHULTT\moghul-skills`.
+  from `Documents\MOGHULTT\moghul-skills`. Also ui-ux-pro-max (local Python
+  search over style/palette/font/UX data:
+  `python .claude/skills/ui-ux-pro-max/scripts/search.py "<query>" --domain ux`)
+  and banner-design (HTML/CSS social and ad banners), from the same folder's
+  `ui-ux-pro-max-skill-main` download; its other five sub-skills (ui-styling
+  = shadcn, slides, design, brand, design-system) were left out on purpose.
 - This file wins over their generic advice: the mockups and design tokens,
   the older-audience rules (17px body, large targets, no auto-advance), the
   ~350ms page slide, and the security model — RLS on with NO policies and

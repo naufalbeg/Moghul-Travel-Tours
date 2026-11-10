@@ -1,3 +1,8 @@
 # Shell scripts must keep LF endings even on Windows checkouts (core.autocrlf),
 # or sh fails on the stray carriage returns.
 .claude/skills/impeccable/scripts/impeccable text eol=lf
+
+# ui-ux-pro-max records sha256 hashes of its data and scripts (as upstream
+# pins them), so keep the exact LF bytes.
+.claude/skills/ui-ux-pro-max/data/** text eol=lf
+.claude/skills/ui-ux-pro-max/scripts/** text eol=lf
