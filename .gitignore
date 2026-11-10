@@ -43,3 +43,8 @@ next-env.d.ts
 /generated/prisma
 
 .vercel
+
+# transitions.dev skills: their license forbids publishing the collection and
+# this repo is public, so they stay local (copy from Documents\MOGHULTT\moghul-skills)
+/.claude/skills/transitions-dev/
+/.claude/skills/transitions-polish/

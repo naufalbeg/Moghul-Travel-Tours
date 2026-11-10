@@ -545,3 +545,21 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   Prisma-touching functions (e.g. `PackageController`-equivalent logic in
   `app/api/admin/packages/route.ts`) — makes it easy to trace an endpoint
   back to its SDD Detail Design entry if behavior is ever in question
+
+## Project skills (.claude/skills)
+- Besides the prisma-* skills: impeccable (UI design/critique/polish),
+  accessibility, seo, web-design-guidelines, transitions-dev,
+  transitions-polish, supabase-postgres-best-practices, webapp-testing
+  (Python Playwright) and pick-ui-library (manual only). Added 2026-11-11
+  from `Documents\MOGHULTT\moghul-skills`.
+- This file wins over their generic advice: the mockups and design tokens,
+  the older-audience rules (17px body, large targets, no auto-advance), the
+  ~350ms page slide, and the security model — RLS on with NO policies and
+  all data through Prisma, so don't add policies or use the Data API because
+  a Supabase skill suggests it. impeccable looks for PRODUCT.md / DESIGN.md
+  (none exist; this file is the brief).
+- transitions-dev / transitions-polish are gitignored (their license forbids
+  publishing the collection; this repo is public) — on another machine copy
+  them in by hand from the folder above.
+- impeccable downloads its engine from github.com/pbakaus/impeccable releases
+  on first use (checksum-verified, cached in ~/.impeccable).
