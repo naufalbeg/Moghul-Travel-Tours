@@ -5,4 +5,5 @@
 # ui-ux-pro-max records sha256 hashes of its data and scripts (as upstream
 # pins them), so keep the exact LF bytes.
 .claude/skills/ui-ux-pro-max/data/** text eol=lf
-.claude/skills/ui-ux-pro-max/scripts/** text eol=lf
+.claude/skills/ui-ux-pro-max/scripts/**/*.py text eol=lf
+.claude/skills/ui-ux-pro-max/scripts/**/*.json text eol=lf

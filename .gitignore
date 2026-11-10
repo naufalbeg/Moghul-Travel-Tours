@@ -48,3 +48,6 @@ next-env.d.ts
 # this repo is public, so they stay local (copy from Documents\MOGHULTT\moghul-skills)
 /.claude/skills/transitions-dev/
 /.claude/skills/transitions-polish/
+
+# Python bytecode from running skill scripts
+__pycache__/
