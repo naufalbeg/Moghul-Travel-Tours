@@ -166,6 +166,10 @@ by Admin after a confirmed booking, never published on the site).
   validation errors — these are pixel-accurate references for matching
   styling, not just inspiration. Mockups for modules 3–7 don't exist yet;
   follow the same visual language.
+- A public-site redesign is being considered (see "Homepage redesign" near
+  the end). Until the owner approves it, everything above still holds.
+  Naufal's design / security / legal checklists are in "Quality checklists"
+  at the very end — use them when relevant.
 - SRS and SDD PDFs are in `Documentation MTT WEB/`
 
 ## Project structure
@@ -305,6 +309,12 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 10. Remaining: verify moghultt.com in Resend (DNS records from the domain
     manager), then set EMAIL_FROM on Vercel so invite/reset emails reach any
     address. Later: point moghultt.com at Vercel.
+11. Homepage redesign — mockup v6 done 2026-11-11, waiting on a second
+    opinion before anything is built (see "Homepage redesign").
+12. Contrast fix on the live site, worth doing whatever happens to the
+    redesign: white text on the orange buttons (`bg-accent`, #F07C1E) is
+    2.9:1 and on the WhatsApp green (#1f9d55) 3.5:1 — both fail WCAG AA.
+    The mockup uses ink text on orange (5.5:1) and green #15803D (5.0:1).
 
 ## Languages (Malay-first, BM | EN switch)
 - Modelled on jomventures.my: Malay for every visitor by default (not
@@ -545,6 +555,11 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   Prisma-touching functions (e.g. `PackageController`-equivalent logic in
   `app/api/admin/packages/route.ts`) — makes it easy to trace an endpoint
   back to its SDD Detail Design entry if behavior is ever in question
+- Images are served unoptimized (`images.unoptimized: true` in
+  next.config.ts, 2026-11-03): the Vercel Hobby image-optimization quota ran
+  out and every image then returned 402. Uploads are already cropped and
+  resized in the browser, so little is lost — don't switch it back on
+  without a paid plan.
 
 ## Project skills (.claude/skills)
 - Besides the prisma-* skills: impeccable (UI design/critique/polish),
@@ -561,10 +576,287 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   the older-audience rules (17px body, large targets, no auto-advance), the
   ~350ms page slide, and the security model — RLS on with NO policies and
   all data through Prisma, so don't add policies or use the Data API because
-  a Supabase skill suggests it. impeccable looks for PRODUCT.md / DESIGN.md
-  (none exist; this file is the brief).
+  a Supabase skill suggests it. impeccable reads PRODUCT.md (product truth
+  for design work: audience, positioning, evidence on hand, written
+  2026-11-11); DESIGN.md comes once a redesign is actually built.
+- webapp-testing / screenshots: `pip install playwright`, then launch with
+  `p.chromium.launch(channel="chrome")` — it drives the installed Chrome, so
+  no `playwright install` browser download is needed. Airbnb blocks headless
+  browsers (blank page); the other reference sites work.
 - transitions-dev / transitions-polish are gitignored (their license forbids
   publishing the collection; this repo is public) — on another machine copy
   them in by hand from the folder above.
 - impeccable downloads its engine from github.com/pbakaus/impeccable releases
   on first use (checksum-verified, cached in ~/.impeccable).
+
+## Homepage redesign (in progress, 2026-11-11)
+- Why: Naufal finds the current public site looks "AI-made / vibe-coded" —
+  specifically the template layout (everything centred, hero → cards →
+  gallery → about) and samey components (identical cards, outline buttons
+  and pills everywhere). Not the colours.
+- Status: `Web Mockups/moghul-homepage-mockup-v6.html` is the current
+  mockup (open it from inside the repo; the logo loads from
+  `../public/brand/`). v3, v4 and v5 are kept beside it for comparison —
+  he said he "really likes how v5 looks", so v6 keeps that look and v5 is
+  the fallback if any v6 change isn't wanted. He is still iterating on the
+  mockup — **don't build it into the Next.js app until he says go.** Other
+  pages (listing, detail, gallery, about, contact) get the same treatment
+  only after the homepage is approved.
+- v3 → v4 (his feedback, 2026-11-11: "pretty good but missing some oomph
+  and refinement"): Pakej pilihan now sits above Berlepas tidak lama lagi;
+  the hero photo became a slideshow of every gallery photo with no "Gambar
+  sebenar" tag; the hero moved onto the brand navy with a white headline
+  whose second phrase is the logo orange, the slideshow running off the
+  right edge of the screen and the search bar overlapping the hero's bottom
+  edge; departure dates became navy calendar tiles. The oomph went into the
+  hero only, on purpose — the rest stays quiet.
+- v4 → v5 (his feedback, 2026-11-11: "i like where this is going", two
+  fixes): the hero photo no longer runs off the right edge of the screen (it
+  read as the page "continuing beyond the webpage") — it sits inside the
+  content column with all four corners rounded; and the hero now shows
+  **package destination photos in random order**, not customer trip photos
+  ("more clean and professional"; the customer photos already have their own
+  band lower down). Also in v5, from the "unslop" checklist below: content
+  column widened 1200 → 1280px so the contained photo stays large; the
+  search bar lost its "Cari trip anda" title and the slideshow its "n /
+  total" counter (redundant labels); buttons nudge down when pressed; the
+  photo frame shows a loading sweep; the footer gained "Dasar privasi" and
+  "Terma & syarat" links (those pages aren't written yet).
+- v5 → v6 (2026-11-11: he asked to run the ten design references in
+  "Quality checklists" against v5). What each one changed:
+  - Animation (Apple): the hero's pieces rise in once on load; blocks ease
+    in once as they are scrolled to (12px, 400ms, staggered 80ms across a
+    row). Set up so nothing can stay hidden: the `reveals` class is only
+    added by a `<head>` script when IntersectionObserver exists and reduced
+    motion is off.
+  - Onboarding (Duolingo): a new section, "Tempah dalam tiga langkah" (pilih
+    pakej dan tarikh → hantar borang tempahan → kami hubungi anda) ending on
+    the booking form's own line "Tiada bayaran dikenakan sehingga tempahan
+    disahkan". Numbers only, no icons. Wording is Claude's — owner to
+    confirm.
+  - UI design (Linear): corner sizes and motion are tokens; the leftover
+    inline styles became classes; the header gains a soft shadow once
+    scrolled.
+  - Typography (Pentagram): eleven text sizes below the headings became
+    seven (`--t-fine` 15 … `--t-display` 28); headline leading tightened
+    (h1 1.05, h2 1.1); `text-wrap: pretty` on paragraphs.
+  - Minimalism (Muji): the line under "Ke mana anda ingin pergi?" was cut.
+    Nothing else could go without losing information.
+  - Search & filters (Airbnb): the search became one bar of three parts
+    (Destinasi | Bulan berlepas | Kategori) and the orange button; each part
+    is the control itself, 76px tall, so a click anywhere on it works. On
+    tablets and phones the parts become filled boxes. Destinasi suggests
+    the places named in the published packages (`<datalist>`). The button
+    shows "Mencari…" with a spinner (simulated in the mockup).
+  - Art direction (Aesop): places open the page, people prove it. The two
+    doors now show places (the Kaabah from the gallery, the Taj Mahal from
+    the Kashmir + Agra + Delhi package) and the Umrah group photo moved
+    down to lead the customer-photo band.
+  - Dashboard (Notion): not applicable to the homepage — it belongs to the
+    admin portal, untouched.
+  - Landing page layout (Stripe): the order already told the story (promise
+    → search → choose → packages → dates → proof → who → contact); the
+    steps section was the one missing piece.
+  - Micro-interactions (Framer): package cards lift under the pointer;
+    departure rows nudge their arrow and brighten the date tile; the
+    slideshow caption dips out and in when the photo changes; the BM | EN
+    pill and header ease between states.
+- How it was chosen: impeccable rolled two directions (a Shah Alam Blue
+  Mosque arcade, a family photo album); he picked the category standard
+  "done properly" instead, benchmarked on jomventures.my, Airbnb,
+  arbatravel.com, ibctours.com and muslimtravelbug.com.
+- Kept: logo blue and orange, Malay-first, older-audience rules. Everything
+  else was open. Lead message: "perjalanan mesra Muslim" as one umbrella
+  over Umrah & Ziarah and holidays abroad.
+- What v6 does, top to bottom: one-line header (logo left, nav, BM | EN,
+  green WhatsApp button with the number); navy hero, left-aligned, beside
+  the package-photo slideshow; search bar; two photo "doors" (Umrah & Ziarah /
+  percutian luar negara) plus link rows for Dalam Negara, Cruise and Pakej
+  Lain; six package cards (category · duration, title, three highlight
+  names, "Bermula dari", next departure; whole card is one link); "Berlepas
+  tidak lama lagi" — a dated list of the next departures; "Tempah dalam
+  tiga langkah" — how booking works; a navy band of
+  real customer trip photos; "who we are" with the About text and all
+  licence numbers; reviews; a contact band; footer. Phones get a WhatsApp |
+  Telefon bar pinned to the bottom instead of the floating bubble.
+- Hero slideshow rules (v5): one photo per published package — its cover
+  (first) photo — shuffled on every visit. The caption under the photo is
+  the package's name, duration and "dari RM X"; it is the link, and its hit
+  area covers the photo, so clicking the photo opens that package. Like the
+  live banner slideshow it fades every 5s, has a Pause/Play button (English,
+  like the banners) and ← → buttons that also stop it, and starts paused for
+  prefers-reduced-motion. It also holds still while the mouse is on the
+  photo or the link has keyboard focus, so the package that opens is the one
+  being looked at. A photo is fetched only when about to show, the fade
+  waits for it to load, and one that fails to load is skipped. The frame is
+  3:2 (package photos are all 16:9, so about 8% is trimmed off each side).
+  When built: shuffle on the server (public pages already render per
+  request) so the first photo arrives with the HTML. The admin controls the
+  homepage simply by choosing each package's cover.
+- Changes from the current design if approved: font becomes Atkinson
+  Hyperlegible Next (built for low-vision readers) instead of Poppins +
+  Inter (load it with next/font, as now — the mockup's Google Fonts link is
+  mockup-only); body 18px; no kicker labels above headings; no ★★★★★
+  decoration; orange buttons take ink text; the homepage's admin-managed
+  banner slideshow is replaced by the package-cover slideshow; "Admin login"
+  moves to the footer.
+- Open decisions before building: whether the hero should stay on cover
+  photos only (v5) or draw on more of each package's photos (111 today, but
+  some are weak for a homepage — a teddy-bear museum, a mall interior — and
+  15 are under 800px wide); how many covers one visit should load once
+  ~50 packages are in; what happens to the "home" banner photos in
+  /admin/banners; where the two door photos come from when built (the
+  admin's per-category banner photos are 3:1 strips, the doors are 3:2);
+  where the Destinasi suggestions come from (packages have no destination
+  field — today they'd have to be derived from titles); the wording of the
+  three booking steps; the privacy and terms pages the footer links to; the
+  live hero title and message both say "dirancang dengan teliti"
+  (copy edit in /admin/content, owner's call); owner/team/office photos to
+  supply; real reviews to collect (the testimonials table is empty — never
+  invent one); the Umrah door says dates are being finalised because no
+  Umrah package is published — when built, it should switch to the package
+  count once there is one.
+- Everything in the mockups is real data from the live site (2026-11-11):
+  14 published packages (111 package photos, all 16:9), all Luar Negara,
+  next departure 20 Nov 2026; 49 gallery photos. Placeholders (owner photo,
+  reviews) are visibly labelled.
+- Checks run on v5 and again on v6: axe WCAG 2.2 (0 violations, run after
+  scrolling so every block is showing), impeccable detector (only
+  false positives: section padding, the photo filling its frame, and the
+  search bar's drop shadow read as a glow), slideshow behaviour test (order
+  differs between visits, caption and link always match the photo, autoplay,
+  hold on hover, pause, arrows, wrap-around, fast clicks, a failed photo is
+  skipped, reduced motion, tab order), screenshots at 1920 / 1440 / 1024 /
+  390px. v6 also: every reveal block shows after scrolling, nothing is
+  hidden with scripts off or with reduced motion, search bar tab order and
+  target heights (76px / 60px), the busy state, card hover, header shadow.
+  v3 also passed the Vercel Web Interface Guidelines; later versions
+  inherit those fixes.
+
+## Quality checklists (Naufal's notes, 2026-11-11)
+Collected by Naufal from software engineers' TikToks and Reels; he asked for
+them to be kept here and used "when relevant and necessary". They are
+prompts for judgement, not rules: where one clashes with this file (the
+older-audience rules, Malay-first, the security model, anything the owner
+asked for), this file wins. The "where this stands" notes are as checked on
+2026-11-11 — re-check before relying on them.
+
+### Design references (borrow the principle, not the look)
+- Animation → apple.com · Onboarding → duolingo.com · UI design →
+  linear.app · Typography → pentagram.com · Minimalism → muji.com · Search &
+  filters → airbnb.com · Art direction → aesop.com · Dashboard → notion.com
+  · Landing page layouts → stripe.com · Micro-interactions → framer.com
+- Where each lands on this site: animation and micro-interactions = the page
+  slides, the slideshows, button and form feedback (always with a
+  reduced-motion fallback; nothing that moves on its own without a Pause);
+  search & filters = the hero search and the /packages pills; landing page
+  layout, typography, minimalism, art direction = the public redesign;
+  dashboard = the admin portal; onboarding = the booking form and a new
+  admin's invite → set password → first login (the public site has no
+  accounts to onboard).
+- What the sites actually do (looked at 2026-11-11 for mockup v6): their
+  headlines are set tight — letter-spacing −0.02 to −0.05em, line-height
+  1.0–1.07 — and not always heavy (Stripe 300, Linear 510, Apple 600);
+  interface motion is short, 150–320ms, on ease-out curves (Apple
+  `cubic-bezier(0.4, 0, 0.6, 1)`, Linear `cubic-bezier(0.32, 0.72, 0, 1)`);
+  Apple puts a Pause button on its own moving hero; Duolingo's first screen
+  is one sentence, one button and one quiet second choice; Airbnb's search
+  is one bar of labelled parts with the button at the end; Stripe and
+  Notion put the proof (logos) straight under the hero. Aesop sits behind
+  a bot check and Muji would not load in a headless browser — don't try to
+  get round either; work from what is generally known of them.
+
+### 20 ways to "unslop" a page
+1. Delete filler badges
+2. Drop redundant labels
+3. Un-italicise random words
+4. Monospace only where needed
+5. Use a design system
+6. Show the actual product
+7. Enlarge the main feature
+8. Group with spacing
+9. Make headlines specific
+10. Emphasise the CTA
+11. Add an accent colour
+12. Keep icons consistent
+13. Remove unnecessary embellishments
+14. Inner radius = outer radius − padding (his note read "Outer Quarter
+    Radius"; taken as the usual nested-corner rule)
+15. Improve text contrast
+16. Wrap headlines properly (`text-wrap: balance`)
+17. Align by eye, not just by pixel size
+18. Use tabular numbers
+19. Add loading states
+20. Animate useful feedback
+- Learned on the mockups: tabular numbers suit columns of dates and prices
+  (the departures list) but made large stand-alone prices look
+  typewritten in Atkinson Hyperlegible, so they're not global. Rule 14 only
+  bites when the padding is smaller than the outer radius (e.g. the phone
+  menu: 14px panel, 8px padding, 6px items).
+
+### Not getting hacked
+1. Check forms for SQL injection
+2. File upload checks
+3. XSS protection
+- Where this stands: every query goes through Prisma and every form input
+  is Zod-validated first; there is no `$queryRaw` / `$executeRaw` anywhere,
+  so there is no hand-built SQL to inject into. Keep it that way — if raw
+  SQL is ever needed, use the tagged-template form, never
+  `$queryRawUnsafe` with joined strings. Uploads only happen through signed
+  URLs issued after `authorize()`, and the buckets enforce JPG/PNG/WEBP
+  ≤5MB (see "Security model"). React escapes everything it renders and
+  there is no `dangerouslySetInnerHTML` — never add one for admin-typed or
+  visitor-typed text. Not done yet: no Content-Security-Policy or other
+  security headers in next.config.ts.
+
+### Not getting sued (his list has 21 points)
+1. Check local laws
+2. Privacy policy
+3. Terms of service
+4. Refund policy
+5. Cookie policy
+6. Cookie consent banner
+7. Check form consent
+8. Audit third-party SDKs
+9. Remove dark patterns
+10. Don't collect unnecessary data
+11. Remove hidden fees
+12. Remove fake reviews
+13. Remove unsupported claims
+14. Accessibility: alt text
+15. Fix colour contrast
+16. Keyboard navigation
+17. Add business details
+18. Age consent for children's data
+19. Unsubscribe link in emails
+20. Licensed fonts and images
+21. A way to request data deletion
+- Where this stands (Claude's reading, not legal advice — the owner should
+  confirm anything that matters):
+  - Missing: there is no privacy policy, terms or refund/cancellation page.
+    The local law is Malaysia's Personal Data Protection Act 2010; the
+    inquiry and booking forms collect names, phone numbers and emails, and
+    the Act expects a written privacy notice in **both Malay and English**.
+    The inquiry form has a one-line note ("Kami hanya akan menggunakan
+    maklumat anda untuk membalas pertanyaan ini"); the booking form has
+    none. The wording of a refund policy is the owner's — never invent one.
+  - Cookies: only functional ones (`lang`, the admin session, hCaptcha on
+    the forms). No analytics or ad pixels, so no consent banner is needed
+    today; adding analytics or a pixel changes that.
+  - Third parties that see visitor data: Vercel (hosting), Supabase
+    (database, photos), Resend (email), hCaptcha, the Google Maps embed. A
+    privacy page should name them. Fonts are self-hosted by next/font.
+  - Already in good shape: no invented reviews (rule above), claims limited
+    to "about a decade" and real licence numbers, "Bermula dari" prices
+    with the "Tidak termasuk" list and price note, company details in the
+    footer, the booking form takes only head-counts for children (no
+    child's personal details), emails are transactional only (no
+    newsletter, so nothing to unsubscribe from).
+  - Open: white-on-orange button contrast on the live site (What's next,
+    item 12); alt text is thin (package cards are decorative `alt=""` next
+    to their title, which is fine; gallery photos only have their tag);
+    where the package photos come from and whether Moghul may use them
+    (they are destination shots, not Moghul's own — this matters more once
+    they lead the homepage); no public way to ask for one's data to be
+    deleted (admins can delete an inquiry once it is resolved) — a privacy
+    page should give a contact for that.
