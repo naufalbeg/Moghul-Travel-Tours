@@ -51,6 +51,9 @@ export const SECURITY_HEADERS = [
   { key: "X-Frame-Options", value: "DENY" },
   // The site uses none of these device features, so no page or embed may ask for them.
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), browsing-topics=()" },
-  // Browsers that have visited once always come back over HTTPS.
-  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
+  // Browsers that have visited once always come back over HTTPS. Deliberately
+  // without includeSubDomains: once the site is on moghultt.com, that would
+  // also force HTTPS on mail., webmail. and the old host's control panel,
+  // which this site does not control.
+  { key: "Strict-Transport-Security", value: "max-age=63072000" },
 ];
