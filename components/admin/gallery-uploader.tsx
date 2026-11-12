@@ -95,7 +95,7 @@ export function GalleryUploader({ existingTags }: { existingTags: string[] }) {
 
   return (
     <section className="mb-8 rounded-xl border border-line bg-white px-5 py-6 sm:px-8">
-      <h3 className="mb-1 text-body">Upload photos</h3>
+      <h2 className="mb-1 text-body">Upload photos</h2>
       <p className="mb-5 text-sm text-muted">Label them first, then choose the photos. Visitors can filter the gallery by label.</p>
 
       {status.kind !== "idle" && status.kind !== "working" && (

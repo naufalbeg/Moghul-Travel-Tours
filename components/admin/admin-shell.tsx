@@ -26,7 +26,7 @@ export function AdminShell({
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-canvas text-meta">
+    <div className="admin flex min-h-screen bg-canvas text-meta">
       {drawerOpen && (
         <div
           className="fixed inset-0 z-30 bg-navy/55 lg:hidden"
@@ -70,10 +70,10 @@ export function AdminShell({
                           href={href}
                           onClick={() => setDrawerOpen(false)}
                           aria-current={active ? "page" : undefined}
-                          className={`flex min-h-11 items-center gap-3 border-l-[3px] px-[22px] py-2.5 transition-colors duration-150 ease-smooth ${
+                          className={`mx-2.5 flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 transition-colors duration-150 ease-smooth ${
                             active
-                              ? "border-accent bg-white/10 font-bold text-white"
-                              : "border-transparent font-medium text-white/82 hover:bg-white/6 hover:text-white"
+                              ? "bg-white/14 font-bold text-white"
+                              : "font-medium text-white/82 hover:bg-white/8 hover:text-white"
                           }`}
                         >
                           <Icon className="size-[19px] shrink-0" />
@@ -118,7 +118,7 @@ export function AdminShell({
             >
               {drawerOpen ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
             </button>
-            <h1 className="text-title font-extrabold text-primary-dark">{titleForPath(pathname)}</h1>
+            <h1 className="text-price font-extrabold text-primary-dark">{titleForPath(pathname)}</h1>
           </div>
 
           <Link

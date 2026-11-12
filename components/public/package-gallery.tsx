@@ -49,7 +49,7 @@ export function PackageGallery({ images, title }: { images: { id: string; url: s
           touchStartX.current = null;
           if (Math.abs(distance) > SWIPE_DISTANCE) go(current + (distance < 0 ? 1 : -1));
         }}
-        className="relative overflow-hidden rounded-2xl bg-linear-135 from-primary-pale to-[#cfe1f2] max-mid:rounded-[16px]"
+        className="relative overflow-hidden rounded-2xl bg-primary-pale max-mid:rounded-[16px]"
       >
         <div
           className="flex transition-transform duration-400 ease-smooth"

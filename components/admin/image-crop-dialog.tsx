@@ -69,7 +69,7 @@ export function ImageCropDialog({
         e.preventDefault();
         onCancel();
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-[880px] rounded-xl p-0 shadow-[0_24px_60px_rgba(13,44,78,0.35)] backdrop:bg-navy/70"
+      className="m-auto w-[calc(100%-2rem)] max-w-[880px] rounded-xl p-0 shadow-dialog backdrop:bg-navy/70"
     >
       {job && (
         <CropStep

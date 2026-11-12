@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { FieldError } from "@/components/admin/field";
+import { PasswordRules } from "@/components/admin/password-rules";
 import { Alert } from "@/components/ui/alert";
 import { PasswordInput } from "@/components/ui/password-input";
-import { PASSWORD_HINT } from "@/lib/validation/password";
 import { setPasswordWithToken, type SetPasswordState } from "./actions";
 
 export function SetPasswordForm({ token, submitLabel }: { token: string; submitLabel: string }) {
@@ -13,6 +13,7 @@ export function SetPasswordForm({ token, submitLabel }: { token: string; submitL
     { status: "idle" },
   );
   const errors = state.status === "error" ? state.fieldErrors : undefined;
+  const [newPassword, setNewPassword] = useState("");
   const input = (error?: string) =>
     `w-full rounded-lg border-[1.5px] px-4 py-3.5 text-base ${
       error ? "border-danger bg-danger-pale" : "border-field"
@@ -32,10 +33,9 @@ export function SetPasswordForm({ token, submitLabel }: { token: string; submitL
           aria-describedby="newPassword-hint"
           aria-invalid={errors?.newPassword ? true : undefined}
           className={input(errors?.newPassword)}
+          onChange={(e) => setNewPassword(e.target.value)}
         />
-        <p id="newPassword-hint" className="mt-1.5 text-sm text-muted">
-          {PASSWORD_HINT}
-        </p>
+        <PasswordRules id="newPassword-hint" value={newPassword} />
         <FieldError id="newPassword-error" message={errors?.newPassword} />
       </div>
       <div>
@@ -54,7 +54,7 @@ export function SetPasswordForm({ token, submitLabel }: { token: string; submitL
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg bg-accent px-5 py-[15px] text-body font-bold text-ink hover:bg-accent-hover disabled:opacity-60"
+        className="w-full rounded-lg bg-accent px-5 py-[15px] text-body font-bold text-ink transition-[background-color,transform] duration-150 ease-smooth hover:bg-accent-hover active:translate-y-px disabled:opacity-60"
       >
         {pending ? "Saving…" : submitLabel}
       </button>

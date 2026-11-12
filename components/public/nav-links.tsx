@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/components/public/i18n-provider";
+import { PendingDim } from "@/components/public/link-pending";
 import { ExternalIcon } from "@/components/ui/icons";
 import { PUBLIC_NAV } from "@/lib/site";
 
@@ -73,7 +74,7 @@ export function NavList({
               aria-current={active ? "page" : undefined}
               className={`${s.base} ${active ? s.active : s.idle}`}
             >
-              {t.nav[key]}
+              <PendingDim>{t.nav[key]}</PendingDim>
             </Link>
           </li>
         );

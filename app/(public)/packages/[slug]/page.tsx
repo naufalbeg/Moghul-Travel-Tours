@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { BookingForm, type BookingDeparture, type BookingOption } from "@/components/public/booking-form";
+import { PackageGrid } from "@/components/public/package-card";
 import { PackageGallery } from "@/components/public/package-gallery";
+import { JsonLd } from "@/components/ui/json-ld";
 import {
   ArrowRightIcon,
   CheckIcon,
@@ -18,9 +20,10 @@ import { fmt } from "@/lib/i18n/config";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { DEPARTURE_AVAILABILITY, PACKAGE_AVAILABILITY, dayLabel, durationLabel } from "@/lib/package-labels";
 import { offeredPrices } from "@/lib/package-prices";
-import { getPublishedPackage } from "@/lib/packages";
+import { getPublishedPackage, listPublishedPackages } from "@/lib/packages";
 import { getPublicContent } from "@/lib/site-config";
 import { inquireHref, telHref } from "@/lib/site-content";
+import { breadcrumbJsonLd, packageJsonLd } from "@/lib/structured-data";
 import { canBookOnline } from "@/lib/validation/booking";
 
 export async function generateMetadata({ params }: PageProps<"/packages/[slug]">): Promise<Metadata> {
@@ -29,6 +32,7 @@ export async function generateMetadata({ params }: PageProps<"/packages/[slug]">
   return {
     title: pkg.title,
     description: pkg.description.slice(0, 160),
+    alternates: { canonical: `/packages/${pkg.slug}` },
     openGraph: { title: pkg.title, images: pkg.images[0] ? [pkg.images[0].url] : undefined },
   };
 }
@@ -38,7 +42,7 @@ const crumb =
 
 function Section({ title, id, children }: { title: string; id?: string; children: ReactNode }) {
   return (
-    <section id={id} className="mb-10">
+    <section id={id} className="reveal mb-10">
       <h2 className="mb-4 text-display font-extrabold text-primary-dark">{title}</h2>
       {children}
     </section>
@@ -86,6 +90,19 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
     hint: t.prices.types[p.type].hint,
     amount: p.amount,
   }));
+  const jumps = [
+    pkg.highlights.length > 0 && { id: "tarikan", label: t.detail.highlights },
+    pkg.inclusions.length > 0 && { id: "termasuk", label: t.detail.included },
+    pkg.itinerary.length > 0 && { id: "itinerari", label: t.detail.itinerary },
+    prices.length > 0 && { id: "prices", label: t.prices.heading },
+    canBook && { id: "tempahan", label: t.client.booking.heading },
+  ].filter(Boolean) as { id: string; label: string }[];
+
+  // Up to three other packages of the same kind, for whoever this one doesn't suit.
+  const related = (await listPublishedPackages({ categories: [pkg.category], take: 4 }))
+    .filter((other) => other.id !== pkg.id)
+    .slice(0, 3);
+
   const bookingDepartures: BookingDeparture[] = pkg.departures.map((d) => ({
     date: d.departureDate.toISOString().slice(0, 10),
     label: formatTripDates(d.departureDate, pkg.durationDays, locale),
@@ -94,6 +111,23 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
 
   return (
     <>
+      <JsonLd
+        data={packageJsonLd({
+          slug: pkg.slug,
+          title: pkg.title,
+          description: pkg.description,
+          imageUrls: pkg.images.map((image) => image.url),
+          fromPrice: pkg.fromPrice,
+          soldOut: pkg.availability === "FULL",
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: t.detail.home, path: "/" },
+          { name: t.detail.packages, path: "/packages" },
+          { name: pkg.title, path: `/packages/${pkg.slug}` },
+        ])}
+      />
       <nav aria-label={t.detail.breadcrumb} className="border-b border-line">
         <ol className="wrap flex flex-wrap items-center gap-x-2 text-fine text-muted">
           <li>
@@ -138,11 +172,17 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
                 {roomsLabel}
               </li>
             )}
-            <li className="flex items-center gap-2">
-              <ShieldIcon strokeWidth={2} className="size-[18px] text-primary" />
-              {t.detail.motacPackage}
-            </li>
           </ul>
+          {/* A long page: let people jump straight to what they came for. */}
+          {jumps.length > 1 && (
+            <nav aria-label={t.detail.jumpLabel} className="mt-4 flex flex-wrap gap-x-5 border-t border-line pt-1">
+              {jumps.map((jump) => (
+                <a key={jump.id} href={`#${jump.id}`} className="text-link inline-flex min-h-11 items-center text-meta">
+                  {jump.label}
+                </a>
+              ))}
+            </nav>
+          )}
         </header>
 
         <aside className="lg:sticky lg:top-[112px] lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
@@ -220,13 +260,13 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
         </aside>
 
         <div className="min-w-0 lg:col-start-1">
-          <Section title={t.detail.about}>
-            <p className="max-w-[70ch] leading-[1.65] whitespace-pre-line">{pkg.description}</p>
+          <Section title={t.detail.about} id="tentang">
+            <p className="max-w-[60ch] leading-[1.65] whitespace-pre-line">{pkg.description}</p>
           </Section>
 
           {pkg.highlights.length > 0 && (
-            <Section title={t.detail.highlights}>
-              <ul className="max-w-[70ch] space-y-2.5">
+            <Section title={t.detail.highlights} id="tarikan">
+              <ul className="max-w-[60ch] space-y-2.5">
                 {pkg.highlights.map((item, i) => (
                   <li
                     key={i}
@@ -240,7 +280,7 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
           )}
 
           {pkg.inclusions.length > 0 && (
-            <Section title={t.detail.included}>
+            <Section title={t.detail.included} id="termasuk">
               <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
                 {pkg.inclusions.map((item) => (
                   <li key={item} className="flex items-start gap-2.5">
@@ -266,7 +306,7 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
           )}
 
           {pkg.itinerary.length > 0 && (
-            <Section title={t.detail.itinerary}>
+            <Section title={t.detail.itinerary} id="itinerari">
               <ol className="border-t border-line">
                 {pkg.itinerary.map((day) => (
                   <li key={day.id} className="flex flex-col gap-2.5 border-b border-line py-5 sm:flex-row sm:gap-5">
@@ -275,7 +315,7 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
                     </span>
                     <div className="min-w-0">
                       <h3 className="mb-1 text-lead tracking-[-0.01em] text-primary-dark">{day.title}</h3>
-                      <p className="max-w-[66ch] whitespace-pre-line text-muted">{day.description}</p>
+                      <p className="max-w-[60ch] whitespace-pre-line text-muted">{day.description}</p>
                     </div>
                   </li>
                 ))}
@@ -314,14 +354,14 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
                   </tbody>
                 </table>
               </div>
-              <p className="mt-3 max-w-[70ch] text-muted">{content.price_note}</p>
+              <p className="mt-3 max-w-[60ch] text-muted">{content.price_note}</p>
             </Section>
           )}
 
           {canBook && (
             <section id="tempahan" className="pt-2">
               <h2 className="mb-2 text-display font-extrabold text-primary-dark">{t.client.booking.heading}</h2>
-              <p className="mb-5 max-w-[70ch] text-muted">{t.client.booking.intro}</p>
+              <p className="mb-5 max-w-[60ch] text-muted">{t.client.booking.intro}</p>
               <BookingForm
                 slug={pkg.slug}
                 title={pkg.title}
@@ -333,6 +373,17 @@ export default async function PackageDetailPage({ params }: PageProps<"/packages
           )}
         </div>
       </div>
+
+      {related.length > 0 && (
+        <section aria-labelledby="related-title" className="section bg-canvas">
+          <div className="wrap">
+            <h2 id="related-title" className="h-section reveal mb-8">
+              {t.detail.related}
+            </h2>
+            <PackageGrid packages={related} />
+          </div>
+        </section>
+      )}
     </>
   );
 }

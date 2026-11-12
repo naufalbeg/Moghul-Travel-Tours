@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { LockIcon } from "@/components/ui/icons";
+import { ArrowLeftIcon, LockIcon } from "@/components/ui/icons";
 import { Logo } from "@/components/ui/logo-mark";
 
 /** The centred white card on the brand navy used by the sign-in pages. */
@@ -9,9 +9,10 @@ export function AuthCard({ title, subtitle, children }: { title: string; subtitl
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-navy px-4 py-10">
       <Link
         href="/"
-        className="on-dark self-start font-bold text-white/86 underline decoration-transparent underline-offset-[0.2em] hover:text-white hover:decoration-current sm:absolute sm:top-7 sm:left-8"
+        className="on-dark inline-flex min-h-11 items-center gap-2 self-start font-bold text-white/86 underline decoration-transparent underline-offset-[0.2em] hover:text-white hover:decoration-current sm:absolute sm:top-5 sm:left-8"
       >
-        ← Back to moghultt.com
+        <ArrowLeftIcon className="size-[18px]" />
+        Back to moghultt.com
       </Link>
 
       <div className="w-full max-w-[440px] rounded-2xl bg-white px-6 pt-10 pb-8 shadow-search sm:px-10">

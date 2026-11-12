@@ -1,6 +1,7 @@
 "use client";
 
 import type HCaptcha from "@hcaptcha/react-hcaptcha";
+import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { submitBooking } from "@/app/(public)/packages/[slug]/actions";
 import { CaptchaField, ContactFields, InlineError, inputClass, labelClass, useErrorText } from "@/components/public/form-fields";
@@ -97,7 +98,7 @@ export function BookingForm({
 
   if (sent) {
     return (
-      <div role="status" className="rounded-xl border border-line bg-white px-6 py-10 sm:px-10">
+      <div role="status" className="appear rounded-xl border border-line bg-white px-6 py-10 sm:px-10">
         <CheckCircleIcon className="mb-4 size-14 text-success" />
         <h3 className="mb-2 text-display font-extrabold text-primary-dark">{fmt(text.thanks, { name: sent.name })}</h3>
         <p className="mb-7 max-w-[56ch] text-muted">{fmt(text.received, { package: title, date: sent.date })}</p>
@@ -125,7 +126,7 @@ export function BookingForm({
         e.preventDefault();
         submit();
       }}
-      className="rounded-xl border border-line bg-white px-5 py-7 sm:px-8"
+      className="border-t-2 border-primary-dark pt-7"
     >
       {banner && (
         <div className="mb-6">
@@ -134,6 +135,7 @@ export function BookingForm({
       )}
 
       <div className="grid gap-5 sm:grid-cols-2">
+        <h3 className="text-lead tracking-[-0.01em] text-primary-dark sm:col-span-2">{text.yourDetails}</h3>
         <ContactFields
           idPrefix="booking-"
           values={contact}
@@ -144,6 +146,9 @@ export function BookingForm({
           }}
         />
 
+        <h3 className="mt-4 text-lead tracking-[-0.01em] text-primary-dark sm:col-span-2">
+          {text.yourTrip}
+        </h3>
         <div className="sm:col-span-2">
           <label htmlFor="booking-departure" className={labelClass}>
             {text.departure}
@@ -298,6 +303,12 @@ export function BookingForm({
       <p className="mt-4 flex items-start gap-2 text-meta font-bold text-primary-dark">
         <ShieldIcon strokeWidth={2} className="mt-0.5 size-5 shrink-0 text-whatsapp" />
         {text.noPayment}
+      </p>
+      <p className="mt-2 text-fine text-muted">
+        {text.privacy}{" "}
+        <Link href="/privacy" className="text-link font-normal">
+          {t.inquiry.privacyLink}
+        </Link>
       </p>
     </form>
   );

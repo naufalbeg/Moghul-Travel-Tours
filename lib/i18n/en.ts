@@ -20,6 +20,10 @@ export const en: Dictionary = {
     contactDescription: "Call, WhatsApp, email or visit the Moghul Travel & Tours office in Shah Alam, Selangor.",
     inquireTitle: "Send an inquiry",
     inquireDescription: "Ask Moghul Travel & Tours about a package — we'll get back to you shortly.",
+    privacyTitle: "Privacy notice",
+    privacyDescription: "What the Moghul Travel & Tours website collects, why, and how to ask for a copy, a correction or deletion.",
+    termsTitle: "Terms of use",
+    termsDescription: "How prices, booking requests and outside links work on the Moghul Travel & Tours website.",
   },
 
   layout: {
@@ -59,6 +63,8 @@ export const en: Dictionary = {
     papuh: "PAPUH Member No. {value}",
     contactLink: "Contact & directions",
     reviewsLink: "Traveller reviews",
+    privacy: "Privacy notice",
+    terms: "Terms of use",
   },
 
   home: {
@@ -117,7 +123,6 @@ export const en: Dictionary = {
     credMatta: "MATTA member",
     credMita: "MITA member",
     credPapuh: "PAPUH member",
-    credAgent: "Certified agent",
     readStory: "Read our story",
 
     reviewHeading: "What our travellers say",
@@ -150,7 +155,7 @@ export const en: Dictionary = {
     CRUISE: "Cruise",
   },
 
-  categoryPills: {
+  categoryFilter: {
     label: "Package categories",
     all: "All packages",
   },
@@ -208,6 +213,10 @@ export const en: Dictionary = {
     title: "Our travel packages",
     categoryTitle: "{category} packages",
     subtitle: "Browse our Umrah & Ziarah, outbound, inbound and cruise packages.",
+    summary: "{n} packages, starting from {price} per person.",
+    summaryOne: "1 package, starting from {price} per person.",
+    found: "{n} packages found",
+    foundOne: "1 package found",
     matching: "Showing packages matching {terms}.",
     departingIn: "departing in {month}",
     clearSearch: "Clear search",
@@ -221,7 +230,6 @@ export const en: Dictionary = {
     breadcrumb: "Breadcrumb",
     home: "Home",
     packages: "Packages",
-    motacPackage: "MOTAC licensed package",
     departures: "Upcoming departure dates",
     noDepartures: "New dates are being arranged — ask us for the latest schedule.",
     bookNow: "Book now",
@@ -235,12 +243,16 @@ export const en: Dictionary = {
     included: "What's included",
     excluded: "Not included",
     itinerary: "Itinerary",
+    jumpLabel: "Jump to a section",
+    related: "Other packages you may like",
   },
 
   about: {
     title: "About us",
     credentials: "Licensed & registered",
     basedIn: "Based in Shah Alam, Selangor",
+    photosHeading: "From our customers' trips",
+    viewGallery: "See the gallery",
     planHeading: "Plan your next journey with us",
     planText: "Tell us where you'd like to go and we'll help you find the right trip.",
     browse: "Browse packages",
@@ -277,6 +289,8 @@ export const en: Dictionary = {
   gallery: {
     title: "Our journeys",
     subtitle: "Real moments from our clients' trips.",
+    summary: "{n} photos from {m} of our customers' trips.",
+    photoAlt: "Customer trip photo: {tag}",
     filterLabel: "Filter photos by trip",
     all: "All photos",
     empty: "Photos from our trips will appear here soon.",
@@ -289,6 +303,8 @@ export const en: Dictionary = {
     empty: "Reviews from our travellers will appear here soon.",
     browse: "Browse our packages",
     stars: "{n} out of 5 stars",
+    meanwhile: "Meanwhile, see photos from our customers' trips, or ask us directly.",
+    viewGallery: "See the gallery",
   },
 
   notFound: {
@@ -329,8 +345,8 @@ export const en: Dictionary = {
       viewer: "Photo viewer",
       counter: "{n} of {total}",
       close: "Close",
-      previous: "← Previous",
-      next: "Next →",
+      previous: "Previous",
+      next: "Next",
     },
     packageGallery: {
       label: "Photos of {title}",
@@ -353,6 +369,7 @@ export const en: Dictionary = {
       send: "Send inquiry",
       sending: "Sending…",
       privacy: "We'll only use your details to reply to this inquiry.",
+      privacyLink: "Read the privacy notice",
       thanks: "Thank you, {name}!",
       submitted: "Your inquiry has been submitted. We will contact you shortly.",
       faster: "Need a faster answer? WhatsApp us",
@@ -360,6 +377,9 @@ export const en: Dictionary = {
     },
     booking: {
       heading: "Booking form",
+      yourDetails: "Your details",
+      yourTrip: "Your trip",
+      privacy: "We'll only use your details to handle this booking request.",
       intro: "Fill in this form to book your place. No payment is taken until our team confirms your booking.",
       departure: "Departure date",
       chooseDeparture: "— Choose a departure date —",

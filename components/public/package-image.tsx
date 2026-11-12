@@ -21,7 +21,7 @@ export function PackageImage({
   iconClassName?: string;
 }) {
   return (
-    <div className={`relative overflow-hidden bg-linear-135 from-primary-pale to-[#cfe1f2] ${className}`}>
+    <div className={`relative overflow-hidden bg-primary-pale ${className}`}>
       {src ? (
         <Image
           src={src}

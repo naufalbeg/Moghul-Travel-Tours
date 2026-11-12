@@ -7,7 +7,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { login, type LoginState } from "./actions";
 
 const inputBase =
-  "w-full rounded-lg border-[1.5px] px-4 py-3.5 text-base text-ink placeholder:text-muted/80 disabled:border-field disabled:bg-[#f1f3f5] disabled:text-muted";
+  "w-full rounded-lg border-[1.5px] px-4 py-3.5 text-base text-ink disabled:border-field disabled:bg-[#f1f3f5] disabled:text-muted";
 
 export function LoginForm() {
   const [state, formAction, pending] = useActionState<LoginState, FormData>(login, {

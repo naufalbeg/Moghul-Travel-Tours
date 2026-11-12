@@ -38,7 +38,6 @@ export default async function AdminBannersPage() {
   return (
     <>
       <PageHeader
-        title="Banners"
         subtitle="The two category photos on the homepage, and the photos behind the banners on the Packages page (these fade from one to the next every few seconds)."
       />
 
@@ -50,7 +49,7 @@ export default async function AdminBannersPage() {
             <section key={slot.key} className="rounded-xl border border-line bg-white px-5 py-6 sm:px-8">
               <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h3 className="mb-1 text-body">{slot.label}</h3>
+                  <h2 className="mb-1 text-body">{slot.label}</h2>
                   <p className="text-sm text-muted">{status(slot, photos.length)}</p>
                 </div>
                 <Link

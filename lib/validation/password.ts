@@ -1,4 +1,5 @@
 import { z } from "zod";
+import "@/lib/validation/zod-config";
 
 // SRS 3.1 rule: min. 8 characters, at least one number and one special
 // character. Shared by change-password, set-password (invites) and reset.

@@ -3,10 +3,11 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/public/i18n-provider";
-import { CloseIcon } from "@/components/ui/icons";
+import { ChevronLeftIcon, ChevronRightIcon, CloseIcon } from "@/components/ui/icons";
 import { fmt } from "@/lib/i18n/config";
 
-type Photo = { id: string; url: string; tag: string };
+/** `tag` is the admin's label (shown as the caption); `alt` describes the photo for screen readers. */
+type Photo = { id: string; url: string; tag: string; alt: string };
 
 /**
  * Photo grid with a full-screen lightbox (REQ-MTT-004-005, SRS step 13).
@@ -51,7 +52,7 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
             >
               <Image
                 src={photo.url}
-                alt={photo.tag}
+                alt={photo.alt}
                 fill
                 sizes="(min-width: 900px) 300px, (min-width: 640px) 33vw, 50vw"
                 className="object-cover transition-transform duration-250 ease-smooth group-hover:scale-[1.03]"
@@ -87,23 +88,25 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
               </button>
             </div>
             <div className="relative min-h-0 flex-1">
-              <Image src={current.url} alt={current.tag} fill sizes="100vw" className="object-contain" />
+              <Image src={current.url} alt={current.alt} fill sizes="100vw" className="object-contain" />
             </div>
             {photos.length > 1 && (
               <div className="flex justify-center gap-3 px-4 py-4">
                 <button
                   type="button"
                   onClick={() => step(-1)}
-                  className="min-h-12 min-w-32 rounded-lg bg-white/12 px-5 text-meta font-bold transition-colors duration-150 ease-smooth hover:bg-white/24"
+                  className="flex min-h-12 min-w-36 items-center justify-center gap-2 rounded-lg bg-white/12 px-5 text-meta font-bold transition-colors duration-150 ease-smooth hover:bg-white/24"
                 >
+                  <ChevronLeftIcon className="size-5" />
                   {t.lightbox.previous}
                 </button>
                 <button
                   type="button"
                   onClick={() => step(1)}
-                  className="min-h-12 min-w-32 rounded-lg bg-white/12 px-5 text-meta font-bold transition-colors duration-150 ease-smooth hover:bg-white/24"
+                  className="flex min-h-12 min-w-36 items-center justify-center gap-2 rounded-lg bg-white/12 px-5 text-meta font-bold transition-colors duration-150 ease-smooth hover:bg-white/24"
                 >
                   {t.lightbox.next}
+                  <ChevronRightIcon className="size-5" />
                 </button>
               </div>
             )}

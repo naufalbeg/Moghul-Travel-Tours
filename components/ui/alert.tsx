@@ -31,7 +31,7 @@ const tones: Record<
 export function Alert({ tone, title, children }: { tone: Tone; title: string; children?: ReactNode }) {
   const t = tones[tone];
   return (
-    <div role={tone === "success" ? "status" : "alert"} className={`flex rounded-lg border px-4 py-3.5 ${t.box}`}>
+    <div role={tone === "success" ? "status" : "alert"} className={`appear flex rounded-lg border px-4 py-3.5 ${t.box}`}>
       <t.Icon className={`mt-px mr-3 size-[19px] shrink-0 ${t.title}`} />
       <div>
         <p className={`leading-snug font-bold ${t.title}`}>{title}</p>

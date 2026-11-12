@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
+import { SECURITY_HEADERS } from "./lib/security-headers";
 
 const nextConfig: NextConfig = {
+  // Fixed security headers on every response. The Content-Security-Policy is
+  // set per request in proxy.ts, because it carries a one-time nonce.
+  async headers() {
+    return [{ source: "/:path*", headers: SECURITY_HEADERS }];
+  },
   images: {
     // Serve photos as-is instead of through Vercel's image optimizer: the
     // Hobby plan's monthly optimization quota ran out and Vercel then answers

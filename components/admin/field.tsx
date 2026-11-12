@@ -65,18 +65,24 @@ export function FieldError({ id, message }: { id: string; message?: string }) {
   );
 }
 
-/** Standard admin list-page header: title, subtitle, primary action. */
-export function PageHeader({ title, subtitle, action }: { title: string; subtitle: string; action?: ReactNode }) {
+/**
+ * Top of an admin list page: one line saying what the list is (or what is in
+ * it), and the page's main action. The page's name is not repeated here —
+ * the top bar already shows it.
+ */
+export function PageHeader({ subtitle, action }: { subtitle: string; action?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-      <div>
-        <h2 className="mb-1 text-price font-extrabold text-primary-dark">{title}</h2>
-        <p className="text-muted">{subtitle}</p>
-      </div>
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <p className="max-w-[72ch] text-muted">{subtitle}</p>
       {action}
     </div>
   );
 }
 
+/** Small button in a table row or list item (Edit, View, Resend…). */
+export const rowButton =
+  "flex min-h-9 items-center gap-1.5 rounded-lg border border-field bg-white px-3 text-sm font-semibold transition-colors duration-150 ease-smooth hover:border-primary hover:text-primary active:translate-y-px disabled:opacity-60";
+
+/** The page's one main action (orange, ink text). */
 export const primaryButton =
   "flex min-h-12 items-center justify-center gap-2 self-start rounded-lg bg-accent px-5 font-bold whitespace-nowrap text-ink transition-[background-color,transform] duration-150 ease-smooth hover:bg-accent-hover active:translate-y-px disabled:bg-line disabled:text-muted disabled:active:translate-y-0";

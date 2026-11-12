@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ConfirmActionButton } from "@/components/admin/confirm-action-button";
-import { PageHeader, primaryButton } from "@/components/admin/field";
+import { PageHeader, primaryButton, rowButton } from "@/components/admin/field";
 import { Alert } from "@/components/ui/alert";
 import { EditIcon, PlusIcon, TrashIcon } from "@/components/ui/icons";
 import { requireAdmin } from "@/lib/auth";
@@ -35,7 +35,6 @@ export default async function AdminAnnouncementsPage({ searchParams }: PageProps
   return (
     <>
       <PageHeader
-        title="Announcements"
         subtitle="Promotions and notices shown in the orange bar at the top of the website."
         action={addButton}
       />
@@ -50,7 +49,7 @@ export default async function AdminAnnouncementsPage({ searchParams }: PageProps
 
       {announcements.length === 0 ? (
         <div className="rounded-xl border border-line bg-white px-6 py-14 text-center">
-          <h3 className="mb-2 text-lg">No announcements</h3>
+          <h2 className="mb-2 text-lg">No announcements</h2>
           <p className="mb-6 text-muted">
             Post an early-bird promo or a notice — it appears as an orange bar across the top of the website.
           </p>
@@ -81,7 +80,7 @@ export default async function AdminAnnouncementsPage({ searchParams }: PageProps
                 <div className="flex shrink-0 flex-wrap gap-2">
                   <Link
                     href={`/admin/announcements/${a.id}/edit`}
-                    className="flex min-h-9 items-center gap-1.5 rounded-lg border border-field px-3 text-sm font-semibold hover:border-primary"
+                    className={rowButton}
                   >
                     <EditIcon className="size-3.5" />
                     Edit

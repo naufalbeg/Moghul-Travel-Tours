@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { PendingSpinner } from "@/components/public/link-pending";
 import { PackageImage } from "@/components/public/package-image";
 import { CalendarIcon } from "@/components/ui/icons";
 import { formatDate, formatPrice } from "@/lib/format";
@@ -28,8 +29,9 @@ export async function PackageCard({ pkg, heading: Heading = "h3" }: { pkg: Packa
   return (
     <Link
       href={`/packages/${pkg.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-white text-left text-ink transition-[border-color,box-shadow,transform] duration-250 ease-smooth hover:-translate-y-[3px] hover:border-primary hover:shadow-lift"
+      className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-line bg-white text-left text-ink transition-[border-color,box-shadow,transform] duration-250 ease-smooth hover:-translate-y-[3px] hover:border-primary hover:shadow-lift"
     >
+      <PendingSpinner className="absolute top-3 right-3 z-[1] size-7 rounded-full bg-navy/70 text-white" />
       <PackageImage
         src={pkg.imageUrl}
         alt=""

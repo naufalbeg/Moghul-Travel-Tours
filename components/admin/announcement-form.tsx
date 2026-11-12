@@ -48,8 +48,6 @@ export function AnnouncementForm({ id, initial }: { id: string | null; initial: 
       noValidate
       className={centeredPage}
     >
-      <h2 className="mb-6 text-price">{id ? "Edit announcement" : "Post an announcement"}</h2>
-
       {banner && (
         <div className="mb-5">
           <Alert tone="error" title={banner} />

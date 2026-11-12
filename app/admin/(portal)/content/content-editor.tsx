@@ -213,13 +213,10 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
   return (
     <form onSubmit={(e) => { e.preventDefault(); save(); }} noValidate>
       <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <h2 className="mb-1 text-price">Website content</h2>
-          <p className="text-muted">
-            Changes appear on the public website as soon as you save. The website is in Bahasa Melayu; texts
-            marked &ldquo;English&rdquo; are for visitors who switch to English.
-          </p>
-        </div>
+        <p className="max-w-[72ch] text-muted">
+          Changes appear on the public website as soon as you save. The website is in Bahasa Melayu; texts marked
+          &ldquo;English&rdquo; are for visitors who switch to English.
+        </p>
         {actions}
       </div>
 
@@ -239,7 +236,7 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
             <section key={section.title} className="border-b border-line px-5 py-7 last:border-b-0 sm:px-8">
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="mb-1 text-body">{section.title}</h3>
+                  <h2 className="mb-1 text-body">{section.title}</h2>
                   <p className="text-sm text-muted">{section.hint}</p>
                 </div>
                 {section.preview && (

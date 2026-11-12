@@ -4,6 +4,8 @@ import type { CSSProperties, ReactNode } from "react";
 import { HeroSlideshow, type HeroSlide } from "@/components/public/hero-slideshow";
 import { PackageGrid } from "@/components/public/package-card";
 import { PackageSearch } from "@/components/public/package-search";
+import { JsonLd } from "@/components/ui/json-ld";
+import { Stars } from "@/components/ui/stars";
 import {
   ArrowRightIcon,
   ClockIcon,
@@ -27,6 +29,7 @@ import { listPublishedPackages, type PackageCardData } from "@/lib/packages";
 import { prisma } from "@/lib/prisma";
 import { OTHER_PACKAGES_URL } from "@/lib/site";
 import { getPublicContent } from "@/lib/site-config";
+import { travelAgencyJsonLd } from "@/lib/structured-data";
 import {
   lines,
   listItems,
@@ -147,11 +150,11 @@ export default async function HomePage() {
     { label: t.home.credMatta, value: content.matta_member },
     { label: t.home.credMita, value: content.mita_member },
     { label: t.home.credPapuh, value: content.papuh_member },
-    { label: t.home.credAgent, value: "Muslim Travel Bug" },
   ].filter((c) => c.value);
 
   return (
     <>
+      <JsonLd data={travelAgencyJsonLd(content)} />
       <section className="on-dark bg-navy pt-[clamp(40px,5vw,72px)] pb-[clamp(104px,10vw,140px)] text-white">
         <div
           className={`wrap grid items-center gap-[clamp(32px,4.5vw,56px)] ${
@@ -429,13 +432,7 @@ export default async function HomePage() {
               {reviews.map((review, i) => (
                 <li key={review.id} className="reveal" style={stagger(i)}>
                   <figure className="flex h-full flex-col rounded-xl border border-line bg-white p-6">
-                    <p
-                      className="text-lead tracking-[2px] text-accent-dark"
-                      role="img"
-                      aria-label={fmt(t.home.stars, { n: review.starRating })}
-                    >
-                      {"★".repeat(review.starRating)}
-                    </p>
+                    <Stars rating={review.starRating} label={fmt(t.home.stars, { n: review.starRating })} />
                     <blockquote className="mt-3 line-clamp-6 whitespace-pre-line">{review.reviewText}</blockquote>
                     <figcaption className="mt-auto pt-4 text-meta text-muted">
                       <strong className="block text-body text-primary-dark">{review.customerName}</strong>
@@ -545,7 +542,7 @@ function Door({
   const linkClass = "arrow-link mt-1.5 after:absolute after:inset-0 after:content-['']";
   return (
     <article className="group reveal relative flex flex-col" style={stagger(index)}>
-      <div className="relative aspect-[3/2] overflow-hidden rounded-xl bg-linear-135 from-primary-pale to-[#cfe1f2]">
+      <div className="relative aspect-[3/2] overflow-hidden rounded-xl bg-primary-pale">
         {photo ? (
           <Image
             src={photo}

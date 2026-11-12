@@ -11,7 +11,11 @@ import { GENERAL_INQUIRY } from "@/lib/validation/inquiry";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getDictionary();
-  return { title: t.meta.inquireTitle, description: t.meta.inquireDescription };
+  return {
+    title: t.meta.inquireTitle,
+    description: t.meta.inquireDescription,
+    alternates: { canonical: "/inquire" },
+  };
 }
 
 /**

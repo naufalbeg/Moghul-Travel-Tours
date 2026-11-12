@@ -119,7 +119,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 function Section({ title, hint, children }: { title: string; hint: string; children: ReactNode }) {
   return (
     <section className="border-b border-line px-5 py-7 last:border-b-0 sm:px-8">
-      <h3 className="mb-1 text-body">{title}</h3>
+      <h2 className="mb-1 text-body">{title}</h2>
       <p className="mb-5 text-sm text-muted">{hint}</p>
       {children}
     </section>
@@ -284,18 +284,23 @@ export function PackageForm({
   return (
     <form onSubmit={(e) => e.preventDefault()} noValidate>
       <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <h2 className="text-price">
-          {packageId ? "Edit package" : "Add new package"}
-          {packageId && (
-            <span
-              className={`ml-3 inline-block rounded-full px-3 py-1 align-middle font-sans text-[13px] font-bold ${
-                isPublished ? "bg-success-pale text-success" : "bg-primary-pale text-primary"
-              }`}
-            >
-              {isPublished ? "Published" : "Draft"}
-            </span>
+        {/* The top bar already says "Add new package" / "Edit package": here, just where it stands. */}
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-muted">
+          {packageId ? (
+            <>
+              <span
+                className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${
+                  isPublished ? "bg-success-pale text-success" : "bg-primary-pale text-primary"
+                }`}
+              >
+                {isPublished ? "Published" : "Draft"}
+              </span>
+              {isPublished ? "Visible on the website." : "Hidden from the website until you publish it."}
+            </>
+          ) : (
+            "A draft needs only a title. Publishing also needs a description, an adult price and a photo."
           )}
-        </h2>
+        </p>
         {actions}
       </div>
 
@@ -362,7 +367,7 @@ export function PackageForm({
                 {CATEGORIES.map((c) => (
                   <label
                     key={c}
-                    className={`flex min-h-11 cursor-pointer items-center rounded-full border-[1.5px] px-[18px] text-fine font-semibold has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-primary-dark ${
+                    className={`flex min-h-11 cursor-pointer items-center rounded-lg border-[1.5px] px-[18px] text-fine font-bold has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-primary-dark ${
                       state.category === c ? "border-primary-dark bg-primary-dark text-white" : "border-field text-ink hover:border-primary"
                     }`}
                   >
@@ -409,7 +414,7 @@ export function PackageForm({
               value={state.description}
               onChange={(e) => update("description", e.target.value)}
               rows={8}
-              placeholder="Describe what makes this journey special..."
+              placeholder="Describe what makes this journey special…"
               aria-invalid={Boolean(err("description"))}
               aria-describedby={describedBy("description")}
               className={`${inputClass(err("description"))} min-h-52 resize-y leading-relaxed field-sizing-content`}

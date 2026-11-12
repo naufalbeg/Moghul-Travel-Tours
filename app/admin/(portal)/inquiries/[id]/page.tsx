@@ -5,7 +5,7 @@ import { z } from "zod";
 import { ConfirmActionButton } from "@/components/admin/confirm-action-button";
 import { centeredPage } from "@/components/admin/field";
 import { InquiryStatusControl } from "@/components/admin/inquiry-status-control";
-import { LockIcon, MailIcon, PhoneIcon, TrashIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { ArrowLeftIcon, LockIcon, MailIcon, PhoneIcon, TrashIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { requireAdmin } from "@/lib/auth";
 import { formatPrice, formatTripDates } from "@/lib/format";
 import { INQUIRY_KIND, INQUIRY_STATUS, formatReceived } from "@/lib/inquiry-labels";
@@ -39,12 +39,13 @@ export default async function InquiryDetailPage({ params }: PageProps<"/admin/in
 
   return (
     <div className={centeredPage}>
-      <Link href="/admin/inquiries" className="mb-4 inline-block text-sm font-semibold text-primary hover:underline">
-        ← All inquiries
+      <Link href="/admin/inquiries" className="mb-3 inline-flex min-h-9 items-center gap-1.5 text-sm font-bold text-primary hover:underline">
+        <ArrowLeftIcon className="size-4" />
+        All inquiries
       </Link>
 
       <div className="mb-6 flex flex-wrap items-center gap-3">
-        <h2 className="text-price">{q.fullName}</h2>
+        <h2 className="text-title text-primary-dark">{q.fullName}</h2>
         {isBooking && (
           <span className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${INQUIRY_KIND.BOOKING.className}`}>
             {INQUIRY_KIND.BOOKING.label}

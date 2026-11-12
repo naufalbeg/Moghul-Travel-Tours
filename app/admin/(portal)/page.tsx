@@ -1,139 +1,63 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import type { ComponentType, SVGProps } from "react";
-import {
-  ImageIcon,
-  MailIcon,
-  MegaphoneIcon,
-  PackageIcon,
-  PlusIcon,
-  StarIcon,
-} from "@/components/ui/icons";
+import { DashboardView } from "@/components/admin/dashboard-view";
 import { liveAnnouncementWhere } from "@/lib/announcements";
 import { requireAdmin } from "@/lib/auth";
-import { INQUIRY_STATUS } from "@/lib/inquiry-labels";
+import { todayInMalaysia } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
-
-const quickActions = [
-  { href: "/admin/packages/new", label: "Add new package" },
-  { href: "/admin/announcements/new", label: "Post announcement" },
-  { href: "/admin/gallery", label: "Upload gallery photos" },
-  { href: "/admin/testimonials/new", label: "Add testimonial" },
-];
-
+/** Dashboard: gathers the numbers; components/admin/dashboard-view.tsx lays them out. */
 export default async function DashboardPage() {
   const admin = await requireAdmin();
-  const now = new Date();
+  const today = todayInMalaysia();
+  const live = { status: "PUBLISHED", deletedAt: null } as const;
 
-  const [newInquiries, publishedPackages, galleryPhotos, testimonials, activeAnnouncements, recent] =
-    await Promise.all([
-      prisma.inquiry.count({ where: { status: "NEW" } }),
-      prisma.package.count({ where: { status: "PUBLISHED", deletedAt: null } }),
-      prisma.galleryImage.count(),
-      prisma.testimonial.count(),
-      prisma.announcement.count({
-        where: liveAnnouncementWhere(now),
-      }),
-      prisma.inquiry.findMany({
-        orderBy: { createdAt: "desc" },
-        take: 4,
-        select: { id: true, fullName: true, packageInterest: true, status: true, kind: true },
-      }),
-    ]);
-
-  const stats: {
-    value: number;
-    label: string;
-    Icon: ComponentType<SVGProps<SVGSVGElement>>;
-    highlight?: boolean;
-  }[] = [
-    { value: newInquiries, label: "New inquiries", Icon: MailIcon, highlight: true },
-    { value: publishedPackages, label: "Published packages", Icon: PackageIcon },
-    { value: galleryPhotos, label: "Gallery photos", Icon: ImageIcon },
-    { value: testimonials, label: "Testimonials", Icon: StarIcon },
-    { value: activeAnnouncements, label: "Active announcements", Icon: MegaphoneIcon },
-  ];
+  const [
+    newInquiries,
+    newBookings,
+    publishedPackages,
+    draftPackages,
+    packagesWithoutDates,
+    nextDeparture,
+    galleryPhotos,
+    testimonials,
+    activeAnnouncements,
+    recent,
+  ] = await Promise.all([
+    prisma.inquiry.count({ where: { status: "NEW" } }),
+    prisma.inquiry.count({ where: { status: "NEW", kind: "BOOKING" } }),
+    prisma.package.count({ where: live }),
+    prisma.package.count({ where: { status: "DRAFT", deletedAt: null } }),
+    prisma.package.count({ where: { ...live, departures: { none: { departureDate: { gte: today } } } } }),
+    prisma.packageDeparture.findFirst({
+      where: { departureDate: { gte: today }, package: live },
+      orderBy: { departureDate: "asc" },
+      select: { departureDate: true, package: { select: { title: true } } },
+    }),
+    prisma.galleryImage.count(),
+    prisma.testimonial.count(),
+    prisma.announcement.count({ where: liveAnnouncementWhere(new Date()) }),
+    prisma.inquiry.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: { id: true, fullName: true, packageInterest: true, status: true, kind: true, createdAt: true },
+    }),
+  ]);
 
   return (
-    <>
-      <h2 className="mb-1 text-2xl">Welcome back, {admin.name.split(" ")[0]}</h2>
-      <p className="mb-7 text-muted">Here&apos;s what&apos;s happening across the site today.</p>
-
-      <ul className="mb-8 grid grid-cols-2 gap-[18px] md:grid-cols-3 xl:grid-cols-5">
-        {stats.map(({ value, label, Icon, highlight }) => (
-          <li
-            key={label}
-            className={`rounded-xl border p-5 ${highlight ? "border-accent bg-accent-pale" : "border-field bg-white"}`}
-          >
-            <span
-              className={`mb-3.5 flex size-[38px] items-center justify-center rounded-lg ${
-                highlight ? "bg-accent/15 text-accent-dark" : "bg-primary-pale text-primary"
-              }`}
-            >
-              <Icon className="size-5" />
-            </span>
-            <div className="font-heading text-display font-bold">{value}</div>
-            <div className="text-sm font-medium text-muted">{label}</div>
-          </li>
-        ))}
-      </ul>
-
-      <div className="flex flex-col items-start gap-6 lg:flex-row">
-        <section className="w-full rounded-xl border border-line bg-white px-6 py-[22px] lg:flex-[1.6]">
-          <h3 className="mb-4 text-body">Recent inquiries</h3>
-          {recent.length === 0 ? (
-            <p className="py-6 text-center text-muted">No inquiries yet.</p>
-          ) : (
-            <ul className="divide-y divide-line">
-              {recent.map((inquiry) => {
-                const pill = INQUIRY_STATUS[inquiry.status];
-                return (
-                  <li key={inquiry.id} className="flex items-center justify-between gap-4 py-3">
-                    <div>
-                      <Link href={`/admin/inquiries/${inquiry.id}`} className="font-semibold hover:underline">
-                        {inquiry.fullName}
-                      </Link>
-                      <div className="text-sm text-muted">
-                        {inquiry.kind === "BOOKING" && <strong className="text-primary">Booking · </strong>}
-                        {inquiry.packageInterest ?? "General inquiry"}
-                      </div>
-                    </div>
-                    <span className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${pill.className}`}>
-                      {pill.label}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-          <Link
-            href="/admin/inquiries"
-            className="mt-3.5 block text-center text-sm font-semibold text-primary"
-          >
-            View all inquiries →
-          </Link>
-        </section>
-
-        <section className="w-full rounded-xl border border-line bg-white px-6 py-[22px] lg:flex-1">
-          <h3 className="mb-4 text-body">Quick actions</h3>
-          <ul className="space-y-2.5">
-            {quickActions.map(({ href, label }) => (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className="flex items-center gap-3 rounded-lg border border-field px-3.5 py-3 text-fine font-semibold hover:border-primary"
-                >
-                  <PlusIcon className="size-[18px] shrink-0 text-accent-dark" />
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-    </>
+    <DashboardView
+      firstName={admin.name.split(" ")[0]}
+      newInquiries={newInquiries}
+      newBookings={newBookings}
+      publishedPackages={publishedPackages}
+      draftPackages={draftPackages}
+      packagesWithoutDates={packagesWithoutDates}
+      nextDeparture={nextDeparture?.departureDate ?? null}
+      galleryPhotos={galleryPhotos}
+      testimonials={testimonials}
+      activeAnnouncements={activeAnnouncements}
+      recent={recent}
+    />
   );
 }

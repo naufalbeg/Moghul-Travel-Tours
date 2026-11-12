@@ -5,9 +5,12 @@ const ringgit = new Intl.NumberFormat("en-MY", {
   maximumFractionDigits: 2,
 });
 
-/** 9800 → "RM 9,800". Accepts Prisma Decimals. */
+/**
+ * 9800 → "RM 9,800". Accepts Prisma Decimals. The space is a non-breaking
+ * one, so a price never splits across two lines ("RM" / "9,800").
+ */
 export function formatPrice(value: number | { toString(): string }) {
-  return `RM ${ringgit.format(Number(value.toString()))}`;
+  return `RM\u00a0${ringgit.format(Number(value.toString()))}`;
 }
 
 /**

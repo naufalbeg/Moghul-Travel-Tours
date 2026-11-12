@@ -28,6 +28,10 @@ export const ms = {
     contactDescription: "Telefon, WhatsApp, e-mel atau kunjungi pejabat Moghul Travel & Tours di Shah Alam, Selangor.",
     inquireTitle: "Hantar pertanyaan",
     inquireDescription: "Tanya Moghul Travel & Tours tentang pakej — kami akan menghubungi anda secepat mungkin.",
+    privacyTitle: "Notis privasi",
+    privacyDescription: "Maklumat yang dikumpul oleh laman web Moghul Travel & Tours, sebabnya, dan cara meminta salinan, pembetulan atau pemadaman.",
+    termsTitle: "Terma penggunaan",
+    termsDescription: "Cara harga, permohonan tempahan dan pautan luar berfungsi di laman web Moghul Travel & Tours.",
   },
 
   layout: {
@@ -69,6 +73,8 @@ export const ms = {
     papuh: "No. Ahli PAPUH {value}",
     contactLink: "Hubungi & arah ke pejabat",
     reviewsLink: "Ulasan pelanggan",
+    privacy: "Notis privasi",
+    terms: "Terma penggunaan",
   },
 
   home: {
@@ -132,7 +138,6 @@ export const ms = {
     credMatta: "Ahli MATTA",
     credMita: "Ahli MITA",
     credPapuh: "Ahli PAPUH",
-    credAgent: "Ejen bertauliah",
     readStory: "Baca kisah kami",
 
     reviewHeading: "Kata pelanggan kami",
@@ -166,7 +171,7 @@ export const ms = {
     CRUISE: "Cruise",
   },
 
-  categoryPills: {
+  categoryFilter: {
     label: "Kategori pakej",
     all: "Semua pakej",
   },
@@ -226,6 +231,11 @@ export const ms = {
     title: "Pakej pelancongan kami",
     categoryTitle: "Pakej {category}",
     subtitle: "Lihat pakej Umrah & Ziarah, luar negara, dalam negara dan cruise kami.",
+    // Under the page title when there are packages: "14 pakej, bermula dari RM 2,190 seorang."
+    summary: "{n} pakej, bermula dari {price} seorang.",
+    summaryOne: "1 pakej, bermula dari {price} seorang.",
+    found: "{n} pakej dijumpai",
+    foundOne: "1 pakej dijumpai",
     matching: "Menunjukkan pakej untuk {terms}.",
     departingIn: "berlepas pada {month}",
     clearSearch: "Kosongkan carian",
@@ -239,7 +249,6 @@ export const ms = {
     breadcrumb: "Laluan halaman",
     home: "Utama",
     packages: "Pakej",
-    motacPackage: "Pakej berlesen MOTAC",
     departures: "Tarikh berlepas akan datang",
     noDepartures: "Tarikh baharu sedang diatur — tanya kami untuk jadual terkini.",
     bookNow: "Tempah sekarang",
@@ -253,12 +262,17 @@ export const ms = {
     included: "Termasuk dalam pakej",
     excluded: "Tidak termasuk",
     itinerary: "Itinerari",
+    // Links under the title that jump down the page.
+    jumpLabel: "Pergi ke bahagian",
+    related: "Pakej lain yang mungkin anda suka",
   },
 
   about: {
     title: "Tentang kami",
     credentials: "Berlesen & berdaftar",
     basedIn: "Berpangkalan di Shah Alam, Selangor",
+    photosHeading: "Daripada perjalanan pelanggan kami",
+    viewGallery: "Lihat galeri",
     planHeading: "Rancang perjalanan anda bersama kami",
     planText: "Beritahu kami destinasi pilihan anda dan kami akan bantu anda mencari percutian yang sesuai.",
     browse: "Lihat pakej",
@@ -295,6 +309,8 @@ export const ms = {
   gallery: {
     title: "Perjalanan kami",
     subtitle: "Detik sebenar daripada percutian pelanggan kami.",
+    summary: "{n} gambar daripada {m} perjalanan pelanggan kami.",
+    photoAlt: "Gambar percutian pelanggan: {tag}",
     filterLabel: "Tapis gambar mengikut trip",
     all: "Semua gambar",
     empty: "Gambar daripada perjalanan kami akan dipaparkan di sini tidak lama lagi.",
@@ -305,6 +321,8 @@ export const ms = {
     title: "Kata pelanggan kami",
     subtitle: "Ulasan daripada keluarga, jemaah dan kumpulan yang pernah melancong bersama kami.",
     empty: "Ulasan daripada pelanggan kami akan dipaparkan di sini tidak lama lagi.",
+    meanwhile: "Sementara itu, lihat gambar daripada perjalanan pelanggan kami, atau tanya kami terus.",
+    viewGallery: "Lihat galeri",
     browse: "Lihat pakej kami",
     stars: "{n} daripada 5 bintang",
   },
@@ -350,8 +368,8 @@ export const ms = {
       viewer: "Paparan gambar",
       counter: "{n} daripada {total}",
       close: "Tutup",
-      previous: "← Sebelumnya",
-      next: "Seterusnya →",
+      previous: "Sebelumnya",
+      next: "Seterusnya",
     },
     packageGallery: {
       label: "Gambar {title}",
@@ -374,6 +392,7 @@ export const ms = {
       send: "Hantar pertanyaan",
       sending: "Menghantar…",
       privacy: "Kami hanya akan menggunakan maklumat anda untuk membalas pertanyaan ini.",
+      privacyLink: "Baca notis privasi",
       thanks: "Terima kasih, {name}!",
       submitted: "Pertanyaan anda telah dihantar. Kami akan menghubungi anda tidak lama lagi.",
       faster: "Mahu jawapan lebih cepat? WhatsApp kami",
@@ -382,6 +401,9 @@ export const ms = {
     // Booking form at the bottom of a package page.
     booking: {
       heading: "Borang Tempahan",
+      yourDetails: "Butiran anda",
+      yourTrip: "Perjalanan anda",
+      privacy: "Kami hanya akan menggunakan maklumat anda untuk menguruskan permohonan tempahan ini.",
       intro: "Isi borang ini untuk menempah tempat. Tiada bayaran dikenakan sehingga tempahan anda disahkan oleh pasukan kami.",
       departure: "Tarikh berlepas",
       chooseDeparture: "— Pilih tarikh berlepas —",

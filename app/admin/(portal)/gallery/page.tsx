@@ -5,6 +5,7 @@ import { ConfirmActionButton } from "@/components/admin/confirm-action-button";
 import { PageHeader } from "@/components/admin/field";
 import { GalleryUploader } from "@/components/admin/gallery-uploader";
 import { ExternalIcon, TrashIcon } from "@/components/ui/icons";
+import { tabClass, tabCountClass, tabListClass } from "@/components/ui/tabs";
 import { requireAdmin } from "@/lib/auth";
 import { listGalleryImages, listGalleryTags } from "@/lib/gallery";
 import { deleteGalleryImage } from "./actions";
@@ -19,15 +20,9 @@ export default async function AdminGalleryPage({ searchParams }: PageProps<"/adm
   const [tags, images] = await Promise.all([listGalleryTags(), listGalleryImages(activeTag)]);
   const total = tags.reduce((sum, t) => sum + t.count, 0);
 
-  const pill = (active: boolean) =>
-    `flex min-h-10 items-center rounded-full border-[1.5px] px-4 text-sm font-semibold ${
-      active ? "border-primary-dark bg-primary-dark text-white" : "border-field bg-white hover:border-primary"
-    }`;
-
   return (
     <>
       <PageHeader
-        title="Gallery"
         subtitle="Trip photos shown on the Gallery page and the homepage."
         action={
           <Link href="/gallery" target="_blank" className="flex items-center gap-1.5 self-start text-sm font-semibold text-primary hover:underline">
@@ -40,23 +35,25 @@ export default async function AdminGalleryPage({ searchParams }: PageProps<"/adm
 
       {total === 0 ? (
         <div className="rounded-xl border border-line bg-white px-6 py-14 text-center">
-          <h3 className="mb-2 text-lg">No photos yet</h3>
+          <h2 className="mb-2 text-lg">No photos yet</h2>
           <p className="text-muted">Photos you upload appear here and on the public Gallery page straight away.</p>
         </div>
       ) : (
         <>
-          <nav aria-label="Filter by label" className="mb-5 flex flex-wrap gap-2">
-            <Link href="/admin/gallery" className={pill(!activeTag)} aria-current={!activeTag ? "page" : undefined}>
-              All ({total})
+          <nav aria-label="Filter by label" className={`${tabListClass} mb-5`}>
+            <Link href="/admin/gallery" className={tabClass(!activeTag)} aria-current={!activeTag ? "page" : undefined}>
+              All
+              <span className={tabCountClass}>{total}</span>
             </Link>
             {tags.map((t) => (
               <Link
                 key={t.tag}
                 href={`/admin/gallery?tag=${encodeURIComponent(t.tag)}`}
-                className={pill(activeTag === t.tag)}
+                className={tabClass(activeTag === t.tag)}
                 aria-current={activeTag === t.tag ? "page" : undefined}
               >
-                {t.tag} ({t.count})
+                {t.tag}
+                <span className={tabCountClass}>{t.count}</span>
               </Link>
             ))}
           </nav>

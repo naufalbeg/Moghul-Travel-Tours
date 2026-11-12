@@ -8,7 +8,7 @@ import { Alert } from "@/components/ui/alert";
 import { AlertCircleIcon, CheckCircleIcon, CloseIcon, PlusIcon } from "@/components/ui/icons";
 
 const dialogClass =
-  "m-auto w-[calc(100%-2rem)] max-w-[460px] rounded-xl p-0 shadow-[0_24px_60px_rgba(13,44,78,0.35)] backdrop:bg-navy/55";
+  "m-auto w-[calc(100%-2rem)] max-w-[460px] rounded-xl p-0 shadow-dialog backdrop:bg-navy/55";
 
 /** What happened after sending an invitation: emailed, or here's the link to share. */
 function InviteOutcome({ result, onDone }: { result: Extract<InviteResult, { ok: true }>; onDone: () => void }) {
@@ -18,7 +18,7 @@ function InviteOutcome({ result, onDone }: { result: Extract<InviteResult, { ok:
       {result.emailSent ? (
         <>
           <CheckCircleIcon className="mb-3 size-10 text-success" />
-          <h3 className="mb-2 text-xl text-primary-dark">Invitation sent</h3>
+          <h2 className="mb-2 text-xl text-primary-dark">Invitation sent</h2>
           <p className="mb-6 text-meta text-muted">
             {result.name} will get an email at <strong className="text-ink">{result.email}</strong> with a link to set
             their password. The link expires in 24 hours.
@@ -27,7 +27,7 @@ function InviteOutcome({ result, onDone }: { result: Extract<InviteResult, { ok:
       ) : (
         <>
           <AlertCircleIcon className="mb-3 size-10 text-accent-dark" />
-          <h3 className="mb-2 text-xl text-primary-dark">Send them this link yourself</h3>
+          <h2 className="mb-2 text-xl text-primary-dark">Send them this link yourself</h2>
           <p className="mb-4 text-meta text-muted">
             The account for <strong className="text-ink">{result.name}</strong> is ready, but the email couldn&apos;t be
             sent (the email service can&apos;t reach other addresses yet). Copy this link and send it to them on
@@ -109,9 +109,9 @@ export function AddAdminButton() {
           >
             <div className="flex items-start justify-between px-6 pt-6 sm:px-[26px]">
               <div>
-                <h3 id="add-admin-title" className="mb-1.5 text-xl text-primary-dark">
+                <h2 id="add-admin-title" className="mb-1.5 text-xl text-primary-dark">
                   Add new admin
-                </h3>
+                </h2>
                 <p className="text-fine text-muted">Invite a staff member to access the admin dashboard.</p>
               </div>
               <button type="button" onClick={close} aria-label="Close" className="ml-3 flex size-9 shrink-0 items-center justify-center rounded-full text-muted hover:bg-canvas">

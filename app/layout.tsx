@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Atkinson_Hyperlegible_Next } from "next/font/google";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { SITE } from "@/lib/site";
@@ -16,6 +16,9 @@ const atkinson = Atkinson_Hyperlegible_Next({
   adjustFontFallback: false,
   fallback: ["system-ui", "sans-serif"],
 });
+
+/** Phone browsers tint their toolbar to match the white header. */
+export const viewport: Viewport = { themeColor: "#ffffff" };
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getDictionary();

@@ -1,11 +1,12 @@
 import type { SVGProps } from "react";
 
-// Stroke icons lifted from the mockups. All inherit currentColor and are
-// hidden from screen readers — pair them with visible text or an aria-label.
+// One icon family: 24px grid, round caps, one stroke weight (2) at every
+// size. All inherit currentColor and are hidden from screen readers — pair
+// them with visible text or an aria-label.
 
 type IconProps = SVGProps<SVGSVGElement>;
 
-function Stroke({ strokeWidth = 1.7, children, ...props }: IconProps) {
+function Stroke({ strokeWidth = 2, children, ...props }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -24,7 +25,7 @@ function Stroke({ strokeWidth = 1.7, children, ...props }: IconProps) {
 }
 
 export const GlobeIcon = (p: IconProps) => (
-  <Stroke strokeWidth={1.6} {...p}>
+  <Stroke {...p}>
     <circle cx="12" cy="12" r="9" />
     <path d="M3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9z" />
   </Stroke>
@@ -98,85 +99,85 @@ export const LogoutIcon = (p: IconProps) => (
 );
 
 export const PlusIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <path d="M12 5v14M5 12h14" />
   </Stroke>
 );
 
 export const MenuIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <path d="M4 6h16M4 12h16M4 18h16" />
   </Stroke>
 );
 
 export const CloseIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <path d="M18 6 6 18M6 6l12 12" />
   </Stroke>
 );
 
 export const LockIcon = (p: IconProps) => (
-  <Stroke strokeWidth={1.6} {...p}>
+  <Stroke {...p}>
     <rect x="4" y="10" width="16" height="10" rx="2" />
     <path d="M8 10V7a4 4 0 0 1 8 0v3" />
   </Stroke>
 );
 
 export const AlertCircleIcon = (p: IconProps) => (
-  <Stroke strokeWidth={1.8} {...p}>
+  <Stroke {...p}>
     <circle cx="12" cy="12" r="9" />
     <path d="M12 8v5M12 16h.01" />
   </Stroke>
 );
 
 export const CheckCircleIcon = (p: IconProps) => (
-  <Stroke strokeWidth={1.8} {...p}>
+  <Stroke {...p}>
     <circle cx="12" cy="12" r="9" />
     <path d="m8 12.5 2.5 2.5L16 9.5" />
   </Stroke>
 );
 
 export const ClockIcon = (p: IconProps) => (
-  <Stroke strokeWidth={1.8} {...p}>
+  <Stroke {...p}>
     <circle cx="12" cy="12" r="9" />
     <path d="M12 7v5l3 3" />
   </Stroke>
 );
 
 export const UserIcon = (p: IconProps) => (
-  <Stroke strokeWidth={1.8} {...p}>
+  <Stroke {...p}>
     <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
     <circle cx="10" cy="7" r="4" />
   </Stroke>
 );
 
 export const ShieldIcon = (p: IconProps) => (
-  <Stroke strokeWidth={1.8} {...p}>
+  <Stroke {...p}>
     <path d="M12 2 3 7v6c0 5 4 9 9 10 5-1 9-5 9-10V7l-9-5z" />
   </Stroke>
 );
 
 export const CheckIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2.2} {...p}>
+  <Stroke {...p}>
     <path d="M20 6 9 17l-5-5" />
   </Stroke>
 );
 
 export const TrashIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6" />
   </Stroke>
 );
 
 export const EditIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <path d="M12 20h9" />
     <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
   </Stroke>
 );
 
 export const ExternalIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
   </Stroke>
 );
@@ -196,13 +197,13 @@ export const SlidesIcon = (p: IconProps) => (
 );
 
 export const ChevronLeftIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2.2} {...p}>
+  <Stroke {...p}>
     <path d="M15 5l-7 7 7 7" />
   </Stroke>
 );
 
 export const ChevronRightIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2.2} {...p}>
+  <Stroke {...p}>
     <path d="M9 5l7 7-7 7" />
   </Stroke>
 );
@@ -215,13 +216,13 @@ export const KeyIcon = (p: IconProps) => (
 );
 
 export const PhoneIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
   </Stroke>
 );
 
 export const InstagramIcon = (p: IconProps) => (
-  <Stroke strokeWidth={1.6} {...p}>
+  <Stroke {...p}>
     <rect x="3" y="3" width="18" height="18" rx="4" />
     <circle cx="12" cy="12" r="3.5" />
     <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" />
@@ -241,7 +242,7 @@ export const TikTokIcon = (p: IconProps) => (
 );
 
 export const MapPinIcon = (p: IconProps) => (
-  <Stroke strokeWidth={1.8} {...p}>
+  <Stroke {...p}>
     <path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z" />
     <circle cx="12" cy="10" r="2.5" />
   </Stroke>
@@ -254,33 +255,52 @@ export const WhatsAppIcon = (p: IconProps) => (
 );
 
 export const ArrowRightIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <path d="M5 12h14M13 6l6 6-6 6" />
   </Stroke>
 );
 
 export const SearchIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <circle cx="11" cy="11" r="7.5" />
     <path d="m21 21-4.6-4.6" />
   </Stroke>
 );
 
 export const CalendarIcon = (p: IconProps) => (
-  <Stroke strokeWidth={1.8} {...p}>
+  <Stroke {...p}>
     <rect x="3" y="4" width="18" height="18" rx="2" />
     <path d="M16 2v4M8 2v4M3 10h18" />
   </Stroke>
 );
 
 export const PauseIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <path d="M9 5v14M15 5v14" />
   </Stroke>
 );
 
 export const PlayIcon = (p: IconProps) => (
-  <Stroke strokeWidth={2} {...p}>
+  <Stroke {...p}>
     <path d="M8 5.5v13l10.5-6.5z" />
+  </Stroke>
+);
+
+export const ArrowLeftIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M19 12H5M11 18l-6-6 6-6" />
+  </Stroke>
+);
+
+export const MinusIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M5 12h14" />
+  </Stroke>
+);
+
+export const InboxIcon = (p: IconProps) => (
+  <Stroke {...p}>
+    <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+    <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
   </Stroke>
 );

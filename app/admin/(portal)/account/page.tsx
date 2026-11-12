@@ -12,13 +12,10 @@ export default async function AccountPage() {
 
   return (
     <div className={`${centeredPage} space-y-6`}>
-      <div>
-        <h2 className="mb-1 text-price">My account</h2>
-        <p className="text-muted">Your sign-in details for the admin dashboard.</p>
-      </div>
+      <p className="text-muted">Your sign-in details for the admin dashboard.</p>
 
       <section className="rounded-xl border border-line bg-white px-6 py-6 sm:px-8">
-        <h3 className="mb-4 text-body">Profile</h3>
+        <h2 className="mb-4 text-body">Profile</h2>
         <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
           <dt className="text-muted">Name</dt>
           <dd className="font-semibold">{admin.name}</dd>
@@ -30,7 +27,7 @@ export default async function AccountPage() {
       </section>
 
       <section className="rounded-xl border border-line bg-white px-6 py-6 sm:px-8">
-        <h3 className="mb-1 text-body">Change password</h3>
+        <h2 className="mb-1 text-body">Change password</h2>
         <p className="mb-5 text-sm text-muted">
           You&apos;ll stay signed in on this device after changing it.
         </p>

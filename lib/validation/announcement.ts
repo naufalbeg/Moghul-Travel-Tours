@@ -1,4 +1,5 @@
 import { z } from "zod";
+import "@/lib/validation/zod-config";
 import { todayInMalaysia } from "@/lib/format";
 
 // Shared by the admin announcement form and its server action (SRS 3.7:

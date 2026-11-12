@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/admin/field";
 import { Alert } from "@/components/ui/alert";
+import { tabClass, tabCountClass, tabListClass } from "@/components/ui/tabs";
 import type { InquiryStatus } from "@/generated/prisma/enums";
 import { requireAdmin } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
@@ -54,7 +55,6 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
   return (
     <>
       <PageHeader
-        title="Inquiries"
         subtitle="Questions and booking requests sent through the website, newest first."
       />
 
@@ -64,7 +64,7 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
         </div>
       )}
 
-      <nav aria-label="Filter by status" className="mb-5 flex flex-wrap gap-2">
+      <nav aria-label="Filter by status" className={`${tabListClass} mb-5`}>
         {tabs.map((tab) => {
           const active = tab.slug === filterSlug || (!tab.slug && !status);
           return (
@@ -72,11 +72,10 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
               key={tab.label}
               href={tab.slug ? `/admin/inquiries?status=${tab.slug}` : "/admin/inquiries"}
               aria-current={active ? "page" : undefined}
-              className={`flex min-h-10 items-center rounded-full border-[1.5px] px-4 text-sm font-semibold ${
-                active ? "border-primary-dark bg-primary-dark text-white" : "border-field bg-white hover:border-primary"
-              }`}
+              className={tabClass(active)}
             >
-              {tab.label} ({tab.count})
+              {tab.label}
+              <span className={tabCountClass}>{tab.count}</span>
             </Link>
           );
         })}
@@ -84,7 +83,7 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
 
       {inquiries.length === 0 ? (
         <div className="rounded-xl border border-line bg-white px-6 py-14 text-center">
-          <h3 className="mb-2 text-lg">{total === 0 ? "No inquiries yet" : "Nothing here"}</h3>
+          <h2 className="mb-2 text-lg">{total === 0 ? "No inquiries yet" : "Nothing here"}</h2>
           <p className="text-muted">
             {total === 0
               ? "When visitors send the inquiry form, their messages appear here and you get an email."

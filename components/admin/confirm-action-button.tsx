@@ -5,7 +5,7 @@ import { useRef, useState, useTransition, type ReactNode } from "react";
 export type ActionResult = { ok: boolean; message?: string };
 
 const triggerStyles = {
-  danger: "border-[#f3d3ce] text-danger hover:bg-danger-pale",
+  danger: "border-danger-line text-danger hover:bg-danger-pale",
   neutral: "border-field text-ink hover:border-primary",
 } as const;
 
@@ -50,7 +50,7 @@ export function ConfirmActionButton({
       <button
         type="button"
         onClick={() => dialogRef.current?.showModal()}
-        className={`flex min-h-9 items-center gap-1.5 rounded-lg border bg-white px-3 text-sm font-semibold ${triggerStyles[tone]}`}
+        className={`flex min-h-9 items-center gap-1.5 rounded-lg border bg-white px-3 text-sm font-semibold transition-colors duration-150 ease-smooth active:translate-y-px ${triggerStyles[tone]}`}
       >
         {icon}
         {label}
@@ -59,7 +59,7 @@ export function ConfirmActionButton({
       <dialog
         ref={dialogRef}
         aria-labelledby={titleId}
-        className="m-auto w-[calc(100%-2rem)] max-w-[440px] rounded-xl p-0 shadow-[0_24px_60px_rgba(13,44,78,0.35)] backdrop:bg-navy/55"
+        className="m-auto w-[calc(100%-2rem)] max-w-[440px] rounded-xl p-0 shadow-dialog backdrop:bg-navy/55"
       >
         <div className="p-6">
           <h2 id={titleId} className="mb-2 text-xl text-primary-dark">

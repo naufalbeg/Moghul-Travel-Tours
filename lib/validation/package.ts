@@ -1,4 +1,5 @@
 import { z } from "zod";
+import "@/lib/validation/zod-config";
 import { PRICE_TYPE_KEYS, listToItems, startingPrice, type PriceList } from "@/lib/package-prices";
 import { IMAGE_BUCKETS, MAX_PACKAGE_IMAGES } from "@/lib/storage-config";
 

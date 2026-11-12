@@ -51,8 +51,6 @@ export function TestimonialForm({ id, initial }: { id: string | null; initial: T
       noValidate
       className={centeredPage}
     >
-      <h2 className="mb-6 text-price">{id ? "Edit testimonial" : "Add testimonial"}</h2>
-
       {banner && (
         <div className="mb-5">
           <Alert tone="error" title={banner} />
@@ -105,7 +103,7 @@ export function TestimonialForm({ id, initial }: { id: string | null; initial: T
               {[1, 2, 3, 4, 5].map((n) => (
                 <label
                   key={n}
-                  className="cursor-pointer rounded-md p-1 text-[32px] leading-none has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-primary-dark"
+                  className="cursor-pointer rounded-md p-1 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-primary-dark"
                 >
                   <input
                     type="radio"
@@ -115,9 +113,17 @@ export function TestimonialForm({ id, initial }: { id: string | null; initial: T
                     onChange={() => set("starRating", n)}
                     className="sr-only"
                   />
-                  <span aria-hidden="true" className={n <= values.starRating ? "text-accent" : "text-line"}>
-                    ★
-                  </span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    strokeWidth={1.5}
+                    strokeLinejoin="round"
+                    className={`size-9 transition-colors duration-150 ${
+                      n <= values.starRating ? "fill-accent stroke-accent-dark" : "fill-none stroke-field"
+                    }`}
+                  >
+                    <path d="m12 2 3.1 6.3 6.9 1-5 4.9L18.2 21 12 17.8 5.8 21 7 14.2l-5-4.9 6.9-1z" />
+                  </svg>
                   <span className="sr-only">
                     {n} star{n === 1 ? "" : "s"}
                   </span>

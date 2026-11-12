@@ -1,4 +1,5 @@
 import { z } from "zod";
+import "@/lib/validation/zod-config";
 import { toIntlPhone, type SiteContentKey } from "@/lib/site-content";
 
 // Shared by the admin content editor and updateSiteContent (SRS 3.6 rules:

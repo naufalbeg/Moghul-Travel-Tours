@@ -24,7 +24,7 @@ export function DeletePackageButton({ id, title }: { id: string; title: string }
       <button
         type="button"
         onClick={() => dialogRef.current?.showModal()}
-        className="flex min-h-9 items-center gap-1.5 rounded-lg border border-[#f3d3ce] px-3 text-sm font-semibold text-danger hover:bg-danger-pale"
+        className="flex min-h-9 items-center gap-1.5 rounded-lg border border-danger-line bg-white px-3 text-sm font-semibold text-danger transition-colors duration-150 ease-smooth hover:bg-danger-pale active:translate-y-px"
       >
         <TrashIcon className="size-3.5" />
         Delete
@@ -33,7 +33,7 @@ export function DeletePackageButton({ id, title }: { id: string; title: string }
       <dialog
         ref={dialogRef}
         aria-labelledby={`delete-${id}-title`}
-        className="m-auto w-[calc(100%-2rem)] max-w-[440px] rounded-xl p-0 shadow-[0_24px_60px_rgba(13,44,78,0.35)] backdrop:bg-navy/55"
+        className="m-auto w-[calc(100%-2rem)] max-w-[440px] rounded-xl p-0 shadow-dialog backdrop:bg-navy/55"
       >
         <div className="p-6">
           <h2 id={`delete-${id}-title`} className="mb-2 text-xl text-primary-dark">

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import "@/lib/validation/zod-config";
 
 // Shared by the admin testimonial form and its server action (SRS 3.5:
 // customer name, trip name and review text required; rating 1–5).

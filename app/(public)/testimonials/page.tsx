@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { connection } from "next/server";
 import { PageBanner } from "@/components/public/page-banner";
+import { PhotoStrip } from "@/components/public/photo-strip";
+import { Stars } from "@/components/ui/stars";
 import { ArrowRightIcon } from "@/components/ui/icons";
 import { formatDate } from "@/lib/format";
 import { fmt } from "@/lib/i18n/config";
@@ -10,7 +12,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getDictionary();
-  return { title: t.meta.testimonialsTitle, description: t.meta.testimonialsDescription };
+  return {
+    title: t.meta.testimonialsTitle,
+    description: t.meta.testimonialsDescription,
+    alternates: { canonical: "/testimonials" },
+  };
 }
 
 /** TestimonialsPage [PKG-MTT-005-001] — REQ-MTT-005-003, newest first. */
@@ -28,25 +34,28 @@ export default async function TestimonialsPage() {
 
       <section className="wrap pt-10 pb-[clamp(56px,7vw,104px)]">
         {testimonials.length === 0 ? (
-          <div className="max-w-[60ch] rounded-xl border border-line bg-white px-6 py-8">
-            <p className="mb-4 text-muted">{t.testimonials.empty}</p>
-            <Link href="/packages" className="arrow-link">
-              {t.testimonials.browse}
-              <ArrowRightIcon className="nudge size-[22px]" />
-            </Link>
+          // No reviews yet: say so plainly, and let the customers' own photos speak meanwhile.
+          <div>
+            <p className="max-w-[60ch] text-lead">{t.testimonials.empty}</p>
+            <p className="mt-2 mb-7 max-w-[60ch] text-muted">{t.testimonials.meanwhile}</p>
+            <PhotoStrip />
+            <div className="mt-7 flex flex-wrap gap-x-8 gap-y-1">
+              <Link href="/gallery" className="arrow-link">
+                {t.testimonials.viewGallery}
+                <ArrowRightIcon className="nudge size-[22px]" />
+              </Link>
+              <Link href="/packages" className="arrow-link">
+                {t.testimonials.browse}
+                <ArrowRightIcon className="nudge size-[22px]" />
+              </Link>
+            </div>
           </div>
         ) : (
           <ul className="columns-1 gap-6 sm:columns-2 mid:columns-3">
             {testimonials.map((review) => (
               <li key={review.id} className="mb-6 break-inside-avoid">
                 <figure className="rounded-xl border border-line bg-white p-6">
-                  <p
-                    className="text-lead tracking-[2px] text-accent-dark"
-                    role="img"
-                    aria-label={fmt(t.testimonials.stars, { n: review.starRating })}
-                  >
-                    {"★".repeat(review.starRating)}
-                  </p>
+                  <Stars rating={review.starRating} label={fmt(t.testimonials.stars, { n: review.starRating })} />
                   <blockquote className="mt-3 whitespace-pre-line">{review.reviewText}</blockquote>
                   <figcaption className="mt-4 text-meta text-muted">
                     <strong className="block text-body text-primary-dark">{review.customerName}</strong>

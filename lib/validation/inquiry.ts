@@ -1,4 +1,5 @@
 import { z } from "zod";
+import "@/lib/validation/zod-config";
 
 // Shared by the public inquiry form and submitInquiry (SRS 3.3: all fields
 // except Message are required; email must be valid). The contact fields and

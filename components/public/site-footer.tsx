@@ -7,6 +7,7 @@ import { SITE } from "@/lib/site";
 import { lines, telHref, whatsappHref, type SiteContent } from "@/lib/site-content";
 
 const link = "text-white underline decoration-white/40 underline-offset-[0.2em] hover:decoration-white";
+const legal = "underline decoration-white/40 underline-offset-[0.2em] hover:text-white";
 
 function Column({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -54,11 +55,18 @@ export async function SiteFooter({ content }: { content: SiteContent }) {
             </li>
             <li>
               {t.footer.tel}{" "}
-              <a href={telHref(content.phone)} className={link}>
+              <a href={telHref(content.phone)} className={`${link} whitespace-nowrap`}>
                 {content.phone}
               </a>
-              {" · "}WhatsApp{" "}
-              <a href={whatsappHref(content)} target="_blank" rel="noopener noreferrer" className={link}>
+            </li>
+            <li>
+              WhatsApp{" "}
+              <a
+                href={whatsappHref(content)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${link} whitespace-nowrap`}
+              >
                 {content.whatsapp}
               </a>
             </li>
@@ -130,10 +138,20 @@ export async function SiteFooter({ content }: { content: SiteContent }) {
           <span lang="en">
             © {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </span>
-          {/* Deliberately low-key: staff need it, visitors shouldn't be drawn to it. */}
-          <Link href="/admin/login" lang="en" className="underline decoration-white/40 underline-offset-[0.2em] hover:text-white">
-            Admin login
-          </Link>
+          <span>
+            <Link href="/privacy" className={legal}>
+              {t.footer.privacy}
+            </Link>
+            {" · "}
+            <Link href="/terms" className={legal}>
+              {t.footer.terms}
+            </Link>
+            {" · "}
+            {/* Deliberately low-key: staff need it, visitors shouldn't be drawn to it. */}
+            <Link href="/admin/login" lang="en" className={legal}>
+              Admin login
+            </Link>
+          </span>
           <span lang="en">Developed by MNB</span>
         </div>
       </div>

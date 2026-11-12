@@ -1,20 +1,15 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { PasswordRules } from "@/components/admin/password-rules";
 import { Alert } from "@/components/ui/alert";
 import { AlertCircleIcon } from "@/components/ui/icons";
 import { PasswordInput } from "@/components/ui/password-input";
-import { PASSWORD_HINT } from "@/lib/validation/password";
 import { changePassword, type ChangePasswordState } from "./actions";
 
 const fields = [
   { name: "currentPassword", label: "Current password", autoComplete: "current-password" },
-  {
-    name: "newPassword",
-    label: "New password",
-    autoComplete: "new-password",
-    hint: PASSWORD_HINT,
-  },
+  { name: "newPassword", label: "New password", autoComplete: "new-password", rules: true },
   { name: "confirmPassword", label: "Confirm new password", autoComplete: "new-password" },
 ] as const;
 
@@ -24,6 +19,7 @@ export function ChangePasswordForm() {
     { status: "idle" },
   );
   const fieldErrors = state.status === "error" ? state.fieldErrors : undefined;
+  const [newPassword, setNewPassword] = useState("");
 
   return (
     <form action={formAction} noValidate className="space-y-5">
@@ -37,7 +33,7 @@ export function ChangePasswordForm() {
       {fields.map((field) => {
         const error = fieldErrors?.[field.name];
         const describedBy = [
-          "hint" in field ? `${field.name}-hint` : null,
+          "rules" in field ? `${field.name}-hint` : null,
           error ? `${field.name}-error` : null,
         ]
           .filter(Boolean)
@@ -54,15 +50,12 @@ export function ChangePasswordForm() {
               required
               aria-invalid={error ? true : undefined}
               aria-describedby={describedBy || undefined}
+              onChange={"rules" in field ? (e) => setNewPassword(e.target.value) : undefined}
               className={`w-full rounded-lg border-[1.5px] px-3.5 py-3 text-meta ${
                 error ? "border-danger bg-danger-pale" : "border-field"
               }`}
             />
-            {"hint" in field && (
-              <p id={`${field.name}-hint`} className="mt-1.5 text-sm text-muted">
-                {field.hint}
-              </p>
-            )}
+            {"rules" in field && <PasswordRules id={`${field.name}-hint`} value={newPassword} />}
             {error && (
               <p
                 id={`${field.name}-error`}
@@ -79,7 +72,7 @@ export function ChangePasswordForm() {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg bg-accent px-6 py-3 font-bold text-ink hover:bg-accent-hover disabled:opacity-60"
+        className="min-h-12 rounded-lg bg-accent px-6 font-bold text-ink transition-[background-color,transform] duration-150 ease-smooth hover:bg-accent-hover active:translate-y-px disabled:opacity-60"
       >
         {pending ? "Updating…" : "Update password"}
       </button>

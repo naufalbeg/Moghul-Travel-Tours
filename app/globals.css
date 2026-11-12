@@ -58,6 +58,7 @@
   --shadow-lift: 0 12px 28px rgb(13 44 78 / 0.12);
   --shadow-panel: 0 12px 32px rgb(13 44 78 / 0.16);
   --shadow-search: 0 18px 44px rgb(13 44 78 / 0.18), 0 2px 6px rgb(13 44 78 / 0.08);
+  --shadow-dialog: 0 24px 60px rgb(13 44 78 / 0.35);
 }
 
 /* One typeface throughout: Atkinson Hyperlegible Next (next/font, app/layout.tsx). */
@@ -71,6 +72,7 @@
     -webkit-font-smoothing: antialiased;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: rgb(27 95 168 / 0.14);
+    scrollbar-color: #9fb6cc var(--color-canvas);
     /* Keeps in-page targets clear of the sticky header. */
     scroll-padding-top: 104px;
   }
@@ -89,6 +91,17 @@
   ::selection {
     background: var(--color-accent-pale);
     color: var(--color-ink);
+  }
+
+  /* Example text inside fields: readable (5.4:1), but clearly not an answer. */
+  ::placeholder {
+    color: #5d6b78;
+    opacity: 1;
+  }
+
+  /* Columns of figures line up digit under digit. */
+  table {
+    font-variant-numeric: tabular-nums;
   }
 
   h1,
@@ -273,6 +286,33 @@
     color: var(--color-primary-dark);
   }
 
+  /*
+   * Feedback that has just appeared (a saved / sent / error message) settles
+   * in with a short rise, so the change is noticed.
+   */
+  .appear {
+    animation: rise 250ms var(--ease-smooth) both;
+  }
+
+  /* Placeholder blocks while a page's data loads (admin loading screens). */
+  .skeleton {
+    border-radius: var(--radius-lg);
+    background: linear-gradient(100deg, var(--color-line) 30%, #e9eff5 50%, var(--color-line) 70%) 0 0 / 220% 100%;
+  }
+
+  /* A menu link that has been clicked and is still loading its page. */
+  .link-pending {
+    opacity: 0.55;
+  }
+
+  /* Admin lists: the row under the pointer is tinted, so it is clear which one a button belongs to. */
+  .admin tbody tr {
+    transition: background-color 150ms var(--ease-smooth);
+  }
+  .admin tbody tr:hover {
+    background-color: var(--color-canvas);
+  }
+
   /* A spinner for busy buttons. */
   .spinner {
     width: 20px;
@@ -297,6 +337,10 @@
     border-radius: var(--radius-2xl);
     padding: 8px;
     box-shadow: var(--shadow-search);
+  }
+  /* Packages page: two parts and the button (the category stays with the tabs). */
+  .search-bar-two {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) auto;
   }
   .seg {
     position: relative;
@@ -419,6 +463,9 @@
 @media (prefers-reduced-motion: no-preference) {
   .spinner {
     animation: spin 700ms linear infinite;
+  }
+  .skeleton {
+    animation: photo-loading 1.4s linear infinite;
   }
 
   /* The homepage hero's pieces rise into place once, one after another. */

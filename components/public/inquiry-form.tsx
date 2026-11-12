@@ -78,7 +78,7 @@ export function InquiryForm({
 
   if (sentTo) {
     return (
-      <div role="status" className="rounded-xl border border-line bg-white px-6 py-10 sm:px-10">
+      <div role="status" className="appear rounded-xl border border-line bg-white px-6 py-10 sm:px-10">
         <CheckCircleIcon className="mb-4 size-14 text-success" />
         <h2 className="mb-2 text-display font-extrabold text-primary-dark">{fmt(text.thanks, { name: sentTo })}</h2>
         <p className="mb-7 max-w-[52ch] text-muted">{text.submitted}</p>
@@ -176,7 +176,12 @@ export function InquiryForm({
         {pending && <span className="spinner" aria-hidden="true" />}
         {pending ? text.sending : text.send}
       </button>
-      <p className="mt-4 text-fine text-muted">{text.privacy}</p>
+      <p className="mt-4 text-fine text-muted">
+        {text.privacy}{" "}
+        <Link href="/privacy" className="text-link font-normal">
+          {text.privacyLink}
+        </Link>
+      </p>
     </form>
   );
 }

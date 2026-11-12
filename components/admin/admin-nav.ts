@@ -30,11 +30,11 @@ export const ADMIN_NAV: { label: string; items: NavItem[] }[] = [
   {
     label: "Content management",
     items: [
-      { href: "/admin/packages", label: "Packages", title: "Manage Packages", Icon: PackageIcon },
+      { href: "/admin/packages", label: "Packages", title: "Packages", Icon: PackageIcon },
       { href: "/admin/inquiries", label: "Inquiries", title: "Inquiries", Icon: MailIcon },
       { href: "/admin/gallery", label: "Gallery", title: "Gallery", Icon: ImageIcon },
       { href: "/admin/testimonials", label: "Testimonials", title: "Testimonials", Icon: StarIcon },
-      { href: "/admin/content", label: "Content pages", title: "Content Pages", Icon: FileIcon },
+      { href: "/admin/content", label: "Content pages", title: "Content pages", Icon: FileIcon },
       { href: "/admin/banners", label: "Banners", title: "Banners", Icon: SlidesIcon },
       {
         href: "/admin/announcements",
@@ -50,11 +50,11 @@ export const ADMIN_NAV: { label: string; items: NavItem[] }[] = [
       {
         href: "/admin/users",
         label: "User management",
-        title: "User Management",
+        title: "User management",
         Icon: UsersIcon,
         minRole: "MASTER_ADMIN",
       },
-      { href: "/admin/account", label: "My account", title: "My Account", Icon: KeyIcon },
+      { href: "/admin/account", label: "My account", title: "My account", Icon: KeyIcon },
     ],
   },
 ];
@@ -65,12 +65,12 @@ export function isNavItemActive(href: string, pathname: string) {
 
 // Sub-pages whose top-bar title differs from their section's.
 const SUB_PAGE_TITLES: [RegExp, string][] = [
-  [/^\/admin\/packages\/new$/, "Add New Package"],
-  [/^\/admin\/packages\/[^/]+\/edit$/, "Edit Package"],
-  [/^\/admin\/testimonials\/new$/, "Add Testimonial"],
-  [/^\/admin\/testimonials\/[^/]+\/edit$/, "Edit Testimonial"],
-  [/^\/admin\/announcements\/new$/, "Post Announcement"],
-  [/^\/admin\/announcements\/[^/]+\/edit$/, "Edit Announcement"],
+  [/^\/admin\/packages\/new$/, "Add new package"],
+  [/^\/admin\/packages\/[^/]+\/edit$/, "Edit package"],
+  [/^\/admin\/testimonials\/new$/, "Add testimonial"],
+  [/^\/admin\/testimonials\/[^/]+\/edit$/, "Edit testimonial"],
+  [/^\/admin\/announcements\/new$/, "Post announcement"],
+  [/^\/admin\/announcements\/[^/]+\/edit$/, "Edit announcement"],
 ];
 
 export function titleForPath(pathname: string) {

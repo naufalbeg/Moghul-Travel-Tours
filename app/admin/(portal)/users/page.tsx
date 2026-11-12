@@ -32,7 +32,7 @@ export default async function UsersPage() {
 
   return (
     <>
-      <PageHeader title="Admin accounts" subtitle="Manage who has access to the admin dashboard." action={<AddAdminButton />} />
+      <PageHeader subtitle="Manage who has access to the admin dashboard." action={<AddAdminButton />} />
 
       <div className="overflow-x-auto rounded-xl border border-line bg-white">
         <table className="w-full min-w-[820px] border-collapse text-left">
@@ -94,7 +94,7 @@ export default async function UsersPage() {
                   </td>
                   <td className="px-5 py-4">
                     {isMaster || u.id === me.id ? (
-                      <span className="text-sm text-muted italic">Cannot be modified</span>
+                      <span className="text-sm text-muted">Cannot be modified</span>
                     ) : (
                       <div className="flex flex-wrap gap-2">
                         {pending && u.isActive && <ResendInviteButton userId={u.id} />}

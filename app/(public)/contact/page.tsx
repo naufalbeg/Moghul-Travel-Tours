@@ -13,7 +13,11 @@ import { GENERAL_INQUIRY } from "@/lib/validation/inquiry";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getDictionary();
-  return { title: t.meta.contactTitle, description: t.meta.contactDescription };
+  return {
+    title: t.meta.contactTitle,
+    description: t.meta.contactDescription,
+    alternates: { canonical: "/contact" },
+  };
 }
 
 /** One way to reach the office: an icon, a heading and the details, separated by a rule. */

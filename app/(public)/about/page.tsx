@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageBanner } from "@/components/public/page-banner";
+import { PhotoStrip } from "@/components/public/photo-strip";
 import { ArrowRightIcon, ShieldIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { getDictionary } from "@/lib/i18n/server";
 import { getPublicContent } from "@/lib/site-config";
@@ -8,7 +9,11 @@ import { paragraphs, whatsappHref } from "@/lib/site-content";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [content, t] = await Promise.all([getPublicContent(), getDictionary()]);
-  return { title: t.meta.aboutTitle, description: content.about_summary.slice(0, 160) };
+  return {
+    title: t.meta.aboutTitle,
+    description: content.about_summary.slice(0, 160),
+    alternates: { canonical: "/about" },
+  };
 }
 
 /** AboutContactPage [PKG-MTT-006-001] — About half: the story, beside the licences and a way to start planning. */
@@ -20,7 +25,6 @@ export default async function AboutPage() {
     { label: t.home.credMatta, value: content.matta_member },
     { label: t.home.credMita, value: content.mita_member },
     { label: t.home.credPapuh, value: content.papuh_member },
-    { label: t.home.credAgent, value: "Muslim Travel Bug" },
   ].filter((c) => c.value);
 
   return (
@@ -28,13 +32,29 @@ export default async function AboutPage() {
       <PageBanner title={t.about.title}>{content.about_summary}</PageBanner>
 
       <div className="wrap grid items-start gap-[clamp(32px,5vw,72px)] pt-[clamp(40px,5vw,64px)] pb-[clamp(56px,7vw,104px)] mid:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
-        <article className="max-w-[65ch] space-y-5 text-lead leading-[1.65]">
-          {paragraphs(content.about_story).map((p) => (
-            <p key={p} className="whitespace-pre-line">
-              {p}
-            </p>
-          ))}
-        </article>
+        <div>
+          <article className="max-w-[65ch] space-y-5 text-lead leading-[1.65]">
+            {paragraphs(content.about_story).map((p) => (
+              <p key={p} className="whitespace-pre-line">
+                {p}
+              </p>
+            ))}
+          </article>
+
+          {/* Places open the page, people prove it: the customers' own trip photos. */}
+          <section aria-labelledby="photos-title" className="reveal mt-12">
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-1">
+              <h2 id="photos-title" className="text-title text-primary-dark">
+                {t.about.photosHeading}
+              </h2>
+              <Link href="/gallery" className="arrow-link">
+                {t.about.viewGallery}
+                <ArrowRightIcon className="nudge size-[22px]" />
+              </Link>
+            </div>
+            <PhotoStrip />
+          </section>
+        </div>
 
         <aside className="space-y-8 mid:sticky mid:top-[112px]">
           <section aria-labelledby="credentials-title">
