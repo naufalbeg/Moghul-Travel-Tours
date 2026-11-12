@@ -71,17 +71,17 @@ export default async function AdminAnnouncementsPage({ searchParams }: PageProps
             return (
               <li key={a.id} className="flex flex-col gap-4 rounded-xl border border-line bg-white p-5 lg:flex-row lg:items-center">
                 <div className="min-w-0 flex-1">
-                  <span className={`mb-2 inline-block rounded-full px-3 py-1 text-xs font-bold ${pillClass[state]}`}>{label}</span>
+                  <span className={`mb-2 inline-block rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${pillClass[state]}`}>{label}</span>
                   <p className={`font-semibold ${state === "live" ? "" : "text-muted"}`}>{a.title}</p>
-                  <p className="text-[15px] text-muted">{a.body}</p>
+                  <p className="text-meta text-muted">{a.body}</p>
                   {state === "ended" && (
-                    <p className="mt-1 text-[13px] text-muted">Edit it and choose a later date to show it again.</p>
+                    <p className="mt-1 text-sm text-muted">Edit it and choose a later date to show it again.</p>
                   )}
                 </div>
                 <div className="flex shrink-0 flex-wrap gap-2">
                   <Link
                     href={`/admin/announcements/${a.id}/edit`}
-                    className="flex min-h-9 items-center gap-1.5 rounded-[7px] border border-line px-3 text-[13.5px] font-semibold hover:border-primary"
+                    className="flex min-h-9 items-center gap-1.5 rounded-lg border border-field px-3 text-sm font-semibold hover:border-primary"
                   >
                     <EditIcon className="size-3.5" />
                     Edit

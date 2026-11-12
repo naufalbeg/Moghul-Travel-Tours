@@ -64,12 +64,12 @@ export default async function AdminTestimonialsPage({ searchParams }: PageProps<
                     {t.tripName}
                     {t.tripDate && ` · ${formatDate(t.tripDate)}`}
                   </p>
-                  <p className="line-clamp-2 text-[15px]">&ldquo;{t.reviewText}&rdquo;</p>
+                  <p className="line-clamp-2 text-meta">&ldquo;{t.reviewText}&rdquo;</p>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <Link
                     href={`/admin/testimonials/${t.id}/edit`}
-                    className="flex min-h-9 items-center gap-1.5 rounded-[7px] border border-line px-3 text-[13.5px] font-semibold hover:border-primary"
+                    className="flex min-h-9 items-center gap-1.5 rounded-lg border border-field px-3 text-sm font-semibold hover:border-primary"
                   >
                     <EditIcon className="size-3.5" />
                     Edit

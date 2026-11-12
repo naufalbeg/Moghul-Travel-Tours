@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { PauseIcon, PlayIcon } from "@/components/ui/icons";
 import { BANNER_SLIDE_MS } from "@/lib/banners";
 
 const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
@@ -13,9 +14,9 @@ function subscribeReducedMotion(onChange: () => void) {
 }
 
 /**
- * Photo background for a banner (homepage hero, package listing banners):
- * the photos fade from one to the next every few seconds behind a dark
- * overlay that keeps the white text readable. The owner asked for autoplay,
+ * Photo background for a package listing banner: the photos fade from one to
+ * the next every few seconds behind a navy overlay, darkest on the left where
+ * the white title sits. The owner asked for autoplay,
  * so it has a Pause button, stops while the tab is hidden, and doesn't
  * autoplay for visitors who turned on "reduce motion". Place it inside a
  * `relative isolate overflow-hidden` container. Play/Pause stays in English
@@ -58,7 +59,7 @@ export function BannerSlideshow({ images }: { images: { id: string; url: string 
             }`}
           />
         ))}
-        <div className="absolute inset-0 bg-linear-to-b from-navy/60 via-navy/45 to-navy/70" />
+        <div className="absolute inset-0 bg-linear-to-r from-navy/90 via-navy/65 to-navy/35" />
       </div>
 
       {count > 1 && !reducedMotion && (
@@ -67,17 +68,9 @@ export function BannerSlideshow({ images }: { images: { id: string; url: string 
           onClick={() => setPaused((p) => !p)}
           lang="en"
           aria-label={paused ? "Play the photo slideshow" : "Pause the photo slideshow"}
-          className="absolute top-3 right-3 flex min-h-10 items-center gap-1.5 rounded-full bg-navy/60 px-3.5 text-sm font-semibold text-white hover:bg-navy/80 sm:top-4 sm:right-4"
+          className="absolute top-3 right-3 z-[1] flex min-h-12 items-center gap-2 rounded-lg bg-navy/70 px-3.5 text-meta font-bold text-white transition-colors duration-150 ease-smooth hover:bg-navy/90 sm:top-4 sm:right-4"
         >
-          {paused ? (
-            <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
-              <path d="M7 5h4v14H7zM13 5h4v14h-4z" />
-            </svg>
-          )}
+          {paused ? <PlayIcon className="size-5" /> : <PauseIcon className="size-5" />}
           {paused ? "Play" : "Pause"}
         </button>
       )}

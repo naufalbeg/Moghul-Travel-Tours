@@ -21,7 +21,7 @@ export default async function AdminGalleryPage({ searchParams }: PageProps<"/adm
 
   const pill = (active: boolean) =>
     `flex min-h-10 items-center rounded-full border-[1.5px] px-4 text-sm font-semibold ${
-      active ? "border-primary bg-primary text-white" : "border-line bg-white hover:border-primary"
+      active ? "border-primary-dark bg-primary-dark text-white" : "border-field bg-white hover:border-primary"
     }`;
 
   return (

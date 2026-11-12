@@ -73,7 +73,7 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
               href={tab.slug ? `/admin/inquiries?status=${tab.slug}` : "/admin/inquiries"}
               aria-current={active ? "page" : undefined}
               className={`flex min-h-10 items-center rounded-full border-[1.5px] px-4 text-sm font-semibold ${
-                active ? "border-primary bg-primary text-white" : "border-line bg-white hover:border-primary"
+                active ? "border-primary-dark bg-primary-dark text-white" : "border-field bg-white hover:border-primary"
               }`}
             >
               {tab.label} ({tab.count})
@@ -95,7 +95,7 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
         <div className="overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[720px] border-collapse text-left">
             <thead>
-              <tr className="border-b border-line bg-canvas text-[13px] font-bold tracking-wide text-muted">
+              <tr className="border-b border-line bg-canvas text-sm font-bold tracking-wide text-muted">
                 <th scope="col" className="px-5 py-4">From</th>
                 <th scope="col" className="px-5 py-4">Package</th>
                 <th scope="col" className="px-5 py-4">Received</th>
@@ -118,7 +118,7 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
                     </td>
                     <td className="px-5 py-4 text-sm">
                       {q.kind === "BOOKING" && (
-                        <span className={`mb-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${INQUIRY_KIND.BOOKING.className}`}>
+                        <span className={`mb-1 inline-block rounded-full px-2.5 py-0.5 text-[13px] font-bold whitespace-nowrap ${INQUIRY_KIND.BOOKING.className}`}>
                           {INQUIRY_KIND.BOOKING.label}
                         </span>
                       )}
@@ -131,12 +131,12 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps<"/a
                     </td>
                     <td className="px-5 py-4 text-sm whitespace-nowrap text-muted">{formatReceived(q.createdAt)}</td>
                     <td className="px-5 py-4">
-                      <span className={`rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap ${pill.className}`}>{pill.label}</span>
+                      <span className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap whitespace-nowrap ${pill.className}`}>{pill.label}</span>
                     </td>
                     <td className="px-5 py-4 text-right">
                       <Link
                         href={`/admin/inquiries/${q.id}`}
-                        className="inline-flex min-h-9 items-center rounded-[7px] border border-line px-3 text-[13.5px] font-semibold hover:border-primary"
+                        className="inline-flex min-h-9 items-center rounded-lg border border-field px-3 text-sm font-semibold hover:border-primary"
                       >
                         Open
                       </Link>

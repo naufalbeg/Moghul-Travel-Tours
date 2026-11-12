@@ -1,25 +1,17 @@
 import Link from "next/link";
+import { pillClass } from "@/components/public/pill";
 import { getDictionary } from "@/lib/i18n/server";
 import { CATEGORY_FILTERS } from "@/lib/package-labels";
 
 /**
- * Category filter pills (mockup 3.2.1). Plain links, so they work without JS.
- * A pill right of the active one slides the results in from the right, one to
- * the left from the left. On the homepage (`fromHomepage`) every pill leads to
- * the Packages page, so they all slide forward like the Packages menu item.
+ * Category filter pills on the Packages page. Plain links, so they work
+ * without JS. A pill right of the active one slides the results in from the
+ * right, one to the left from the left.
  */
-export async function CategoryPills({
-  active,
-  allLabel,
-  fromHomepage = false,
-}: {
-  active: string | null;
-  allLabel?: string;
-  fromHomepage?: boolean;
-}) {
+export async function CategoryPills({ active }: { active: string | null }) {
   const t = await getDictionary();
   const pills = [
-    { slug: null, label: allLabel ?? t.categoryPills.all, href: "/packages" },
+    { slug: null, label: t.categoryPills.all, href: "/packages" },
     ...CATEGORY_FILTERS.map((f) => ({
       slug: f.slug,
       label: t.categories[f.categories[0]],
@@ -30,19 +22,16 @@ export async function CategoryPills({
   const current = pills.findIndex((pill) => pill.slug === active);
 
   return (
-    <nav aria-label={t.categoryPills.label} className="flex flex-wrap justify-center gap-3">
+    <nav aria-label={t.categoryPills.label} className="flex flex-wrap gap-3">
       {pills.map((pill, i) => {
         const isActive = i === current;
-        const direction = fromHomepage || i > current ? "nav-forward" : "nav-back";
         return (
           <Link
             key={pill.slug ?? "all"}
             href={pill.href}
-            transitionTypes={isActive && !fromHomepage ? undefined : [direction]}
+            transitionTypes={isActive ? undefined : [i > current ? "nav-forward" : "nav-back"]}
             aria-current={isActive ? "page" : undefined}
-            className={`flex min-h-11 items-center rounded-full border-[1.5px] border-primary px-[22px] text-[15px] font-semibold ${
-              isActive ? "bg-primary text-white" : "bg-white text-primary hover:bg-primary-pale"
-            }`}
+            className={pillClass(isActive)}
           >
             {pill.label}
           </Link>

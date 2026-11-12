@@ -4,10 +4,10 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { logAudit } from "@/lib/audit";
 import { authorize } from "@/lib/auth";
-import { BANNER_KEYS } from "@/lib/banners";
+import { bannerSlot, type BannerSlot } from "@/lib/banners";
 import { IMAGE_PATH_PATTERN, createSignedImageUploads, removeImages } from "@/lib/image-uploads";
 import { prisma } from "@/lib/prisma";
-import { IMAGE_BUCKETS, MAX_BANNER_IMAGES, publicImageUrl } from "@/lib/storage-config";
+import { IMAGE_BUCKETS, publicImageUrl } from "@/lib/storage-config";
 
 // BannerController. Same upload pattern as the gallery: signed URLs, the
 // browser uploads the cropped photo straight to Storage, then
@@ -18,31 +18,36 @@ const BUCKET = IMAGE_BUCKETS.banners;
 const EXPIRED = { ok: false as const, message: "Your session has expired. Please sign in again." };
 const UNKNOWN_BANNER = { ok: false as const, message: "Unknown banner." };
 
-const bannerKey = z.string().refine((key) => BANNER_KEYS.includes(key));
+const fullMessage = (slot: BannerSlot) =>
+  slot.max === 1
+    ? "This slot already has its photo. Remove it first to choose another."
+    : `This banner already has ${slot.max} photos.`;
 
 export async function createBannerImageUploads(banner: string, files: { type: string; size: number }[]) {
   const auth = await authorize("ADMIN");
   if (!auth.ok) return EXPIRED;
-  if (!bannerKey.safeParse(banner).success) return UNKNOWN_BANNER;
+  const slot = bannerSlot(banner);
+  if (!slot) return UNKNOWN_BANNER;
 
-  const room = MAX_BANNER_IMAGES - (await prisma.bannerImage.count({ where: { banner } }));
-  if (room <= 0) return { ok: false as const, message: `This banner already has ${MAX_BANNER_IMAGES} photos.` };
+  const room = slot.max - (await prisma.bannerImage.count({ where: { banner } }));
+  if (room <= 0) return { ok: false as const, message: fullMessage(slot) };
   return createSignedImageUploads(BUCKET, files, room);
 }
 
-/** Records an uploaded photo at the end of the banner's slideshow. */
+/** Records an uploaded photo at the end of the slot's photos. */
 export async function saveBannerImage(banner: string, path: string) {
   const auth = await authorize("ADMIN");
   if (!auth.ok) return EXPIRED;
-  if (!bannerKey.safeParse(banner).success) return UNKNOWN_BANNER;
+  const slot = bannerSlot(banner);
+  if (!slot) return UNKNOWN_BANNER;
   if (!IMAGE_PATH_PATTERN.test(path)) {
     return { ok: false as const, message: "That photo couldn't be saved. Please try uploading it again." };
   }
 
   const existing = await prisma.bannerImage.findMany({ where: { banner }, select: { sortOrder: true } });
-  if (existing.length >= MAX_BANNER_IMAGES) {
+  if (existing.length >= slot.max) {
     await removeImages(BUCKET, [path]);
-    return { ok: false as const, message: `This banner already has ${MAX_BANNER_IMAGES} photos.` };
+    return { ok: false as const, message: fullMessage(slot) };
   }
 
   const image = await prisma.bannerImage.create({

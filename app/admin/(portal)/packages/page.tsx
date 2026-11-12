@@ -44,12 +44,12 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
     <>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="mb-1 text-[23px]">All packages</h2>
+          <h2 className="mb-1 text-price">All packages</h2>
           <p className="text-muted">Manage published and draft travel packages.</p>
         </div>
         <Link
           href="/admin/packages/new"
-          className="flex min-h-12 items-center justify-center gap-2 self-start rounded-lg bg-accent px-5 font-bold whitespace-nowrap text-white hover:bg-accent-dark"
+          className="flex min-h-12 items-center justify-center gap-2 self-start rounded-lg bg-accent px-5 font-bold whitespace-nowrap text-ink hover:bg-accent-hover"
         >
           <PlusIcon className="size-[18px]" />
           Add new package
@@ -72,7 +72,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
           <p className="mb-6 text-muted">Add your first package — it can stay a draft until it&apos;s ready.</p>
           <Link
             href="/admin/packages/new"
-            className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-accent px-5 font-bold text-white"
+            className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-accent px-5 font-bold text-ink"
           >
             <PlusIcon className="size-[18px]" />
             Add new package
@@ -82,7 +82,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
         <div className="overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[920px] border-collapse text-left">
             <thead>
-              <tr className="border-b border-line bg-canvas text-[13px] font-bold tracking-wide text-muted">
+              <tr className="border-b border-line bg-canvas text-sm font-bold tracking-wide text-muted">
                 <th scope="col" className="px-5 py-4">Package</th>
                 <th scope="col" className="px-5 py-4">Price</th>
                 <th scope="col" className="px-5 py-4">Status</th>
@@ -114,33 +114,33 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
                         </div>
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-sm text-muted">
+                    <td className="px-5 py-4 text-sm whitespace-nowrap text-muted">
                       {fromPrice !== null ? `From ${formatPrice(fromPrice)}` : "Not set"}
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-col items-start gap-1">
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-bold ${
+                          className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${
                             isDraft ? "bg-primary-pale text-primary" : "bg-success-pale text-success"
                           }`}
                         >
                           {isDraft ? "Draft" : "Published"}
                         </span>
                         {pkg.availability !== "OPEN" && (
-                          <span className={`rounded-full px-3 py-1 text-xs font-bold ${availability.className}`}>
+                          <span className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${availability.className}`}>
                             {availability.label}
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-sm text-muted">
+                    <td className="px-5 py-4 text-sm whitespace-nowrap text-muted">
                       {upcoming > 0 ? `${upcoming} upcoming` : "Not set"}
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-wrap gap-2">
                         <Link
                           href={`/admin/packages/${pkg.id}/edit`}
-                          className="flex min-h-9 items-center gap-1.5 rounded-[7px] border border-line px-3 text-[13.5px] font-semibold hover:border-primary"
+                          className="flex min-h-9 items-center gap-1.5 rounded-lg border border-field px-3 text-sm font-semibold hover:border-primary"
                         >
                           <EditIcon className="size-3.5" />
                           Edit
@@ -149,7 +149,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
                           <Link
                             href={`/packages/${pkg.slug}`}
                             target="_blank"
-                            className="flex min-h-9 items-center gap-1.5 rounded-[7px] border border-line px-3 text-[13.5px] font-semibold hover:border-primary"
+                            className="flex min-h-9 items-center gap-1.5 rounded-lg border border-field px-3 text-sm font-semibold hover:border-primary"
                           >
                             <ExternalIcon className="size-3.5" />
                             View

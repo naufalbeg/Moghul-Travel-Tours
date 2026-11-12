@@ -35,6 +35,10 @@ export const ms = {
     homeLink: "{name} — laman utama",
     announcements: "Pengumuman",
     whatsappUs: "WhatsApp kami",
+    // Phones: the WhatsApp | Telefon bar pinned to the bottom of the screen.
+    contactBar: "Hubungi kami",
+    call: "Telefon",
+    and: "dan",
   },
 
   // Pre-filled WhatsApp messages.
@@ -46,47 +50,113 @@ export const ms = {
     askTrip: "Salam Moghul Travel & Tours, saya ingin bertanya tentang percutian.",
     sentMessage: "Salam Moghul Travel & Tours, saya baru menghantar mesej melalui laman web anda.",
     sentInquiry: "Salam Moghul Travel & Tours, saya baru menghantar pertanyaan melalui laman web anda.",
+    askCategoryDates: "Salam Moghul Travel & Tours, saya ingin tahu tarikh {category} akan datang.",
+    askInbound: "Salam Moghul Travel & Tours, saya ingin bertanya tentang percutian dalam negara.",
+    askCruise: "Salam Moghul Travel & Tours, saya ingin bertanya tentang pakej cruise.",
   },
 
   footer: {
+    tagline: "Agensi pelancongan berlesen MOTAC di Shah Alam: Umrah, Ziarah dan percutian mesra Muslim.",
+    contactHeading: "Hubungi",
+    pagesHeading: "Laman",
+    licencesHeading: "Lesen & keahlian",
     office: "Pejabat",
     tel: "Tel",
     officeHours: "Waktu pejabat",
     motac: "No. Lesen MOTAC {value}",
-    companyReg: "No. Pendaftaran Syarikat {value}",
     matta: "No. Ahli MATTA {value}",
     mita: "No. Ahli MITA {value}",
     papuh: "No. Ahli PAPUH {value}",
-    contactLink: "Hubungi & arah ke pejabat →",
-    reviewsLink: "Ulasan pelanggan →",
+    contactLink: "Hubungi & arah ke pejabat",
+    reviewsLink: "Ulasan pelanggan",
   },
 
   home: {
-    featured: "Pakej pelancongan pilihan",
-    all: "Semua",
-    viewAll: "Lihat semua pakej",
+    // Under the hero buttons: "Berlesen MOTAC KPK/LN 9109 · ahli MATTA, MITA dan PAPUH · pejabat di Shah Alam".
+    trustLicence: "Berlesen MOTAC {licence}",
+    trustMembers: "ahli {list}",
+    trustOffice: "pejabat di Shah Alam",
+    viewPackages: "Lihat {n} pakej",
+    viewOnePackage: "Lihat 1 pakej",
+    viewAllPackages: "Lihat semua pakej",
+    slideshowLabel: "Destinasi daripada pakej kami",
+    // Caption under each hero photo: "9 hari, 7 malam · dari RM 5,990".
+    fromPrice: "dari {price}",
+
+    // "Where would you like to go?": two photo doors and three link rows.
+    doorsHeading: "Ke mana anda ingin pergi?",
+    doorOutbound: "Percutian luar negara",
+    doorOpen: "{n} pakej dibuka untuk tempahan.",
+    doorOpenOne: "1 pakej dibuka untuk tempahan.",
+    doorSoon: "Tarikh {category} akan datang sedang dimuktamadkan. Tanya kami tarikh dan harga terkini.",
+    doorAsk: "Tanya tarikh {category} di WhatsApp",
+    rowInboundAsk: "Tanya kami tentang percutian di Malaysia",
+    rowCruiseAsk: "Tanya kami tentang pakej pelayaran",
+    rowOther: "Lebih banyak pakej di Muslim Travel Bug",
+
+    featured: "Pakej pilihan",
+    viewAllCount: "Lihat semua {n} pakej",
     noPackages:
       "Pakej akan datang kami sedang dimuktamadkan. Hubungi kami dan kami akan kongsikan tarikh terkini Umrah, Ziarah dan pelancongan.",
     askWhatsApp: "Tanya kami di WhatsApp",
-    journeysHeading: "Perjalanan kami & maklum balas pelanggan",
-    photosCaption: "Kenangan indah daripada perjalanan pelanggan kami",
-    viewGallery: "Lihat galeri penuh",
+
+    departuresHeading: "Berlepas tidak lama lagi",
+    departuresIntro: "Tarikh yang masih dibuka untuk tempahan. Harga ialah harga bermula, seorang.",
+    departuresAll: "Lihat semua pakej dan tarikh",
+
+    // How booking works. Wording to be confirmed by the owner.
+    stepsHeading: "Tempah dalam tiga langkah",
+    steps: [
+      {
+        title: "Pilih pakej dan tarikh",
+        text: "Semak harga bermula, apa yang termasuk dan tarikh berlepas yang masih dibuka.",
+      },
+      {
+        title: "Hantar borang tempahan",
+        text: "Isi borang ringkas di halaman pakej, atau WhatsApp kami jika itu lebih mudah.",
+      },
+      {
+        title: "Kami hubungi anda",
+        text: "Pasukan kami akan menghubungi anda untuk mengesahkan tempat dan menerangkan cara bayaran.",
+      },
+    ],
+
+    proofHeading: "Detik sebenar daripada percutian pelanggan kami",
+    proofText: "Gambar yang diambil oleh rombongan Moghul sendiri sepanjang perjalanan.",
+    proofAll: "Lihat semua {n} gambar",
+
+    aboutHeading: "Setiap kumpulan diurus secara peribadi.",
+    // Licence list beside the About text: label, then the number.
+    credMotac: "Lesen MOTAC",
+    credCompanyReg: "No. Pendaftaran Syarikat",
+    credMatta: "Ahli MATTA",
+    credMita: "Ahli MITA",
+    credPapuh: "Ahli PAPUH",
+    credAgent: "Ejen bertauliah",
+    readStory: "Baca kisah kami",
+
     reviewHeading: "Kata pelanggan kami",
+    reviewText: "Ulasan sebenar daripada keluarga, jemaah dan kumpulan yang pernah melancong bersama kami.",
     stars: "{n} daripada 5 bintang",
-    allReviews: "Lihat semua ulasan →",
-    aboutHeading: "Tentang {name}",
-    readStory: "Baca kisah kami →",
+    allReviews: "Lihat semua ulasan",
+
+    contactHeading: "Ada soalan? Bercakap terus dengan pasukan kami.",
+    contactText: "WhatsApp atau telefon kami, atau datang ke pejabat kami di Shah Alam.",
+    callNumber: "Telefon {number}",
+    openMaps: "Buka di Google Maps",
   },
 
   search: {
     label: "Cari pakej",
     destination: "Destinasi",
     destinationPlaceholder: "Ke mana anda ingin pergi?",
-    month: "Bulan",
+    // With suggestions set in Content pages: "Contoh: Turkiye, Bromo, Taipei…".
+    destinationExamples: "Contoh: {places}…",
+    month: "Bulan berlepas",
     anyMonth: "Semua bulan",
     category: "Kategori",
     allCategories: "Semua kategori",
-    submit: "Cari",
+    submit: "Cari pakej",
   },
 
   categories: {
@@ -149,9 +219,7 @@ export const ms = {
   },
 
   card: {
-    highlights: "Tarikan utama",
-    viewDetails: "Lihat pakej",
-    inquire: "Buat pertanyaan",
+    nextDeparture: "Berlepas {date}",
   },
 
   packages: {
@@ -190,11 +258,6 @@ export const ms = {
   about: {
     title: "Tentang kami",
     credentials: "Berlesen & berdaftar",
-    motac: "No. Lesen MOTAC {value}",
-    companyReg: "No. Pendaftaran Syarikat {value}",
-    matta: "No. Ahli MATTA {value}",
-    mita: "No. Ahli MITA {value}",
-    papuh: "No. Ahli PAPUH {value}",
     basedIn: "Berpangkalan di Shah Alam, Selangor",
     planHeading: "Rancang perjalanan anda bersama kami",
     planText: "Beritahu kami destinasi pilihan anda dan kami akan bantu anda mencari percutian yang sesuai.",
@@ -267,14 +330,20 @@ export const ms = {
     },
     menu: {
       open: "Menu",
-      close: "Tutup",
-      call: "Telefon kami",
-      whatsapp: "WhatsApp",
     },
     language: {
       label: "Bahasa / Language",
       ms: "Bahasa Melayu",
       en: "English",
+    },
+    // Homepage hero: package-photo slideshow (Play / Pause stay in English).
+    slideshow: {
+      previous: "Gambar sebelumnya",
+      next: "Gambar seterusnya",
+      photoAlt: "Gambar destinasi pakej {title}",
+    },
+    search: {
+      searching: "Mencari…",
     },
     lightbox: {
       open: "Buka gambar {n} dalam skrin penuh",

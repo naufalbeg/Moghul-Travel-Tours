@@ -28,11 +28,11 @@ export function LanguageSwitch() {
     <div
       role="group"
       aria-label={t.language.label}
-      className="relative inline-flex shrink-0 rounded-full border-[1.5px] border-primary bg-white p-0.5"
+      className="relative inline-flex shrink-0 rounded-full border-[1.5px] border-field bg-white p-0.5"
     >
       <span
         aria-hidden="true"
-        className={`absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded-full bg-primary transition-transform duration-300 ease-out motion-reduce:transition-none ${
+        className={`absolute inset-y-0.5 left-0.5 w-[calc(50%-2px)] rounded-full bg-primary-dark transition-transform duration-250 ease-smooth ${
           shown === "en" ? "translate-x-full" : ""
         }`}
       />
@@ -45,8 +45,8 @@ export function LanguageSwitch() {
           aria-pressed={shown === l}
           aria-label={t.language[l]}
           title={t.language[l]}
-          className={`relative min-h-10 w-12 rounded-full text-[15px] font-bold transition-colors duration-300 ${
-            shown === l ? "text-white" : "text-primary hover:text-primary-dark"
+          className={`relative min-h-11 w-10 rounded-full text-fine font-bold transition-colors duration-250 ease-smooth sm:w-[46px] ${
+            shown === l ? "text-white" : "text-muted hover:text-ink"
           }`}
         >
           {SHORT[l]}

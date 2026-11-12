@@ -21,14 +21,14 @@ type Variant = "desktop" | "mobile";
 
 const linkStyles: Record<Variant, { base: string; active: string; idle: string }> = {
   desktop: {
-    base: "border-b-2 px-0.5 py-1.5 text-base font-semibold transition-colors hover:border-accent hover:text-primary",
-    active: "border-accent text-primary",
-    idle: "border-transparent text-ink",
+    base: "inline-flex min-h-12 items-center rounded-lg px-2.5 whitespace-nowrap transition-colors duration-150 ease-smooth hover:bg-canvas",
+    active: "font-bold text-primary underline decoration-accent decoration-[3px] underline-offset-[0.45em]",
+    idle: "font-medium text-ink",
   },
   mobile: {
-    base: "block rounded-lg px-4 py-3.5 text-lg font-semibold",
-    active: "bg-primary-pale text-primary",
-    idle: "text-ink hover:bg-canvas",
+    base: "flex min-h-[52px] items-center rounded-md px-3.5 hover:bg-canvas",
+    active: "font-bold text-primary",
+    idle: "font-medium text-ink",
   },
 };
 
@@ -47,7 +47,7 @@ export function NavList({
   // the right, items to the left from the left (app/(public)/template.tsx).
   const current = PUBLIC_NAV.findIndex(({ href }) => isActive(href));
   return (
-    <ul className={variant === "desktop" ? "flex flex-wrap justify-center gap-x-7 gap-y-2" : "space-y-1"}>
+    <ul className={variant === "desktop" ? "flex gap-0.5" : undefined}>
       {PUBLIC_NAV.map((item, i) => {
         const { href, key } = item;
         if ("external" in item) {

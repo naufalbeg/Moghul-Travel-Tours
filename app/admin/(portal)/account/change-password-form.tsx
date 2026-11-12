@@ -54,19 +54,19 @@ export function ChangePasswordForm() {
               required
               aria-invalid={error ? true : undefined}
               aria-describedby={describedBy || undefined}
-              className={`w-full rounded-lg border-[1.5px] px-3.5 py-3 text-[15px] focus:border-primary focus:outline-none ${
-                error ? "border-danger bg-danger-pale" : "border-line"
+              className={`w-full rounded-lg border-[1.5px] px-3.5 py-3 text-meta ${
+                error ? "border-danger bg-danger-pale" : "border-field"
               }`}
             />
             {"hint" in field && (
-              <p id={`${field.name}-hint`} className="mt-1.5 text-[13px] text-muted">
+              <p id={`${field.name}-hint`} className="mt-1.5 text-sm text-muted">
                 {field.hint}
               </p>
             )}
             {error && (
               <p
                 id={`${field.name}-error`}
-                className="mt-2 flex items-center gap-1.5 text-[13.5px] font-semibold text-danger"
+                className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-danger"
               >
                 <AlertCircleIcon className="size-3.5 shrink-0" />
                 {error}
@@ -79,7 +79,7 @@ export function ChangePasswordForm() {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg bg-accent px-6 py-3 font-bold text-white hover:bg-accent-dark disabled:opacity-60"
+        className="rounded-lg bg-accent px-6 py-3 font-bold text-ink hover:bg-accent-hover disabled:opacity-60"
       >
         {pending ? "Updating…" : "Update password"}
       </button>

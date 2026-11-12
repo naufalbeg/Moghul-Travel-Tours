@@ -135,7 +135,7 @@ export function PointListField({
   return (
     <fieldset aria-describedby={`${id}-hint`}>
       <legend className="mb-2 block text-sm font-semibold">{label}</legend>
-      <p id={`${id}-hint`} className="-mt-1 mb-2.5 text-[13px] text-muted">
+      <p id={`${id}-hint`} className="-mt-1 mb-2.5 text-sm text-muted">
         {hint && `${hint} `}Press Enter to start a new point — a point can be as long as you need.
       </p>
 
@@ -143,7 +143,7 @@ export function PointListField({
         {rows.map((row, i) => (
           <li key={i}>
             <div className="flex items-start gap-2">
-              <span aria-hidden="true" className="w-6 shrink-0 pt-3.5 text-right text-[14px] font-semibold text-muted">
+              <span aria-hidden="true" className="w-6 shrink-0 pt-3.5 text-right text-fine font-semibold text-muted">
                 {i + 1}.
               </span>
               <label htmlFor={i === 0 ? id : `${id}-${i}`} className="sr-only">
@@ -190,11 +190,11 @@ export function PointListField({
           type="button"
           onClick={add}
           disabled={full}
-          className="min-h-11 rounded-lg border-[1.5px] border-dashed border-line px-4 text-[14.5px] font-semibold text-primary hover:border-primary disabled:cursor-not-allowed disabled:text-muted disabled:hover:border-line"
+          className="min-h-11 rounded-lg border-[1.5px] border-dashed border-field px-4 text-fine font-semibold text-primary hover:border-primary disabled:cursor-not-allowed disabled:text-muted disabled:hover:border-field"
         >
           + Add a point
         </button>
-        <span className={`text-[13px] ${over ? "font-semibold text-danger" : "text-muted"}`}>
+        <span className={`text-sm ${over ? "font-semibold text-danger" : "text-muted"}`}>
           {over
             ? `${filled} of ${max} — remove ${filled - max}`
             : full

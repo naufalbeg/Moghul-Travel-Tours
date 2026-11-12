@@ -1,41 +1,56 @@
+import Form from "next/form";
+import type { CSSProperties } from "react";
+import { SearchSubmit } from "@/components/public/search-submit";
+import { fmt } from "@/lib/i18n/config";
 import { getDictionary, getLocale } from "@/lib/i18n/server";
 import { CATEGORY_FILTERS } from "@/lib/package-labels";
 import { upcomingMonths } from "@/lib/packages";
 
-const fieldClass =
-  "min-h-12 w-full rounded-lg border border-line bg-white px-3.5 text-[15px] text-ink focus:border-primary focus:outline-none";
-
 /**
- * Hero search bar (homepage mockup). A plain GET form to /packages, so it
- * works without JavaScript.
+ * Homepage search: one bar of three parts (destination, departure month,
+ * category) and the orange button — the styles are `.search-bar` / `.seg` in
+ * app/globals.css. A GET form to /packages, so it works without JavaScript;
+ * with it, the button shows "Mencari…" until the results arrive.
+ *
+ * `suggestions` are the places offered as the visitor types (the admin's
+ * list in Content pages).
  */
-export async function PackageSearch() {
+export async function PackageSearch({ suggestions = [] }: { suggestions?: string[] }) {
   const [t, locale] = await Promise.all([getDictionary(), getLocale()]);
+  const placeholder =
+    suggestions.length >= 3
+      ? fmt(t.search.destinationExamples, { places: suggestions.slice(0, 3).join(", ") })
+      : t.search.destinationPlaceholder;
+
   return (
-    <form
+    <Form
       action="/packages"
-      method="get"
       role="search"
       aria-label={t.search.label}
-      className="relative z-10 mx-auto -mt-14 grid max-w-[880px] gap-3.5 rounded-[14px] bg-white p-5 text-left shadow-[0_8px_28px_rgba(18,58,102,0.18)] sm:grid-cols-2 sm:p-6 lg:grid-cols-[1.4fr_1fr_1fr_auto] lg:items-end"
+      className="search-bar rise"
+      style={{ "--i": 4 } as CSSProperties}
     >
-      <div>
-        <label htmlFor="search-q" className="mb-1.5 block text-[13px] font-semibold text-muted">
-          {t.search.destination}
-        </label>
+      <div className="seg">
+        <label htmlFor="search-q">{t.search.destination}</label>
         <input
           id="search-q"
           name="q"
           type="search"
-          placeholder={t.search.destinationPlaceholder}
-          className={fieldClass}
+          autoComplete="off"
+          placeholder={placeholder}
+          list={suggestions.length > 0 ? "search-destinations" : undefined}
         />
+        {suggestions.length > 0 && (
+          <datalist id="search-destinations">
+            {suggestions.map((place) => (
+              <option key={place} value={place} />
+            ))}
+          </datalist>
+        )}
       </div>
-      <div>
-        <label htmlFor="search-month" className="mb-1.5 block text-[13px] font-semibold text-muted">
-          {t.search.month}
-        </label>
-        <select id="search-month" name="month" defaultValue="" className={fieldClass}>
+      <div className="seg">
+        <label htmlFor="search-month">{t.search.month}</label>
+        <select id="search-month" name="month" defaultValue="">
           <option value="">{t.search.anyMonth}</option>
           {upcomingMonths(locale).map((m) => (
             <option key={m.value} value={m.value}>
@@ -44,11 +59,9 @@ export async function PackageSearch() {
           ))}
         </select>
       </div>
-      <div>
-        <label htmlFor="search-category" className="mb-1.5 block text-[13px] font-semibold text-muted">
-          {t.search.category}
-        </label>
-        <select id="search-category" name="category" defaultValue="" className={fieldClass}>
+      <div className="seg">
+        <label htmlFor="search-category">{t.search.category}</label>
+        <select id="search-category" name="category" defaultValue="">
           <option value="">{t.search.allCategories}</option>
           {CATEGORY_FILTERS.map((f) => (
             <option key={f.slug} value={f.slug}>
@@ -57,12 +70,7 @@ export async function PackageSearch() {
           ))}
         </select>
       </div>
-      <button
-        type="submit"
-        className="min-h-12 rounded-lg bg-accent px-8 text-base font-bold text-white hover:bg-accent-dark sm:col-span-2 lg:col-span-1"
-      >
-        {t.search.submit}
-      </button>
-    </form>
+      <SearchSubmit label={t.search.submit} />
+    </Form>
   );
 }

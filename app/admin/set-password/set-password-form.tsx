@@ -14,8 +14,8 @@ export function SetPasswordForm({ token, submitLabel }: { token: string; submitL
   );
   const errors = state.status === "error" ? state.fieldErrors : undefined;
   const input = (error?: string) =>
-    `w-full rounded-lg border-[1.5px] px-4 py-3.5 text-base focus:border-primary focus:outline-none ${
-      error ? "border-danger bg-danger-pale" : "border-line"
+    `w-full rounded-lg border-[1.5px] px-4 py-3.5 text-base ${
+      error ? "border-danger bg-danger-pale" : "border-field"
     }`;
 
   return (
@@ -33,7 +33,7 @@ export function SetPasswordForm({ token, submitLabel }: { token: string; submitL
           aria-invalid={errors?.newPassword ? true : undefined}
           className={input(errors?.newPassword)}
         />
-        <p id="newPassword-hint" className="mt-1.5 text-[13px] text-muted">
+        <p id="newPassword-hint" className="mt-1.5 text-sm text-muted">
           {PASSWORD_HINT}
         </p>
         <FieldError id="newPassword-error" message={errors?.newPassword} />
@@ -54,7 +54,7 @@ export function SetPasswordForm({ token, submitLabel }: { token: string; submitL
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-lg bg-accent px-5 py-[15px] text-[17px] font-bold text-white hover:bg-accent-dark disabled:opacity-60"
+        className="w-full rounded-lg bg-accent px-5 py-[15px] text-body font-bold text-ink hover:bg-accent-hover disabled:opacity-60"
       >
         {pending ? "Saving…" : submitLabel}
       </button>

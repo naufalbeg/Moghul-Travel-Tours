@@ -16,7 +16,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t.meta.contactTitle, description: t.meta.contactDescription };
 }
 
-function Card({
+/** One way to reach the office: an icon, a heading and the details, separated by a rule. */
+function Way({
   Icon,
   title,
   children,
@@ -26,17 +27,18 @@ function Card({
   children: ReactNode;
 }) {
   return (
-    <section className="flex gap-4 rounded-xl border border-line bg-white p-5 sm:p-6">
-      <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary-pale text-primary">
-        <Icon className="size-[22px]" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <h2 className="mb-1.5 text-lg text-primary-dark">{title}</h2>
+    <section className="grid grid-cols-[28px_minmax(0,1fr)] gap-3 border-b border-line py-5 first:pt-0">
+      <Icon strokeWidth={2} className="mt-[3px] size-[22px] text-primary" />
+      <div className="min-w-0">
+        <h2 className="mb-1 text-title text-primary-dark">{title}</h2>
         {children}
       </div>
     </section>
   );
 }
+
+const phoneLink =
+  "inline-flex min-h-11 items-center text-lead font-bold text-primary underline decoration-transparent underline-offset-[0.2em] hover:decoration-current";
 
 /** AboutContactPage [PKG-MTT-006-001] — Contact half. */
 export default async function ContactPage() {
@@ -52,80 +54,93 @@ export default async function ContactPage() {
     <>
       <PageBanner title={t.contact.title}>{t.contact.subtitle}</PageBanner>
 
-      <div className="mx-auto grid max-w-[1160px] gap-8 px-4 py-12 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-        <div className="space-y-4">
-          <Card Icon={WhatsAppIcon} title="WhatsApp">
+      <div className="wrap grid items-start gap-[clamp(32px,5vw,72px)] pt-[clamp(40px,5vw,64px)] pb-[clamp(48px,6vw,80px)] mid:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <div>
+          <Way Icon={WhatsAppIcon} title="WhatsApp">
             <p className="mb-3 text-muted">{fmt(t.contact.whatsappText, { number: content.whatsapp })}</p>
             <a
               href={whatsappHref(content, t.whatsapp.askTrip)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[#1f9d55] px-5 font-bold text-white"
+              className="btn btn-wa"
             >
-              <WhatsAppIcon className="size-5" />
+              <WhatsAppIcon className="size-[22px]" />
               {t.contact.whatsappButton}
             </a>
-          </Card>
+          </Way>
 
-          <Card Icon={PhoneIcon} title={t.contact.callHeading}>
-            <ul className="space-y-2">
+          <Way Icon={PhoneIcon} title={t.contact.callHeading}>
+            <ul>
               <li>
                 <span className="text-muted">{t.contact.office}</span>
-                <a href={telHref(content.phone)} className="text-lg font-bold text-primary hover:underline">
+                <a href={telHref(content.phone)} className={phoneLink}>
                   {content.phone}
                 </a>
               </li>
               {content.mobile && (
                 <li>
                   <span className="text-muted">{t.contact.mobile}</span>
-                  <a href={telHref(content.mobile)} className="text-lg font-bold text-primary hover:underline">
+                  <a href={telHref(content.mobile)} className={phoneLink}>
                     {content.mobile}
                   </a>
                 </li>
               )}
             </ul>
-          </Card>
+          </Way>
 
-          <Card Icon={MailIcon} title={t.contact.email}>
-            <ul className="space-y-1">
+          <Way Icon={MailIcon} title={t.contact.email}>
+            <ul>
               {[content.email, content.alt_email].filter(Boolean).map((email) => (
                 <li key={email}>
-                  <a href={`mailto:${email}`} className="font-semibold break-all text-primary hover:underline">
+                  <a href={`mailto:${email}`} className="text-link inline-flex min-h-11 items-center break-all">
                     {email}
                   </a>
                 </li>
               ))}
             </ul>
-          </Card>
+          </Way>
 
-          <Card Icon={ClockIcon} title={t.contact.hours}>
-            <ul className="text-muted">
+          <Way Icon={ClockIcon} title={t.contact.hours}>
+            <ul>
               {lines(content.office_hours).map((line) => (
                 <li key={line}>{line}</li>
               ))}
             </ul>
-          </Card>
+          </Way>
+
+          <p className="pt-5 text-muted">
+            {t.contact.lookingForTrip}{" "}
+            <Link href="/packages" className="text-link">
+              {t.contact.browse}
+            </Link>
+          </p>
         </div>
 
-        <div className="space-y-4">
-          <Card Icon={MapPinIcon} title={t.contact.visit}>
-            <address className="mb-3 text-muted not-italic">
-              {address.map((line) => (
-                <span key={line} className="block">
-                  {line}
-                </span>
-              ))}
-            </address>
+        <section aria-labelledby="visit-heading">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+            <div>
+              <h2 id="visit-heading" className="mb-1 text-title text-primary-dark">
+                {t.contact.visit}
+              </h2>
+              <address className="not-italic">
+                {address.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </address>
+            </div>
             <a
               href={mapLinkUrl(content.address)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center rounded-lg border-[1.5px] border-primary px-4 font-bold text-primary hover:bg-primary-pale"
+              className="btn btn-outline btn-sm"
             >
+              <MapPinIcon strokeWidth={2} className="size-5" />
               {t.contact.directions}
             </a>
-          </Card>
-          <div className="overflow-hidden rounded-xl border border-line bg-white">
+          </div>
+          <div className="overflow-hidden rounded-xl border border-line bg-canvas">
             <iframe
               src={mapEmbedUrl(content.address, locale)}
               title={fmt(t.contact.mapTitle, { address: address.join(", ") })}
@@ -134,25 +149,23 @@ export default async function ContactPage() {
               className="block aspect-[4/3] w-full border-0"
             />
           </div>
-          <p className="text-center text-[15px] text-muted">
-            {t.contact.lookingForTrip}{" "}
-            <Link href="/packages" className="font-semibold text-primary underline underline-offset-4">
-              {t.contact.browse}
-            </Link>
-          </p>
-        </div>
+        </section>
       </div>
 
-      <section aria-labelledby="message-heading" className="mx-auto max-w-[860px] px-4 pb-16 sm:px-8">
-        <h2 id="message-heading" className="mb-2 text-center text-[26px] text-primary-dark">
-          {t.contact.messageHeading}
-        </h2>
-        <p className="mb-6 text-center text-muted">{t.contact.messageText}</p>
-        <InquiryForm
-          packages={packages.map((p) => p.title)}
-          initialPackage={GENERAL_INQUIRY}
-          whatsappUrl={whatsappHref(content, t.whatsapp.sentMessage)}
-        />
+      <section aria-labelledby="message-heading" className="bg-canvas py-[clamp(48px,6vw,80px)]">
+        <div className="wrap">
+          <div className="mx-auto max-w-[860px]">
+            <h2 id="message-heading" className="h-section">
+              {t.contact.messageHeading}
+            </h2>
+            <p className="mt-2.5 mb-7 text-muted">{t.contact.messageText}</p>
+            <InquiryForm
+              packages={packages.map((p) => p.title)}
+              initialPackage={GENERAL_INQUIRY}
+              whatsappUrl={whatsappHref(content, t.whatsapp.sentMessage)}
+            />
+          </div>
+        </div>
       </section>
     </>
   );

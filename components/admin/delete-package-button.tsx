@@ -24,7 +24,7 @@ export function DeletePackageButton({ id, title }: { id: string; title: string }
       <button
         type="button"
         onClick={() => dialogRef.current?.showModal()}
-        className="flex min-h-9 items-center gap-1.5 rounded-[7px] border border-[#f3d3ce] px-3 text-[13.5px] font-semibold text-danger hover:bg-danger-pale"
+        className="flex min-h-9 items-center gap-1.5 rounded-lg border border-[#f3d3ce] px-3 text-sm font-semibold text-danger hover:bg-danger-pale"
       >
         <TrashIcon className="size-3.5" />
         Delete
@@ -33,13 +33,13 @@ export function DeletePackageButton({ id, title }: { id: string; title: string }
       <dialog
         ref={dialogRef}
         aria-labelledby={`delete-${id}-title`}
-        className="m-auto w-[calc(100%-2rem)] max-w-[440px] rounded-[14px] p-0 shadow-[0_24px_60px_rgba(13,44,78,0.35)] backdrop:bg-navy/55"
+        className="m-auto w-[calc(100%-2rem)] max-w-[440px] rounded-xl p-0 shadow-[0_24px_60px_rgba(13,44,78,0.35)] backdrop:bg-navy/55"
       >
         <div className="p-6">
           <h2 id={`delete-${id}-title`} className="mb-2 text-xl text-primary-dark">
             Delete this package?
           </h2>
-          <p className="text-[15px] text-muted">
+          <p className="text-meta text-muted">
             <strong className="text-ink">{title}</strong> will be removed from the website straight away.
             It stays in the records, so it can be recovered if deleted by mistake.
           </p>
@@ -49,7 +49,7 @@ export function DeletePackageButton({ id, title }: { id: string; title: string }
           <button
             type="button"
             onClick={() => dialogRef.current?.close()}
-            className="min-h-11 rounded-lg border-[1.5px] border-line px-5 font-semibold"
+            className="min-h-11 rounded-lg border-[1.5px] border-field px-5 font-semibold"
           >
             Cancel
           </button>

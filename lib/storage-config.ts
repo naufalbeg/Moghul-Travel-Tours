@@ -27,14 +27,9 @@ export const CROPPED_IMAGE_MAX_WIDTH = 1920;
  */
 export const ORIGINAL_IMAGE_MAX_BYTES = 25 * 1024 * 1024;
 
-/**
- * Banner slideshow photos (homepage and package listing banners) are cropped
- * to a wide 3:1 strip and saved up to 2400×800; the banner shows them with
- * object-cover, so phones see the middle of the strip.
- */
-export const BANNER_IMAGE_ASPECT = 3;
-export const BANNER_IMAGE_MAX_WIDTH = 2400;
-export const MAX_BANNER_IMAGES = 5;
+// The shapes and photo limits of the banner slots (listing banners are 3:1
+// strips, the homepage's category panels 3:2) are in lib/banners.ts.
+
 /** Photos per gallery upload batch. */
 export const MAX_GALLERY_BATCH = 20;
 

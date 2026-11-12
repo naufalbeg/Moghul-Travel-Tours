@@ -12,13 +12,13 @@ export default function ForgotPasswordPage() {
   if (state.status === "sent") {
     return (
       <AuthCard title="Check your email">
-        <p className="mb-6 text-center text-[15px] text-muted">
+        <p className="mb-6 text-center text-meta text-muted">
           If <strong className="text-ink">{state.email}</strong> belongs to an admin account, we&apos;ve sent it a link
           to choose a new password. The link works for 1 hour — check your spam folder too.
         </p>
         <Link
           href="/admin/login"
-          className="flex min-h-12 items-center justify-center rounded-lg border-[1.5px] border-line font-semibold"
+          className="flex min-h-12 items-center justify-center rounded-lg border-[1.5px] border-field font-semibold"
         >
           Back to sign in
         </Link>
@@ -40,13 +40,13 @@ export default function ForgotPasswordPage() {
             type="email"
             autoComplete="username"
             required
-            className="w-full rounded-lg border-[1.5px] border-line px-4 py-3.5 text-base focus:border-primary focus:outline-none"
+            className="w-full rounded-lg border-[1.5px] border-field px-4 py-3.5 text-base"
           />
         </div>
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded-lg bg-accent px-5 py-[15px] text-[17px] font-bold text-white hover:bg-accent-dark disabled:opacity-60"
+          className="w-full rounded-lg bg-accent px-5 py-[15px] text-body font-bold text-ink hover:bg-accent-hover disabled:opacity-60"
         >
           {pending ? "Sending…" : "Send reset link"}
         </button>

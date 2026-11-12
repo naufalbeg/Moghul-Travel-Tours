@@ -66,16 +66,16 @@ export default async function DashboardPage() {
         {stats.map(({ value, label, Icon, highlight }) => (
           <li
             key={label}
-            className={`rounded-xl border p-5 ${highlight ? "border-accent bg-accent-pale" : "border-line bg-white"}`}
+            className={`rounded-xl border p-5 ${highlight ? "border-accent bg-accent-pale" : "border-field bg-white"}`}
           >
             <span
-              className={`mb-3.5 flex size-[38px] items-center justify-center rounded-[9px] ${
+              className={`mb-3.5 flex size-[38px] items-center justify-center rounded-lg ${
                 highlight ? "bg-accent/15 text-accent-dark" : "bg-primary-pale text-primary"
               }`}
             >
               <Icon className="size-5" />
             </span>
-            <div className="font-heading text-[28px] font-bold">{value}</div>
+            <div className="font-heading text-display font-bold">{value}</div>
             <div className="text-sm font-medium text-muted">{label}</div>
           </li>
         ))}
@@ -83,7 +83,7 @@ export default async function DashboardPage() {
 
       <div className="flex flex-col items-start gap-6 lg:flex-row">
         <section className="w-full rounded-xl border border-line bg-white px-6 py-[22px] lg:flex-[1.6]">
-          <h3 className="mb-4 text-[17px]">Recent inquiries</h3>
+          <h3 className="mb-4 text-body">Recent inquiries</h3>
           {recent.length === 0 ? (
             <p className="py-6 text-center text-muted">No inquiries yet.</p>
           ) : (
@@ -101,7 +101,7 @@ export default async function DashboardPage() {
                         {inquiry.packageInterest ?? "General inquiry"}
                       </div>
                     </div>
-                    <span className={`rounded-full px-3 py-1 text-xs font-bold ${pill.className}`}>
+                    <span className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${pill.className}`}>
                       {pill.label}
                     </span>
                   </li>
@@ -118,13 +118,13 @@ export default async function DashboardPage() {
         </section>
 
         <section className="w-full rounded-xl border border-line bg-white px-6 py-[22px] lg:flex-1">
-          <h3 className="mb-4 text-[17px]">Quick actions</h3>
+          <h3 className="mb-4 text-body">Quick actions</h3>
           <ul className="space-y-2.5">
             {quickActions.map(({ href, label }) => (
               <li key={href}>
                 <Link
                   href={href}
-                  className="flex items-center gap-3 rounded-lg border border-line px-3.5 py-3 text-[14.5px] font-semibold hover:border-primary"
+                  className="flex items-center gap-3 rounded-lg border border-field px-3.5 py-3 text-fine font-semibold hover:border-primary"
                 >
                   <PlusIcon className="size-[18px] shrink-0 text-accent-dark" />
                   {label}

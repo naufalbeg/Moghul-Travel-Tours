@@ -5,8 +5,8 @@ export const SITE_CONTENT_DEFAULTS = {
   // Texts in TRANSLATED_KEYS are in Malay (the site's main language); their
   // English versions are the matching "<key>_en" entries further down.
   //
-  // Homepage banner. The headline is shown in capitals by CSS, so it's stored
-  // as typed.
+  // Homepage banner. In the headline, what follows the first dash or comma is
+  // shown in the logo's orange (splitHeadline below).
   hero_title: "Jelajah lebih jauh — temui percutian impian anda",
   hero_message:
     "Umrah, Ziarah dan percutian keluarga yang dirancang dengan teliti, disokong pengalaman lebih sedekad dan pasukan yang sentiasa mudah dihubungi.",
@@ -21,6 +21,10 @@ export const SITE_CONTENT_DEFAULTS = {
   price_note:
     "Harga termasuk tiket penerbangan. Oleh kerana tambang penerbangan sentiasa berubah, ini ialah harga permulaan — kami akan mengesahkan harga akhir apabila anda menghubungi kami.",
   office_hours: "Isnin–Jumaat, 9 pagi – 6 petang",
+  // Places suggested as visitors type in the homepage search, separated by
+  // commas. Packages have no destination field, so the admin keeps this list.
+  search_destinations:
+    "Turkiye, Uzbekistan, Kyrgyzstan, Kazakhstan, Kashmir, Agra, Delhi, Taipei, Alishan, Sun Moon Lake, Da Nang, Hoi An, Ba Na Hills, Phu Quoc, Bangkok, Kanchanaburi, Pulau Hainan, Jakarta, Bandung, Surabaya, Bromo",
 
   hero_title_en: "Go beyond the ordinary — find your ideal journey",
   hero_message_en:
@@ -86,6 +90,7 @@ export function localizeContent(content: SiteContent, locale: "ms" | "en"): Site
 /** Fields that may be left blank; everything else is required. */
 export const OPTIONAL_CONTENT_KEYS: readonly SiteContentKey[] = [
   ...TRANSLATED_KEYS.map(englishKey),
+  "search_destinations",
   "mobile",
   "alt_email",
   "matta_member",
@@ -95,6 +100,24 @@ export const OPTIONAL_CONTENT_KEYS: readonly SiteContentKey[] = [
   "instagram_url",
   "tiktok_url",
 ];
+
+/**
+ * The homepage headline in two parts: what follows the first dash or comma
+ * is shown in the logo's orange. "Perjalanan mesra Muslim - dirancang dengan
+ * teliti" → ["Perjalanan mesra Muslim,", "dirancang dengan teliti"]. A
+ * headline with neither stays in one piece.
+ */
+export function splitHeadline(title: string): [string, string | null] {
+  const match = title.trim().match(/^(.+?)(?:\s+[-–—]\s+|,\s+)(.+)$/);
+  return match ? [`${match[1]},`, match[2]] : [title.trim(), null];
+}
+
+/** A comma- or line-separated list ("Turkiye, Bromo") as its items. */
+export const listItems = (text: string) =>
+  text
+    .split(/[,\n]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
 
 /** "03-5888 3401" / "+(60)3 5888 3401" → "60358883401" for tel: and wa.me links. */
 export function toIntlPhone(phone: string) {

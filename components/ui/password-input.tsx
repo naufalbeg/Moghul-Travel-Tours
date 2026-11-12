@@ -18,7 +18,7 @@ export function PasswordInput({
         disabled={props.disabled}
         aria-pressed={visible}
         aria-label={visible ? "Hide password" : "Show password"}
-        className="absolute inset-y-0 right-1.5 my-auto h-10 rounded-md px-2.5 text-[13px] font-semibold text-primary disabled:text-muted"
+        className="absolute inset-y-0 right-1.5 my-auto h-10 rounded-md px-2.5 text-sm font-semibold text-primary disabled:text-muted"
       >
         {visible ? "Hide" : "Show"}
       </button>

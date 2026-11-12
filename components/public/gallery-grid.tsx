@@ -41,20 +41,20 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
 
   return (
     <>
-      <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <ul className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 mid:grid-cols-4">
         {photos.map((photo, i) => (
           <li key={photo.id}>
             <button
               type="button"
               onClick={() => open(i)}
-              className="group relative block aspect-[4/3] w-full overflow-hidden rounded-[10px] bg-primary-pale"
+              className="group relative block aspect-[4/3] w-full overflow-hidden rounded-xl bg-primary-pale"
             >
               <Image
                 src={photo.url}
                 alt={photo.tag}
                 fill
-                sizes="(min-width: 1024px) 270px, (min-width: 768px) 33vw, 50vw"
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                sizes="(min-width: 900px) 300px, (min-width: 640px) 33vw, 50vw"
+                className="object-cover transition-transform duration-250 ease-smooth group-hover:scale-[1.03]"
               />
               <span className="sr-only">{fmt(t.lightbox.open, { n: i + 1 })}</span>
             </button>
@@ -66,21 +66,21 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
         ref={dialogRef}
         onClose={() => setIndex(null)}
         aria-label={t.lightbox.viewer}
-        className="m-0 h-full max-h-none w-full max-w-none bg-black/95 p-0 text-white backdrop:bg-black/80"
+        className="on-dark m-0 h-full max-h-none w-full max-w-none bg-navy-deep p-0 text-white backdrop:bg-navy-deep"
       >
         {current && (
           <div className="flex h-full flex-col">
             <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
-              <p className="text-[15px]">
-                <span className="font-semibold">{current.tag}</span>
-                <span className="ml-3 text-white/60">
+              <p className="text-meta">
+                <span className="font-bold">{current.tag}</span>
+                <span className="ml-3 text-white/72">
                   {fmt(t.lightbox.counter, { n: index! + 1, total: photos.length })}
                 </span>
               </p>
               <button
                 type="button"
                 onClick={close}
-                className="flex min-h-12 items-center gap-2 rounded-lg bg-white/10 px-4 font-semibold hover:bg-white/20"
+                className="flex min-h-12 items-center gap-2 rounded-lg bg-white/12 px-4 text-meta font-bold transition-colors duration-150 ease-smooth hover:bg-white/24"
               >
                 <CloseIcon className="size-5" />
                 {t.lightbox.close}
@@ -94,14 +94,14 @@ export function GalleryGrid({ photos }: { photos: Photo[] }) {
                 <button
                   type="button"
                   onClick={() => step(-1)}
-                  className="min-h-12 min-w-32 rounded-lg bg-white/10 px-5 font-semibold hover:bg-white/20"
+                  className="min-h-12 min-w-32 rounded-lg bg-white/12 px-5 text-meta font-bold transition-colors duration-150 ease-smooth hover:bg-white/24"
                 >
                   {t.lightbox.previous}
                 </button>
                 <button
                   type="button"
                   onClick={() => step(1)}
-                  className="min-h-12 min-w-32 rounded-lg bg-white/10 px-5 font-semibold hover:bg-white/20"
+                  className="min-h-12 min-w-32 rounded-lg bg-white/12 px-5 text-meta font-bold transition-colors duration-150 ease-smooth hover:bg-white/24"
                 >
                   {t.lightbox.next}
                 </button>

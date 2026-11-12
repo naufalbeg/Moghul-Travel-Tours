@@ -3,10 +3,10 @@
 import type HCaptcha from "@hcaptcha/react-hcaptcha";
 import { useRef, useState, useTransition } from "react";
 import { submitBooking } from "@/app/(public)/packages/[slug]/actions";
-import { CaptchaField, ContactFields, InlineError, inputClass, useErrorText } from "@/components/public/form-fields";
+import { CaptchaField, ContactFields, InlineError, inputClass, labelClass, useErrorText } from "@/components/public/form-fields";
 import { useI18n } from "@/components/public/i18n-provider";
 import { Alert } from "@/components/ui/alert";
-import { CheckCircleIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { CheckCircleIcon, ShieldIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { formatPrice } from "@/lib/format";
 import { fmt } from "@/lib/i18n/config";
 import { whatsappHref } from "@/lib/site-content";
@@ -18,7 +18,7 @@ export type BookingDeparture = { date: string; label: string; availability: "OPE
 export type BookingOption = { key: string; label: string; hint: string | null; amount: number };
 
 const stepButton =
-  "flex size-11 shrink-0 items-center justify-center rounded-full border-[1.5px] border-primary text-xl font-bold text-primary hover:bg-primary-pale disabled:border-line disabled:text-line disabled:hover:bg-transparent";
+  "flex size-12 shrink-0 items-center justify-center rounded-lg border-[1.5px] border-field bg-white text-price font-bold text-primary-dark transition-colors duration-150 ease-smooth hover:bg-canvas active:translate-y-px disabled:border-line disabled:text-line disabled:hover:bg-white";
 
 /**
  * "Borang Tempahan" at the bottom of a package page (like jomventures.my):
@@ -97,12 +97,10 @@ export function BookingForm({
 
   if (sent) {
     return (
-      <div role="status" className="rounded-xl border border-line bg-white px-6 py-10 text-center sm:px-10">
-        <CheckCircleIcon className="mx-auto mb-4 size-14 text-success" />
-        <h3 className="mb-2 text-2xl text-primary-dark">{fmt(text.thanks, { name: sent.name })}</h3>
-        <p className="mx-auto mb-7 max-w-[480px] text-[17px] text-muted">
-          {fmt(text.received, { package: title, date: sent.date })}
-        </p>
+      <div role="status" className="rounded-xl border border-line bg-white px-6 py-10 sm:px-10">
+        <CheckCircleIcon className="mb-4 size-14 text-success" />
+        <h3 className="mb-2 text-display font-extrabold text-primary-dark">{fmt(text.thanks, { name: sent.name })}</h3>
+        <p className="mb-7 max-w-[56ch] text-muted">{fmt(text.received, { package: title, date: sent.date })}</p>
         <a
           href={whatsappHref(
             { whatsapp },
@@ -110,9 +108,9 @@ export function BookingForm({
           )}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#1f9d55] px-6 font-bold text-white"
+          className="btn btn-wa"
         >
-          <WhatsAppIcon className="size-5" />
+          <WhatsAppIcon className="size-[22px]" />
           {text.whatsapp}
         </a>
       </div>
@@ -127,7 +125,7 @@ export function BookingForm({
         e.preventDefault();
         submit();
       }}
-      className="scroll-mt-6 rounded-xl border border-line bg-white px-5 py-7 sm:px-8"
+      className="rounded-xl border border-line bg-white px-5 py-7 sm:px-8"
     >
       {banner && (
         <div className="mb-6">
@@ -147,7 +145,7 @@ export function BookingForm({
         />
 
         <div className="sm:col-span-2">
-          <label htmlFor="booking-departure" className="mb-2 block font-semibold">
+          <label htmlFor="booking-departure" className={labelClass}>
             {text.departure}
           </label>
           <select
@@ -174,11 +172,11 @@ export function BookingForm({
         </div>
 
         <fieldset className="sm:col-span-2" aria-describedby={errors.travellers ? "booking-travellers-error" : undefined}>
-          <legend className="mb-1 font-semibold">{text.travellers}</legend>
-          <p className="mb-2 text-[15px] text-muted">{text.travellersHint}</p>
+          <legend className="mb-1 font-bold">{text.travellers}</legend>
+          <p className="mb-2 text-meta text-muted">{text.travellersHint}</p>
           <ul
             className={`divide-y divide-line rounded-lg border-[1.5px] px-4 ${
-              errors.travellers ? "border-danger bg-danger-pale" : "border-line"
+              errors.travellers ? "border-danger bg-danger-pale" : "border-field"
             }`}
           >
             {options.map((o) => {
@@ -190,8 +188,8 @@ export function BookingForm({
                   className="flex flex-col gap-2.5 py-3.5 min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between min-[480px]:gap-3"
                 >
                   <div className="min-w-0">
-                    <p className="font-semibold">{o.label}</p>
-                    <p className="text-[15px] text-muted">
+                    <p className="font-bold">{o.label}</p>
+                    <p className="text-meta text-muted">
                       {fmt(text.perPerson, { price: formatPrice(o.amount) })}
                       {o.hint && ` · ${o.hint}`}
                     </p>
@@ -215,7 +213,7 @@ export function BookingForm({
                       onChange={(e) => setCount(o.key, Number(e.target.value))}
                       onFocus={(e) => e.target.select()}
                       aria-label={o.label}
-                      className="h-11 w-14 rounded-lg border-[1.5px] border-line bg-white text-center text-lg font-bold text-ink focus:border-primary focus:outline-none"
+                      className="h-12 w-14 rounded-lg border-[1.5px] border-field bg-white text-center text-lead font-bold text-ink tabular-nums"
                     />
                     <button
                       type="button"
@@ -236,27 +234,27 @@ export function BookingForm({
 
         {lines.length > 0 && (
           <div className="rounded-lg bg-primary-pale px-4 py-4 sm:col-span-2" aria-live="polite">
-            <ul className="space-y-1.5 text-[15px]">
+            <ul className="space-y-1.5 text-meta">
               {lines.map((l) => (
                 <li key={l.key} className="flex justify-between gap-4">
                   <span>
                     {fmt(text.line, { n: l.count, option: l.label })}{" "}
                     <span className="text-muted">({formatPrice(l.amount)})</span>
                   </span>
-                  <span className="font-semibold whitespace-nowrap">{formatPrice(l.count * l.amount)}</span>
+                  <span className="font-bold whitespace-nowrap tabular-nums">{formatPrice(l.count * l.amount)}</span>
                 </li>
               ))}
             </ul>
-            <p className="mt-3 flex justify-between gap-4 border-t border-primary/20 pt-3 text-lg font-bold text-primary-dark">
+            <p className="mt-3 flex items-baseline justify-between gap-4 border-t border-primary/20 pt-3 font-bold text-primary-dark">
               <span>{text.total}</span>
-              <span className="font-heading whitespace-nowrap">{formatPrice(total)}</span>
+              <span className="text-price font-extrabold whitespace-nowrap tabular-nums">{formatPrice(total)}</span>
             </p>
-            <p className="mt-1 text-sm text-muted">{text.estimateNote}</p>
+            <p className="mt-1 text-fine text-muted">{text.estimateNote}</p>
           </div>
         )}
 
         <div className="sm:col-span-2">
-          <label htmlFor="booking-message" className="mb-2 block font-semibold">
+          <label htmlFor="booking-message" className={labelClass}>
             {text.notes} <span className="font-normal text-muted">{t.inquiry.optional}</span>
           </label>
           <textarea
@@ -291,11 +289,16 @@ export function BookingForm({
       <button
         type="submit"
         disabled={pending}
-        className="mt-7 min-h-14 w-full rounded-[10px] bg-accent px-6 text-lg font-bold text-white hover:bg-accent-dark disabled:opacity-60 sm:w-auto sm:min-w-64"
+        aria-busy={pending || undefined}
+        className="btn btn-accent btn-lg mt-7 w-full sm:w-auto sm:min-w-64"
       >
+        {pending && <span className="spinner" aria-hidden="true" />}
         {pending ? text.sending : text.submit}
       </button>
-      <p className="mt-4 text-[15px] font-semibold text-success">{text.noPayment}</p>
+      <p className="mt-4 flex items-start gap-2 text-meta font-bold text-primary-dark">
+        <ShieldIcon strokeWidth={2} className="mt-0.5 size-5 shrink-0 text-whatsapp" />
+        {text.noPayment}
+      </p>
     </form>
   );
 }

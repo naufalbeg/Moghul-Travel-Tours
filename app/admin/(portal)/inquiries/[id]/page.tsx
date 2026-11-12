@@ -44,18 +44,18 @@ export default async function InquiryDetailPage({ params }: PageProps<"/admin/in
       </Link>
 
       <div className="mb-6 flex flex-wrap items-center gap-3">
-        <h2 className="text-[23px]">{q.fullName}</h2>
+        <h2 className="text-price">{q.fullName}</h2>
         {isBooking && (
-          <span className={`rounded-full px-3 py-1 text-xs font-bold ${INQUIRY_KIND.BOOKING.className}`}>
+          <span className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${INQUIRY_KIND.BOOKING.className}`}>
             {INQUIRY_KIND.BOOKING.label}
           </span>
         )}
-        <span className={`rounded-full px-3 py-1 text-xs font-bold ${pill.className}`}>{pill.label}</span>
+        <span className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${pill.className}`}>{pill.label}</span>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <section className="rounded-xl border border-line bg-white p-6">
-          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-[15px]">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-meta">
             <dt className="text-muted">Package</dt>
             <dd className="font-semibold">
               {livePackage ? (
@@ -97,13 +97,13 @@ export default async function InquiryDetailPage({ params }: PageProps<"/admin/in
           {isBooking && (
             <>
               <h3 className="mt-6 mb-2 text-base">Booking request</h3>
-              <p className="mb-3 text-[15px]">
+              <p className="mb-3 text-meta">
                 Departure: <strong>{departure ?? "—"}</strong>
               </p>
               <div className="overflow-x-auto rounded-lg border border-line">
-                <table className="w-full border-collapse text-left text-[15px]">
+                <table className="w-full border-collapse text-left text-meta">
                   <thead>
-                    <tr className="bg-canvas text-[13px] font-bold text-muted">
+                    <tr className="bg-canvas text-sm font-bold text-muted">
                       <th scope="col" className="px-4 py-2.5">Travellers</th>
                       <th scope="col" className="px-4 py-2.5 text-right">Price per person</th>
                       <th scope="col" className="px-4 py-2.5 text-right">Subtotal</th>
@@ -134,7 +134,7 @@ export default async function InquiryDetailPage({ params }: PageProps<"/admin/in
                   </tfoot>
                 </table>
               </div>
-              <p className="mt-2 text-[13px] text-muted">
+              <p className="mt-2 text-sm text-muted">
                 The website&apos;s starting prices when they booked. Confirm the seats, final price and payment with the
                 customer.
               </p>
@@ -157,7 +157,7 @@ export default async function InquiryDetailPage({ params }: PageProps<"/admin/in
                 href={whatsappHref({ whatsapp: q.phone }, `Hi ${q.fullName}, this is Moghul Travel & Tours replying to ${about}.`)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${contactButton} border-[#1f9d55] bg-[#1f9d55] text-white`}
+                className={`${contactButton} border-whatsapp bg-whatsapp text-white hover:bg-whatsapp-dark`}
               >
                 <WhatsAppIcon className="size-5" />
                 WhatsApp them
@@ -191,7 +191,7 @@ export default async function InquiryDetailPage({ params }: PageProps<"/admin/in
                   The inquiry from <strong className="text-ink">{q.fullName}</strong> will be deleted permanently.
                 </ConfirmActionButton>
               ) : (
-                <p className="text-[13px] text-muted">Resolved inquiries can be deleted.</p>
+                <p className="text-sm text-muted">Resolved inquiries can be deleted.</p>
               )}
             </div>
           </section>

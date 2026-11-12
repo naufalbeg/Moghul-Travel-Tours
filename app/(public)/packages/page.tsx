@@ -23,7 +23,7 @@ function param(value: string | string[] | undefined) {
   return (Array.isArray(value) ? value[0] : value)?.trim() || undefined;
 }
 
-/** PackageListingPage [PKG-MTT-002-001] — mockup 3.2.1. */
+/** PackageListingPage [PKG-MTT-002-001]: navy banner, category pills, the cards. */
 export default async function PackagesPage({ searchParams }: PageProps<"/packages">) {
   const params = await searchParams;
   const filter = resolveCategoryFilter(param(params.category));
@@ -59,30 +59,27 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
         </PageBanner>
       </SlideTransition>
 
-      <section className="mx-auto max-w-[1160px] px-4 pt-10 pb-16 sm:px-8 sm:pt-14">
-        <div className="mb-9">
+      <section className="wrap pt-10 pb-[clamp(56px,7vw,104px)]">
+        <div className="mb-8">
           <CategoryPills active={filter?.slug ?? null} />
         </div>
 
         <SlideTransition key={view}>
           <div>
             {searchParts.length > 0 && (
-              <p className="mb-6 text-center text-muted">
+              <p className="mb-6 text-muted">
                 {fmt(t.packages.matching, { terms: searchParts.join(", ") })}{" "}
-                <Link
-                  href={filter ? `/packages?category=${filter.slug}` : "/packages"}
-                  className="font-semibold text-primary underline underline-offset-4"
-                >
+                <Link href={filter ? `/packages?category=${filter.slug}` : "/packages"} className="text-link">
                   {t.packages.clearSearch}
                 </Link>
               </p>
             )}
 
             {packages.length > 0 ? (
-              <PackageGrid packages={packages} />
+              <PackageGrid packages={packages} heading="h2" />
             ) : (
-              <div className="mx-auto max-w-[560px] rounded-xl border border-line bg-white px-6 py-10 text-center">
-                <h2 className="mb-2 text-xl text-primary-dark">{t.packages.noneTitle}</h2>
+              <div className="max-w-[60ch] rounded-xl border border-line bg-white px-6 py-8">
+                <h2 className="mb-2 text-title text-primary-dark">{t.packages.noneTitle}</h2>
                 <p className="mb-6 text-muted">
                   {searchParts.length > 0 || filter ? t.packages.noneFiltered : t.packages.noneYet}
                 </p>
@@ -90,9 +87,9 @@ export default async function PackagesPage({ searchParams }: PageProps<"/package
                   href={whatsappHref(content, t.whatsapp.askPackages)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-[#1f9d55] px-6 font-bold text-white"
+                  className="btn btn-wa"
                 >
-                  <WhatsAppIcon className="size-5" />
+                  <WhatsAppIcon className="size-[22px]" />
                   {t.home.askWhatsApp}
                 </a>
               </div>

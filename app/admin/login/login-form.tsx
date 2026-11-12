@@ -7,7 +7,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { login, type LoginState } from "./actions";
 
 const inputBase =
-  "w-full rounded-lg border-[1.5px] px-4 py-3.5 text-base text-ink placeholder:text-muted/80 focus:border-primary focus:outline-none disabled:border-line disabled:bg-[#f1f3f5] disabled:text-muted";
+  "w-full rounded-lg border-[1.5px] px-4 py-3.5 text-base text-ink placeholder:text-muted/80 disabled:border-field disabled:bg-[#f1f3f5] disabled:text-muted";
 
 export function LoginForm() {
   const [state, formAction, pending] = useActionState<LoginState, FormData>(login, {
@@ -16,7 +16,7 @@ export function LoginForm() {
 
   const locked = state.status === "locked";
   const invalid = state.status === "error";
-  const inputClass = `${inputBase} ${invalid ? "border-danger bg-danger-pale" : "border-line"}`;
+  const inputClass = `${inputBase} ${invalid ? "border-danger bg-danger-pale" : "border-field"}`;
 
   return (
     <form action={formAction} noValidate>
@@ -70,13 +70,13 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={pending || locked}
-        className="w-full rounded-lg bg-accent px-5 py-[15px] text-[17px] font-bold text-white hover:bg-accent-dark disabled:bg-line disabled:text-muted"
+        className="w-full rounded-lg bg-accent px-5 py-[15px] text-body font-bold text-ink hover:bg-accent-hover disabled:bg-line disabled:text-muted"
       >
         {pending ? "Signing in…" : "Sign in"}
       </button>
 
       {locked && (
-        <p className="mt-3.5 text-center text-[13px] text-muted">
+        <p className="mt-3.5 text-center text-sm text-muted">
           Need urgent access? Contact your Master Admin.
         </p>
       )}

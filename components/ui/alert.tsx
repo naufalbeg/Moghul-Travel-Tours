@@ -31,11 +31,11 @@ const tones: Record<
 export function Alert({ tone, title, children }: { tone: Tone; title: string; children?: ReactNode }) {
   const t = tones[tone];
   return (
-    <div role={tone === "success" ? "status" : "alert"} className={`flex rounded-[10px] border px-4 py-3.5 ${t.box}`}>
+    <div role={tone === "success" ? "status" : "alert"} className={`flex rounded-lg border px-4 py-3.5 ${t.box}`}>
       <t.Icon className={`mt-px mr-3 size-[19px] shrink-0 ${t.title}`} />
       <div>
-        <p className={`text-[15px] leading-snug font-semibold ${t.title}`}>{title}</p>
-        {children && <p className={`mt-1 text-sm ${t.body}`}>{children}</p>}
+        <p className={`leading-snug font-bold ${t.title}`}>{title}</p>
+        {children && <p className={`mt-1 text-[0.93em] ${t.body}`}>{children}</p>}
       </div>
     </div>
   );

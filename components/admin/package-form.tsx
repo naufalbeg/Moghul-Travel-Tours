@@ -103,13 +103,13 @@ function toInput(s: PackageFormState): PackageInput {
 }
 
 const input =
-  "w-full rounded-lg border-[1.5px] px-3.5 py-3 text-[15px] text-ink focus:border-primary focus:outline-none";
-const inputClass = (error?: string) => `${input} ${error ? "border-danger bg-danger-pale" : "border-line bg-white"}`;
+  "w-full rounded-lg border-[1.5px] px-3.5 py-3 text-meta text-ink";
+const inputClass = (error?: string) => `${input} ${error ? "border-danger bg-danger-pale" : "border-field bg-white"}`;
 
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
-    <p id={id} className="mt-2 flex items-center gap-1.5 text-[13.5px] font-semibold text-danger">
+    <p id={id} className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-danger">
       <AlertCircleIcon className="size-3.5 shrink-0" />
       {message}
     </p>
@@ -119,7 +119,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 function Section({ title, hint, children }: { title: string; hint: string; children: ReactNode }) {
   return (
     <section className="border-b border-line px-5 py-7 last:border-b-0 sm:px-8">
-      <h3 className="mb-1 text-[17px]">{title}</h3>
+      <h3 className="mb-1 text-body">{title}</h3>
       <p className="mb-5 text-sm text-muted">{hint}</p>
       {children}
     </section>
@@ -258,7 +258,7 @@ export function PackageForm({
         onClick={(e) => {
           if (dirty && !window.confirm("You have unsaved changes. Leave without saving?")) e.preventDefault();
         }}
-        className="flex min-h-11 items-center px-4 text-[14.5px] font-semibold text-muted hover:text-ink"
+        className="flex min-h-11 items-center px-4 text-fine font-semibold text-muted hover:text-ink"
       >
         Cancel
       </Link>
@@ -266,7 +266,7 @@ export function PackageForm({
         type="button"
         onClick={() => submit("draft")}
         disabled={pending}
-        className="min-h-11 rounded-lg border-[1.5px] border-line bg-white px-5 text-[14.5px] font-bold hover:border-primary disabled:opacity-60"
+        className="min-h-11 rounded-lg border-[1.5px] border-field bg-white px-5 text-fine font-bold hover:border-primary disabled:opacity-60"
       >
         {isPublished ? "Move to drafts" : "Save as draft"}
       </button>
@@ -274,7 +274,7 @@ export function PackageForm({
         type="button"
         onClick={() => submit("publish")}
         disabled={pending}
-        className="min-h-11 rounded-lg bg-accent px-6 text-[14.5px] font-bold text-white hover:bg-accent-dark disabled:opacity-60"
+        className="min-h-11 rounded-lg bg-accent px-6 text-fine font-bold text-ink hover:bg-accent-hover disabled:opacity-60"
       >
         {pending ? "Saving…" : isPublished ? "Save changes" : "Publish"}
       </button>
@@ -284,11 +284,11 @@ export function PackageForm({
   return (
     <form onSubmit={(e) => e.preventDefault()} noValidate>
       <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <h2 className="text-[23px]">
+        <h2 className="text-price">
           {packageId ? "Edit package" : "Add new package"}
           {packageId && (
             <span
-              className={`ml-3 inline-block rounded-full px-3 py-1 align-middle font-sans text-xs font-bold ${
+              className={`ml-3 inline-block rounded-full px-3 py-1 align-middle font-sans text-[13px] font-bold ${
                 isPublished ? "bg-success-pale text-success" : "bg-primary-pale text-primary"
               }`}
             >
@@ -347,7 +347,7 @@ export function PackageForm({
                     className={`${inputClass(err("slug"))} sm:rounded-l-none`}
                   />
                 </div>
-                <p id="slug-hint" className="mt-1.5 text-[13px] text-muted">
+                <p id="slug-hint" className="mt-1.5 text-sm text-muted">
                   {packageId
                     ? "Changing this breaks links people have already shared."
                     : "Filled in automatically from the title. Leave it as is unless you want a shorter link."}
@@ -362,8 +362,8 @@ export function PackageForm({
                 {CATEGORIES.map((c) => (
                   <label
                     key={c}
-                    className={`flex min-h-11 cursor-pointer items-center rounded-full border-[1.5px] px-[18px] text-[14.5px] font-semibold has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-accent ${
-                      state.category === c ? "border-primary bg-primary text-white" : "border-line text-ink hover:border-primary"
+                    className={`flex min-h-11 cursor-pointer items-center rounded-full border-[1.5px] px-[18px] text-fine font-semibold has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-primary-dark ${
+                      state.category === c ? "border-primary-dark bg-primary-dark text-white" : "border-field text-ink hover:border-primary"
                     }`}
                   >
                     <input
@@ -380,12 +380,12 @@ export function PackageForm({
               </div>
             </fieldset>
 
-            <div className="mt-5 rounded-[10px] bg-canvas p-4">
+            <div className="mt-5 rounded-lg bg-canvas p-4">
               <label htmlFor="adminNote" className="mb-1 flex items-center gap-1.5 text-sm font-semibold">
                 <LockIcon className="size-3.5 shrink-0 text-muted" />
                 Admin note
               </label>
-              <p id="adminNote-hint" className="mb-2 text-[13px] text-muted">
+              <p id="adminNote-hint" className="mb-2 text-sm text-muted">
                 Only admins see this — it never appears on the website. Shown beside Delete in the package list.
               </p>
               <textarea
@@ -493,10 +493,10 @@ export function PackageForm({
                 const idx = dayIndex[i];
                 const e = (f: string) => (idx >= 0 ? err(`itinerary.${idx}.${f}`) : undefined);
                 return (
-                  <li key={day.key} className="rounded-[10px] bg-canvas p-4">
+                  <li key={day.key} className="rounded-lg bg-canvas p-4">
                     <div className="mb-3 flex flex-wrap items-end gap-3">
                       <div>
-                        <label htmlFor={`day-start-${day.key}`} className="mb-1 block text-[13px] font-semibold">
+                        <label htmlFor={`day-start-${day.key}`} className="mb-1 block text-sm font-semibold">
                           Day
                         </label>
                         <input
@@ -510,7 +510,7 @@ export function PackageForm({
                         />
                       </div>
                       <div>
-                        <label htmlFor={`day-end-${day.key}`} className="mb-1 block text-[13px] font-semibold">
+                        <label htmlFor={`day-end-${day.key}`} className="mb-1 block text-sm font-semibold">
                           to day <span className="font-normal text-muted">(optional)</span>
                         </label>
                         <input
@@ -524,7 +524,7 @@ export function PackageForm({
                         />
                       </div>
                       <div className="min-w-56 flex-1">
-                        <label htmlFor={`day-title-${day.key}`} className="mb-1 block text-[13px] font-semibold">
+                        <label htmlFor={`day-title-${day.key}`} className="mb-1 block text-sm font-semibold">
                           Title
                         </label>
                         <input
@@ -538,7 +538,7 @@ export function PackageForm({
                       <button
                         type="button"
                         onClick={() => removeRow("itinerary", day.key)}
-                        className="min-h-10 px-2 text-[13px] font-semibold text-danger"
+                        className="min-h-10 px-2 text-sm font-semibold text-danger"
                       >
                         Remove day
                       </button>
@@ -562,7 +562,7 @@ export function PackageForm({
             <button
               type="button"
               onClick={addDay}
-              className="mt-4 block min-h-12 w-full rounded-lg border-[1.5px] border-dashed border-line text-[14.5px] font-semibold text-primary hover:border-primary"
+              className="mt-4 block min-h-12 w-full rounded-lg border-[1.5px] border-dashed border-field text-fine font-semibold text-primary hover:border-primary"
             >
               + Add another day
             </button>
@@ -620,7 +620,7 @@ export function PackageForm({
             </table>
             <FieldError id="prices-error" message={priceError} />
 
-            <p className="mt-5 rounded-lg bg-primary-pale px-4 py-3 text-[14.5px] text-ink">
+            <p className="mt-5 rounded-lg bg-primary-pale px-4 py-3 text-fine text-ink">
               {fromPrice !== null ? (
                 <>
                   The website shows <strong>Starts from {formatPrice(fromPrice)}</strong> per person — the lowest
@@ -691,7 +691,7 @@ export function PackageForm({
                     <button
                       type="button"
                       onClick={() => removeRow("departures", d.key)}
-                      className="min-h-10 px-2 text-[13px] font-semibold text-danger"
+                      className="min-h-10 px-2 text-sm font-semibold text-danger"
                     >
                       Remove
                     </button>
@@ -702,7 +702,7 @@ export function PackageForm({
             <button
               type="button"
               onClick={addDeparture}
-              className="mt-4 block min-h-12 w-full rounded-lg border-[1.5px] border-dashed border-line text-[14.5px] font-semibold text-primary hover:border-primary"
+              className="mt-4 block min-h-12 w-full rounded-lg border-[1.5px] border-dashed border-field text-fine font-semibold text-primary hover:border-primary"
             >
               + Add {state.departures.length ? "another" : "a"} date
             </button>

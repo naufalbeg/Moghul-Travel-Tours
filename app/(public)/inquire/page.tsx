@@ -27,31 +27,28 @@ export default async function InquirePage({ searchParams }: PageProps<"/inquire"
     <>
       <PageBanner title={t.inquire.title}>{t.inquire.subtitle}</PageBanner>
 
-      <div className="mx-auto grid max-w-[1160px] gap-8 px-4 py-12 sm:px-8 lg:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)] lg:items-start">
+      <div className="wrap grid items-start gap-8 pt-10 pb-[clamp(56px,7vw,104px)] mid:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)] mid:gap-10">
         <InquiryForm
           packages={packages.map((p) => p.title)}
           initialPackage={selected}
           whatsappUrl={whatsappHref(content, t.whatsapp.sentInquiry)}
         />
 
-        <aside className="rounded-xl bg-primary-pale p-6">
-          <h2 className="mb-2 text-lg text-primary-dark">{t.inquire.talkHeading}</h2>
-          <p className="mb-4 text-[15px] text-muted">{t.inquire.talkText}</p>
+        <aside className="rounded-xl bg-canvas p-6 mid:sticky mid:top-[112px]">
+          <h2 className="text-title text-primary-dark">{t.inquire.talkHeading}</h2>
+          <p className="mt-2 mb-5 text-muted">{t.inquire.talkText}</p>
           <div className="flex flex-col gap-3">
             <a
               href={whatsappHref(content, t.whatsapp.askTrip)}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#1f9d55] px-5 font-bold text-white"
+              className="btn btn-wa"
             >
-              <WhatsAppIcon className="size-5" />
+              <WhatsAppIcon className="size-[22px]" />
               {fmt(t.inquire.whatsapp, { number: content.whatsapp })}
             </a>
-            <a
-              href={telHref(content.phone)}
-              className="flex min-h-12 items-center justify-center gap-2 rounded-lg border-[1.5px] border-primary bg-white px-5 font-bold text-primary"
-            >
-              <PhoneIcon className="size-5" />
+            <a href={telHref(content.phone)} className="btn btn-primary">
+              <PhoneIcon strokeWidth={2} className="size-[22px]" />
               {fmt(t.inquire.call, { number: content.phone })}
             </a>
           </div>

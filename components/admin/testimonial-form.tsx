@@ -51,7 +51,7 @@ export function TestimonialForm({ id, initial }: { id: string | null; initial: T
       noValidate
       className={centeredPage}
     >
-      <h2 className="mb-6 text-[23px]">{id ? "Edit testimonial" : "Add testimonial"}</h2>
+      <h2 className="mb-6 text-price">{id ? "Edit testimonial" : "Add testimonial"}</h2>
 
       {banner && (
         <div className="mb-5">
@@ -105,7 +105,7 @@ export function TestimonialForm({ id, initial }: { id: string | null; initial: T
               {[1, 2, 3, 4, 5].map((n) => (
                 <label
                   key={n}
-                  className="cursor-pointer rounded-md p-1 text-[32px] leading-none has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-accent"
+                  className="cursor-pointer rounded-md p-1 text-[32px] leading-none has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-primary-dark"
                 >
                   <input
                     type="radio"
