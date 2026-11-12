@@ -1,65 +1,62 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-import { CloseIcon, MenuIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
+import { useEffect, useRef, useState } from "react";
+import { CloseIcon, MenuIcon } from "@/components/ui/icons";
 import { useI18n } from "@/components/public/i18n-provider";
 import { ActiveNavList } from "@/components/public/nav-links";
-import { telHref, whatsappHref } from "@/lib/site-content";
 
-export function MobileMenu({ phone, whatsapp }: { phone: string; whatsapp: string }) {
+/**
+ * The top menu on phones and tablets: a Menu button that opens a small panel
+ * under it. Closes on a choice, on Escape and on a tap anywhere else.
+ */
+export function MobileMenu() {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
-  const close = () => setOpen(false);
+  const root = useRef<HTMLDivElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      button.current?.focus();
+    };
+    const onPointer = (e: PointerEvent) => {
+      if (!root.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+    };
+  }, [open]);
 
   return (
-    <div className="shrink-0 lg:hidden">
+    <div ref={root} className="relative nav:hidden">
       <button
+        ref={button}
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-controls="mobile-menu"
-        className="flex min-h-12 items-center gap-2 rounded-lg border-[1.5px] border-line px-4 font-semibold text-primary-dark"
+        className={`flex min-h-12 items-center gap-2 rounded-lg border-[1.5px] border-field px-3.5 font-bold text-ink transition-colors duration-150 ease-smooth hover:bg-canvas ${
+          open ? "bg-canvas" : "bg-white"
+        }`}
       >
-        {open ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
-        {open ? t.menu.close : t.menu.open}
+        {open ? <CloseIcon className="size-[22px]" /> : <MenuIcon className="size-[22px]" />}
+        {t.menu.open}
       </button>
 
       {open && (
+        // Inner corners = the panel's 14px corner minus its 8px padding.
         <nav
           id="mobile-menu"
           aria-label={t.nav.label}
-          className="absolute inset-x-0 top-full z-40 border-b border-line bg-white px-4 pt-3 pb-5 shadow-lg"
+          className="absolute top-[calc(100%+10px)] right-0 z-40 w-[min(320px,calc(100vw-32px))] rounded-xl border border-line bg-white p-2 shadow-panel"
         >
-          <ActiveNavList variant="mobile" onNavigate={close} />
-
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <a
-              href={telHref(phone)}
-              className="flex min-h-13 items-center justify-center gap-2 rounded-lg border-[1.5px] border-primary font-bold text-primary"
-            >
-              <PhoneIcon className="size-5" />
-              {t.menu.call}
-            </a>
-            <a
-              href={whatsappHref({ whatsapp })}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex min-h-13 items-center justify-center gap-2 rounded-lg bg-[#1f9d55] font-bold text-white"
-            >
-              <WhatsAppIcon className="size-5" />
-              {t.menu.whatsapp}
-            </a>
-          </div>
-
-          <Link
-            href="/admin/login"
-            onClick={close}
-            lang="en"
-            className="mt-4 block text-center text-[13px] font-medium text-muted hover:text-primary"
-          >
-            Admin login
-          </Link>
+          <ActiveNavList variant="mobile" onNavigate={() => setOpen(false)} />
         </nav>
       )}
     </div>

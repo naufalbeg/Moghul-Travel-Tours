@@ -1,9 +1,16 @@
+import { RevealOnScroll } from "@/components/public/reveal-on-scroll";
 import { SlideTransition } from "@/components/public/slide-transition";
 
 /**
  * Re-mounts on every public navigation, so the page content between the
- * header and footer can slide left or right when the top menu is used.
+ * header and footer can slide left or right when the top menu is used, and
+ * the new page's blocks can ease in as they are scrolled to.
  */
 export default function PublicTemplate({ children }: { children: React.ReactNode }) {
-  return <SlideTransition>{children}</SlideTransition>;
+  return (
+    <>
+      <SlideTransition>{children}</SlideTransition>
+      <RevealOnScroll />
+    </>
+  );
 }

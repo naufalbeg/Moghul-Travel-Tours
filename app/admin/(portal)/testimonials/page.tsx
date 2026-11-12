@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ConfirmActionButton } from "@/components/admin/confirm-action-button";
-import { PageHeader, primaryButton } from "@/components/admin/field";
+import { PageHeader, primaryButton, rowButton } from "@/components/admin/field";
 import { Alert } from "@/components/ui/alert";
 import { EditIcon, ExternalIcon, PlusIcon, TrashIcon } from "@/components/ui/icons";
+import { Stars } from "@/components/ui/stars";
 import { requireAdmin } from "@/lib/auth";
 import { formatDate } from "@/lib/format";
 import { prisma } from "@/lib/prisma";
@@ -26,7 +27,7 @@ export default async function AdminTestimonialsPage({ searchParams }: PageProps<
 
   return (
     <>
-      <PageHeader title="Testimonials" subtitle="Customer reviews shown on the homepage and the Reviews page." action={addButton} />
+      <PageHeader subtitle="Customer reviews shown on the homepage and the Reviews page." action={addButton} />
 
       {typeof saved === "string" && (
         <div className="mb-5">
@@ -38,7 +39,7 @@ export default async function AdminTestimonialsPage({ searchParams }: PageProps<
 
       {testimonials.length === 0 ? (
         <div className="rounded-xl border border-line bg-white px-6 py-14 text-center">
-          <h3 className="mb-2 text-lg">No testimonials yet</h3>
+          <h2 className="mb-2 text-lg">No testimonials yet</h2>
           <p className="mb-6 text-muted">Add a review from a happy customer — the homepage shows the newest one.</p>
           <div className="flex justify-center">{addButton}</div>
         </div>
@@ -55,21 +56,18 @@ export default async function AdminTestimonialsPage({ searchParams }: PageProps<
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 flex flex-wrap items-center gap-x-3 gap-y-1">
                     <span className="font-semibold">{t.customerName}</span>
-                    <span className="text-accent" aria-label={`${t.starRating} out of 5 stars`}>
-                      {"★".repeat(t.starRating)}
-                      <span className="text-line">{"★".repeat(5 - t.starRating)}</span>
-                    </span>
+                    <Stars rating={t.starRating} label={`${t.starRating} out of 5 stars`} className="size-[18px]" />
                   </div>
                   <p className="mb-2 text-sm text-muted">
                     {t.tripName}
                     {t.tripDate && ` · ${formatDate(t.tripDate)}`}
                   </p>
-                  <p className="line-clamp-2 text-[15px]">&ldquo;{t.reviewText}&rdquo;</p>
+                  <p className="line-clamp-2 text-meta">&ldquo;{t.reviewText}&rdquo;</p>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <Link
                     href={`/admin/testimonials/${t.id}/edit`}
-                    className="flex min-h-9 items-center gap-1.5 rounded-[7px] border border-line px-3 text-[13.5px] font-semibold hover:border-primary"
+                    className={rowButton}
                   >
                     <EditIcon className="size-3.5" />
                     Edit

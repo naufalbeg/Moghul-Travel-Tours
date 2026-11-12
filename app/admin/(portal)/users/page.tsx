@@ -10,7 +10,7 @@ import { deleteAdmin, setAdminActive } from "./actions";
 
 export const metadata: Metadata = { title: "User management" };
 
-const pill = "inline-block rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap";
+const pill = "inline-block rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap whitespace-nowrap";
 
 /** UserManagementPage [PKG-MTT-001-003] — mockup 3.1.6. Master Admin only. */
 export default async function UsersPage() {
@@ -32,12 +32,12 @@ export default async function UsersPage() {
 
   return (
     <>
-      <PageHeader title="Admin accounts" subtitle="Manage who has access to the admin dashboard." action={<AddAdminButton />} />
+      <PageHeader subtitle="Manage who has access to the admin dashboard." action={<AddAdminButton />} />
 
       <div className="overflow-x-auto rounded-xl border border-line bg-white">
         <table className="w-full min-w-[820px] border-collapse text-left">
           <thead>
-            <tr className="border-b border-line bg-canvas text-[13px] font-bold tracking-wide text-muted">
+            <tr className="border-b border-line bg-canvas text-sm font-bold tracking-wide text-muted">
               <th scope="col" className="px-5 py-4">Name</th>
               <th scope="col" className="px-5 py-4">Role</th>
               <th scope="col" className="px-5 py-4">Status</th>
@@ -76,7 +76,7 @@ export default async function UsersPage() {
                         <div className={`font-semibold ${muted ? "text-muted" : ""}`}>
                           {u.name}
                           {u.id === me.id && (
-                            <span className="ml-2 rounded-full bg-primary-pale px-2 py-px align-middle text-[11px] font-bold text-primary">You</span>
+                            <span className="ml-2 rounded-full bg-primary-pale px-2 py-px align-middle text-[13px] font-bold text-primary">You</span>
                           )}
                         </div>
                         <div className="text-sm text-muted">{u.email}</div>
@@ -94,7 +94,7 @@ export default async function UsersPage() {
                   </td>
                   <td className="px-5 py-4">
                     {isMaster || u.id === me.id ? (
-                      <span className="text-[13.5px] text-muted italic">Cannot be modified</span>
+                      <span className="text-sm text-muted">Cannot be modified</span>
                     ) : (
                       <div className="flex flex-wrap gap-2">
                         {pending && u.isActive && <ResendInviteButton userId={u.id} />}

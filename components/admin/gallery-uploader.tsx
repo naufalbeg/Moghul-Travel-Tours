@@ -95,7 +95,7 @@ export function GalleryUploader({ existingTags }: { existingTags: string[] }) {
 
   return (
     <section className="mb-8 rounded-xl border border-line bg-white px-5 py-6 sm:px-8">
-      <h3 className="mb-1 text-[17px]">Upload photos</h3>
+      <h2 className="mb-1 text-body">Upload photos</h2>
       <p className="mb-5 text-sm text-muted">Label them first, then choose the photos. Visitors can filter the gallery by label.</p>
 
       {status.kind !== "idle" && status.kind !== "working" && (
@@ -140,13 +140,13 @@ export function GalleryUploader({ existingTags }: { existingTags: string[] }) {
           }}
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
-          className={`flex min-h-[132px] cursor-pointer flex-col items-center justify-center rounded-[10px] border-[1.5px] border-dashed px-6 py-6 text-center ${
-            dragging ? "border-primary bg-primary-pale" : "border-line hover:border-primary"
+          className={`flex min-h-[132px] cursor-pointer flex-col items-center justify-center rounded-lg border-[1.5px] border-dashed px-6 py-6 text-center ${
+            dragging ? "border-primary bg-primary-pale" : "border-field hover:border-primary"
           } ${busy ? "pointer-events-none opacity-70" : ""}`}
         >
           <UploadIcon className="mb-2 size-8 text-primary" />
-          <span className="mb-1 text-[15px] font-semibold">{busy && status.kind === "working" ? status.text : "Drag photos here, or click to browse"}</span>
-          <span className="text-[13px] text-muted">JPG, PNG, or WEBP — up to 5MB each, {MAX_GALLERY_BATCH} at a time</span>
+          <span className="mb-1 text-meta font-semibold">{busy && status.kind === "working" ? status.text : "Drag photos here, or click to browse"}</span>
+          <span className="text-sm text-muted">JPG, PNG, or WEBP — up to 5MB each, {MAX_GALLERY_BATCH} at a time</span>
           <input
             id="gallery-files"
             type="file"

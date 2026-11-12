@@ -19,7 +19,7 @@ export default async function SetPasswordPage({ searchParams }: PageProps<"/admi
     const isInvite = found.status === "expired" && found.user.joinedAt === null;
     return (
       <AuthCard title={found.status === "expired" ? "This link has expired" : "This link isn't valid"}>
-        <p className="mb-6 text-center text-[15px] text-muted">
+        <p className="mb-6 text-center text-meta text-muted">
           {isInvite
             ? "Invitation links last 24 hours. Please ask your Master Admin to send you a new invitation."
             : "The link may have expired or already been used. You can request a new one below."}
@@ -28,14 +28,14 @@ export default async function SetPasswordPage({ searchParams }: PageProps<"/admi
           {!isInvite && (
             <Link
               href="/admin/forgot-password"
-              className="flex min-h-12 items-center justify-center rounded-lg bg-accent font-bold text-white"
+              className="flex min-h-12 items-center justify-center rounded-lg bg-accent font-bold text-ink"
             >
               Send me a new link
             </Link>
           )}
           <Link
             href="/admin/login"
-            className="flex min-h-12 items-center justify-center rounded-lg border-[1.5px] border-line font-semibold"
+            className="flex min-h-12 items-center justify-center rounded-lg border-[1.5px] border-field font-semibold"
           >
             Go to sign in
           </Link>

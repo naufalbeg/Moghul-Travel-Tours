@@ -11,16 +11,20 @@ import type { FormErrorCode } from "@/lib/validation/inquiry";
 
 const SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY ?? "";
 
+// Field borders use the darker "field" grey so the box itself is easy to see;
+// the page's focus ring (app/globals.css) shows which one is active.
 export const inputClass = (error?: string) =>
-  `w-full rounded-lg border-[1.5px] px-4 py-3.5 text-[17px] text-ink focus:border-primary focus:outline-none ${
-    error ? "border-danger bg-danger-pale" : "border-line bg-white"
+  `w-full rounded-lg border-[1.5px] px-4 py-3.5 text-body text-ink ${
+    error ? "border-danger bg-danger-pale" : "border-field bg-white"
   }`;
+
+export const labelClass = "mb-2 block font-bold";
 
 export function InlineError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
-    <p id={id} className="mt-2 flex items-center gap-1.5 text-[15px] font-semibold text-danger">
-      <AlertCircleIcon className="size-4 shrink-0" />
+    <p id={id} className="mt-2 flex items-center gap-1.5 text-meta font-bold text-danger">
+      <AlertCircleIcon strokeWidth={2} className="size-[18px] shrink-0" />
       {message}
     </p>
   );
@@ -61,21 +65,21 @@ export function ContactFields({
   return (
     <>
       <div className="sm:col-span-2">
-        <label htmlFor={`${idPrefix}fullName`} className="mb-2 block font-semibold">
+        <label htmlFor={`${idPrefix}fullName`} className={labelClass}>
           {t.inquiry.fullName}
         </label>
         <input {...field("fullName")} autoComplete="name" />
         <InlineError id={`${idPrefix}fullName-error`} message={say(errors.fullName)} />
       </div>
       <div>
-        <label htmlFor={`${idPrefix}phone`} className="mb-2 block font-semibold">
+        <label htmlFor={`${idPrefix}phone`} className={labelClass}>
           {t.inquiry.phone}
         </label>
         <input {...field("phone")} type="tel" inputMode="tel" autoComplete="tel" placeholder="012-345 6789" />
         <InlineError id={`${idPrefix}phone-error`} message={say(errors.phone)} />
       </div>
       <div>
-        <label htmlFor={`${idPrefix}email`} className="mb-2 block font-semibold">
+        <label htmlFor={`${idPrefix}email`} className={labelClass}>
           {t.inquiry.email}
         </label>
         <input {...field("email")} type="email" autoComplete="email" placeholder={t.inquiry.emailPlaceholder} />

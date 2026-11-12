@@ -47,8 +47,17 @@ const SECTIONS: { title: string; hint: string; preview?: string; fields: Field[]
     hint: "The big headline and message at the top of the homepage.",
     preview: "/",
     fields: [
-      ...bilingual({ key: "hero_title", label: "Headline", wide: true, hint: "Keep it short. It's shown in capital letters automatically." }),
+      ...bilingual({ key: "hero_title", label: "Headline", wide: true, hint: "Keep it short. Whatever follows the first dash or comma is shown in orange." }),
       ...bilingual({ key: "hero_message", label: "Message", kind: "textarea", rows: 2, hint: "One or two sentences under the headline." }),
+      {
+        key: "search_destinations",
+        label: "Search suggestions",
+        kind: "textarea",
+        rows: 3,
+        wide: true,
+        placeholder: "Turkiye, Uzbekistan, Kashmir, Taipei",
+        hint: "Places offered as a visitor types in the homepage search, separated by commas. Keep it in step with your packages; leave blank for no suggestions.",
+      },
     ],
   },
   {
@@ -186,7 +195,7 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
   const actions = (
     <div className="flex flex-wrap items-center gap-2.5">
       {dirty && (
-        <button type="button" onClick={discard} className="min-h-11 px-4 text-[14.5px] font-semibold text-muted hover:text-ink">
+        <button type="button" onClick={discard} className="min-h-11 px-4 text-fine font-semibold text-muted hover:text-ink">
           Discard changes
         </button>
       )}
@@ -194,7 +203,7 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
         type="button"
         onClick={save}
         disabled={pending || !dirty}
-        className="min-h-11 rounded-lg bg-accent px-6 text-[14.5px] font-bold text-white hover:bg-accent-dark disabled:bg-line disabled:text-muted"
+        className="min-h-11 rounded-lg bg-accent px-6 text-fine font-bold text-ink hover:bg-accent-hover disabled:bg-line disabled:text-muted"
       >
         {pending ? "Saving…" : "Save changes"}
       </button>
@@ -204,13 +213,10 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
   return (
     <form onSubmit={(e) => { e.preventDefault(); save(); }} noValidate>
       <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div>
-          <h2 className="mb-1 text-[23px]">Website content</h2>
-          <p className="text-muted">
-            Changes appear on the public website as soon as you save. The website is in Bahasa Melayu; texts
-            marked &ldquo;English&rdquo; are for visitors who switch to English.
-          </p>
-        </div>
+        <p className="max-w-[72ch] text-muted">
+          Changes appear on the public website as soon as you save. The website is in Bahasa Melayu; texts marked
+          &ldquo;English&rdquo; are for visitors who switch to English.
+        </p>
         {actions}
       </div>
 
@@ -230,14 +236,14 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
             <section key={section.title} className="border-b border-line px-5 py-7 last:border-b-0 sm:px-8">
               <div className="mb-5 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="mb-1 text-[17px]">{section.title}</h3>
+                  <h2 className="mb-1 text-body">{section.title}</h2>
                   <p className="text-sm text-muted">{section.hint}</p>
                 </div>
                 {section.preview && (
                   <a
                     href={section.preview}
                     target="_blank"
-                    className="flex shrink-0 items-center gap-1.5 text-[13.5px] font-semibold text-primary hover:underline"
+                    className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
                   >
                     View page
                     <ExternalIcon className="size-3.5" />
@@ -256,8 +262,8 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
                     placeholder: field.placeholder,
                     "aria-invalid": error ? true : undefined,
                     "aria-describedby": ids || undefined,
-                    className: `w-full rounded-lg border-[1.5px] px-3.5 py-3 text-[15px] focus:border-primary focus:outline-none ${
-                      error ? "border-danger bg-danger-pale" : "border-line bg-white"
+                    className: `w-full rounded-lg border-[1.5px] px-3.5 py-3 text-meta ${
+                      error ? "border-danger bg-danger-pale" : "border-field bg-white"
                     }`,
                   };
                   const onChange = (v: string) => setValues((s) => ({ ...s, [field.key]: v }));
@@ -285,12 +291,12 @@ export function ContentEditor({ initial }: { initial: SiteContent }) {
                         />
                       )}
                       {field.hint && (
-                        <p id={`${field.key}-hint`} className="mt-1.5 text-[13px] text-muted">
+                        <p id={`${field.key}-hint`} className="mt-1.5 text-sm text-muted">
                           {field.hint}
                         </p>
                       )}
                       {error && (
-                        <p id={`${field.key}-error`} className="mt-2 flex items-center gap-1.5 text-[13.5px] font-semibold text-danger">
+                        <p id={`${field.key}-error`} className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-danger">
                           <AlertCircleIcon className="size-3.5 shrink-0" />
                           {error}
                         </p>

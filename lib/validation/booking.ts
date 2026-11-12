@@ -1,4 +1,5 @@
 import { z } from "zod";
+import "@/lib/validation/zod-config";
 import type { DepartureAvailability, PackageAvailability } from "@/generated/prisma/enums";
 import { isAdultPrice } from "@/lib/package-prices";
 import { code, collectErrors, contactFields, messageField, type FormErrorCode } from "@/lib/validation/inquiry";

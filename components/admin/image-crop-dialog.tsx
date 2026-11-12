@@ -69,7 +69,7 @@ export function ImageCropDialog({
         e.preventDefault();
         onCancel();
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-[880px] rounded-[14px] p-0 shadow-[0_24px_60px_rgba(13,44,78,0.35)] backdrop:bg-navy/70"
+      className="m-auto w-[calc(100%-2rem)] max-w-[880px] rounded-xl p-0 shadow-dialog backdrop:bg-navy/70"
     >
       {job && (
         <CropStep
@@ -137,7 +137,7 @@ function CropStep({
             </span>
           )}
         </div>
-        <p className="text-[15px] text-muted">{shape.hint}</p>
+        <p className="text-meta text-muted">{shape.hint}</p>
       </div>
 
       <div className="relative h-[min(56vh,460px)] bg-navy">
@@ -161,7 +161,7 @@ function CropStep({
             type="button"
             onClick={() => zoomBy(-0.25)}
             aria-label="Zoom out"
-            className="flex size-11 shrink-0 items-center justify-center rounded-lg border-[1.5px] border-line text-xl font-bold text-primary-dark hover:border-primary"
+            className="flex size-11 shrink-0 items-center justify-center rounded-lg border-[1.5px] border-field text-xl font-bold text-primary-dark hover:border-primary"
           >
             −
           </button>
@@ -182,14 +182,14 @@ function CropStep({
             type="button"
             onClick={() => zoomBy(0.25)}
             aria-label="Zoom in"
-            className="flex size-11 shrink-0 items-center justify-center rounded-lg border-[1.5px] border-line text-xl font-bold text-primary-dark hover:border-primary"
+            className="flex size-11 shrink-0 items-center justify-center rounded-lg border-[1.5px] border-field text-xl font-bold text-primary-dark hover:border-primary"
           >
             +
           </button>
         </div>
         {/* Under half the saved width looks soft on a large screen. */}
         {area && area.width < shape.maxWidth / 2 && (
-          <p className="mt-2 text-[13.5px] text-accent-dark">
+          <p className="mt-2 text-sm text-accent-dark">
             This part of the photo is quite small, so it may look blurry on large screens. Zooming out helps, or
             use a larger photo (at least {shape.maxWidth} pixels wide is best).
           </p>
@@ -203,7 +203,7 @@ function CropStep({
             type="button"
             onClick={() => onSkip(job)}
             disabled={working}
-            className="mr-auto min-h-11 px-2 text-[14.5px] font-semibold text-muted hover:text-ink"
+            className="mr-auto min-h-11 px-2 text-fine font-semibold text-muted hover:text-ink"
           >
             Skip this photo
           </button>
@@ -212,7 +212,7 @@ function CropStep({
           type="button"
           onClick={onCancel}
           disabled={working}
-          className="min-h-11 rounded-lg border-[1.5px] border-line px-5 font-semibold"
+          className="min-h-11 rounded-lg border-[1.5px] border-field px-5 font-semibold"
         >
           {multiple && !isAdjust ? "Cancel all" : "Cancel"}
         </button>
@@ -220,7 +220,7 @@ function CropStep({
           type="button"
           onClick={confirm}
           disabled={working || !area}
-          className="min-h-11 rounded-lg bg-accent px-6 font-bold text-white hover:bg-accent-dark disabled:opacity-60"
+          className="min-h-11 rounded-lg bg-accent px-6 font-bold text-ink hover:bg-accent-hover disabled:opacity-60"
         >
           {working ? "Cropping…" : multiple && position.index + 1 < position.total ? "Use this crop — next" : "Use this crop"}
         </button>

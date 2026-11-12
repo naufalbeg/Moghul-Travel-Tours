@@ -4,7 +4,7 @@ import type HCaptcha from "@hcaptcha/react-hcaptcha";
 import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { submitInquiry } from "@/app/(public)/inquire/actions";
-import { CaptchaField, ContactFields, InlineError, inputClass, useErrorText } from "@/components/public/form-fields";
+import { CaptchaField, ContactFields, InlineError, inputClass, labelClass, useErrorText } from "@/components/public/form-fields";
 import { useI18n } from "@/components/public/i18n-provider";
 import { Alert } from "@/components/ui/alert";
 import { CheckCircleIcon, WhatsAppIcon } from "@/components/ui/icons";
@@ -18,8 +18,7 @@ import {
 } from "@/lib/validation/inquiry";
 
 /**
- * InquiryFormPage [PKG-MTT-003-001] — mockup-free, following the site's
- * form style. Figures 3.3.1 (form), 3.3.2 (success), 3.3.5 (errors).
+ * InquiryFormPage [PKG-MTT-003-001], in the site's form style. Figures 3.3.1 (form), 3.3.2 (success), 3.3.5 (errors).
  */
 export function InquiryForm({
   packages,
@@ -79,24 +78,16 @@ export function InquiryForm({
 
   if (sentTo) {
     return (
-      <div role="status" className="rounded-xl border border-line bg-white px-6 py-10 text-center sm:px-10">
-        <CheckCircleIcon className="mx-auto mb-4 size-14 text-success" />
-        <h2 className="mb-2 text-2xl text-primary-dark">{fmt(text.thanks, { name: sentTo })}</h2>
-        <p className="mx-auto mb-7 max-w-[460px] text-[17px] text-muted">{text.submitted}</p>
-        <div className="flex flex-col justify-center gap-3 sm:flex-row">
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#1f9d55] px-6 font-bold text-white"
-          >
-            <WhatsAppIcon className="size-5" />
+      <div role="status" className="appear rounded-xl border border-line bg-white px-6 py-10 sm:px-10">
+        <CheckCircleIcon className="mb-4 size-14 text-success" />
+        <h2 className="mb-2 text-display font-extrabold text-primary-dark">{fmt(text.thanks, { name: sentTo })}</h2>
+        <p className="mb-7 max-w-[52ch] text-muted">{text.submitted}</p>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="btn btn-wa">
+            <WhatsAppIcon className="size-[22px]" />
             {text.faster}
           </a>
-          <Link
-            href="/packages"
-            className="inline-flex min-h-12 items-center justify-center rounded-lg border-[1.5px] border-primary px-6 font-bold text-primary"
-          >
+          <Link href="/packages" className="btn btn-outline">
             {text.browseMore}
           </Link>
         </div>
@@ -114,7 +105,7 @@ export function InquiryForm({
         e.preventDefault();
         submit();
       }}
-      className="scroll-mt-6 rounded-xl border border-line bg-white px-5 py-7 sm:px-8"
+      className="rounded-xl border border-line bg-white px-5 py-7 sm:px-8"
     >
       {banner && (
         <div className="mb-6">
@@ -126,7 +117,7 @@ export function InquiryForm({
         <ContactFields values={values} errors={errors} onChange={set} />
 
         <div className="sm:col-span-2">
-          <label htmlFor="packageInterest" className="mb-2 block font-semibold">
+          <label htmlFor="packageInterest" className={labelClass}>
             {text.packageInterest}
           </label>
           <select
@@ -148,7 +139,7 @@ export function InquiryForm({
         </div>
 
         <div className="sm:col-span-2">
-          <label htmlFor="message" className="mb-2 block font-semibold">
+          <label htmlFor="message" className={labelClass}>
             {text.message} <span className="font-normal text-muted">{text.optional}</span>
           </label>
           <textarea
@@ -179,11 +170,18 @@ export function InquiryForm({
       <button
         type="submit"
         disabled={pending}
-        className="mt-7 min-h-14 w-full rounded-[10px] bg-accent px-6 text-lg font-bold text-white hover:bg-accent-dark disabled:opacity-60 sm:w-auto sm:min-w-60"
+        aria-busy={pending || undefined}
+        className="btn btn-accent btn-lg mt-7 w-full sm:w-auto sm:min-w-60"
       >
+        {pending && <span className="spinner" aria-hidden="true" />}
         {pending ? text.sending : text.send}
       </button>
-      <p className="mt-4 text-sm text-muted">{text.privacy}</p>
+      <p className="mt-4 text-fine text-muted">
+        {text.privacy}{" "}
+        <Link href="/privacy" className="text-link font-normal">
+          {text.privacyLink}
+        </Link>
+      </p>
     </form>
   );
 }

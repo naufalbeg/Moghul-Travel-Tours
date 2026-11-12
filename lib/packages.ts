@@ -16,17 +16,28 @@ const primaryImageFirst: Prisma.PackageImageOrderByWithRelationInput[] = [
   { sortOrder: "asc" },
 ];
 
-const cardSelect = {
-  id: true,
-  slug: true,
-  title: true,
-  category: true,
-  highlights: true,
-  prices: { where: { type: { in: [...ADULT_PRICE_TYPES] } }, select: { type: true, amount: true } },
-  availability: true,
-  durationDays: true,
-  images: { orderBy: primaryImageFirst, take: 1, select: { url: true } },
-} satisfies Prisma.PackageSelect;
+const cardSelect = (today: Date) =>
+  ({
+    id: true,
+    slug: true,
+    title: true,
+    category: true,
+    highlights: true,
+    prices: { where: { type: { in: [...ADULT_PRICE_TYPES] } }, select: { type: true, amount: true } },
+    availability: true,
+    durationDays: true,
+    durationNights: true,
+    images: { orderBy: primaryImageFirst, take: 1, select: { url: true } },
+    // The next date a visitor could still join.
+    departures: {
+      where: { departureDate: { gte: today }, availability: { not: "FULL" } },
+      orderBy: { departureDate: "asc" },
+      take: 1,
+      select: { departureDate: true },
+    },
+  }) satisfies Prisma.PackageSelect;
+
+type CardRow = Prisma.PackageGetPayload<{ select: ReturnType<typeof cardSelect> }>;
 
 export type PackageCardData = {
   id: string;
@@ -36,12 +47,16 @@ export type PackageCardData = {
   highlights: string[];
   /** "Starts from" price per person; null if no adult price is set. */
   fromPrice: number | null;
-  availability: Prisma.PackageGetPayload<{ select: typeof cardSelect }>["availability"];
+  availability: CardRow["availability"];
   durationDays: number | null;
+  durationNights: number | null;
+  /** The cover photo. */
   imageUrl: string | null;
+  /** The next upcoming departure that isn't full, if any. */
+  nextDeparture: Date | null;
 };
 
-function toCard(p: Prisma.PackageGetPayload<{ select: typeof cardSelect }>): PackageCardData {
+function toCard(p: CardRow): PackageCardData {
   return {
     id: p.id,
     slug: p.slug,
@@ -51,7 +66,9 @@ function toCard(p: Prisma.PackageGetPayload<{ select: typeof cardSelect }>): Pac
     fromPrice: startingPrice(toPriceItems(p.prices)),
     availability: p.availability,
     durationDays: p.durationDays,
+    durationNights: p.durationNights,
     imageUrl: p.images[0]?.url ?? null,
+    nextDeparture: p.departures[0]?.departureDate ?? null,
   };
 }
 
@@ -64,20 +81,13 @@ function monthRange(month: string | undefined) {
   return { gte: new Date(Date.UTC(year, m - 1, 1)), lt: new Date(Date.UTC(year, m, 1)) };
 }
 
-/** listPublishedPackages — REQ-MTT-002-004. Newest first. */
-export async function listPublishedPackages(filters: {
-  categories?: readonly PackageCategory[];
-  query?: string;
-  month?: string;
-  take?: number;
-} = {}) {
-  await connection(); // always read fresh data, never prerender
+type PackageSearch = { categories?: readonly PackageCategory[]; query?: string; month?: string };
 
+/** Published packages matching a search: words in the title or description, a departure in the month, a category. */
+function searchWhere(filters: PackageSearch, today: Date): Prisma.PackageWhereInput {
   const query = filters.query?.trim();
   const range = monthRange(filters.month);
-  const today = todayInMalaysia();
-
-  const where: Prisma.PackageWhereInput = {
+  return {
     ...PUBLIC,
     ...(filters.categories && { category: { in: [...filters.categories] } }),
     ...(query && {
@@ -92,10 +102,29 @@ export async function listPublishedPackages(filters: {
       },
     }),
   };
+}
 
+/** How many published packages each category has for a search — the numbers on the category tabs. */
+export async function countPublishedByCategory(filters: Omit<PackageSearch, "categories"> = {}) {
+  await connection();
+  const rows = await prisma.package.groupBy({
+    by: ["category"],
+    where: searchWhere(filters, todayInMalaysia()),
+    _count: { _all: true },
+  });
+  return Object.fromEntries(rows.map((row) => [row.category, row._count._all])) as Partial<
+    Record<PackageCategory, number>
+  >;
+}
+
+/** listPublishedPackages — REQ-MTT-002-004. Newest first. */
+export async function listPublishedPackages(filters: PackageSearch & { take?: number } = {}) {
+  await connection(); // always read fresh data, never prerender
+
+  const today = todayInMalaysia();
   const rows = await prisma.package.findMany({
-    where,
-    select: cardSelect,
+    where: searchWhere(filters, today),
+    select: cardSelect(today),
     orderBy: { createdAt: "desc" },
     take: filters.take,
   });

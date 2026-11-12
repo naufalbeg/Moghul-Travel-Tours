@@ -163,18 +163,18 @@ export function PackageImageField({ images, onChange, error }: Props) {
         }}
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
-        className={`mb-4 flex cursor-pointer flex-col items-center rounded-[10px] border-[1.5px] border-dashed px-6 py-8 text-center ${
-          invalid ? "border-danger bg-danger-pale" : dragging ? "border-primary bg-primary-pale" : "border-line hover:border-primary"
+        className={`mb-4 flex cursor-pointer flex-col items-center rounded-lg border-[1.5px] border-dashed px-6 py-8 text-center ${
+          invalid ? "border-danger bg-danger-pale" : dragging ? "border-primary bg-primary-pale" : "border-field hover:border-primary"
         }`}
       >
         <UploadIcon className={`mb-2.5 size-8 ${invalid ? "text-danger" : "text-primary"}`} />
-        <span className={`mb-1 text-[15px] font-semibold ${invalid ? "text-danger" : ""}`}>
+        <span className={`mb-1 text-meta font-semibold ${invalid ? "text-danger" : ""}`}>
           Drag photos here, or click to browse
         </span>
-        <span className="text-[13px] text-muted">
+        <span className="text-sm text-muted">
           JPG, PNG, or WEBP — up to {MAX_PACKAGE_IMAGES} photos. You&apos;ll crop each one to fit the website.
         </span>
-        <span className="mt-1 text-[13px] text-muted">
+        <span className="mt-1 text-sm text-muted">
           <strong className="font-semibold text-ink">Best results:</strong> landscape (sideways) photos at least{" "}
           {CROPPED_IMAGE_MAX_WIDTH} × {Math.round(CROPPED_IMAGE_MAX_WIDTH / PACKAGE_IMAGE_ASPECT)} pixels. Most phone
           and camera photos are bigger — that&apos;s fine. Photos saved from WhatsApp are often too small and can look
@@ -194,7 +194,7 @@ export function PackageImageField({ images, onChange, error }: Props) {
       </label>
 
       {(error || notice) && (
-        <p className="mb-4 flex items-start gap-1.5 text-[13.5px] font-semibold text-danger">
+        <p className="mb-4 flex items-start gap-1.5 text-sm font-semibold text-danger">
           <AlertCircleIcon className="mt-0.5 size-3.5 shrink-0" />
           {error ?? notice}
         </p>
@@ -212,17 +212,17 @@ export function PackageImageField({ images, onChange, error }: Props) {
                     className={`size-full object-cover ${img.status === "uploading" ? "opacity-50" : ""}`}
                   />
                   {img.status === "uploading" && (
-                    <span className="absolute inset-x-0 bottom-0 bg-navy/75 py-1 text-center text-[12px] font-semibold text-white">
+                    <span className="absolute inset-x-0 bottom-0 bg-navy/75 py-1 text-center text-[13px] font-semibold text-white">
                       Uploading…
                     </span>
                   )}
                   {img.status === "failed" && (
-                    <span className="absolute inset-x-0 bottom-0 bg-danger py-1 text-center text-[12px] font-semibold text-white">
+                    <span className="absolute inset-x-0 bottom-0 bg-danger py-1 text-center text-[13px] font-semibold text-white">
                       Upload failed
                     </span>
                   )}
                   {img.isPrimary && (
-                    <span className="absolute top-1.5 left-1.5 rounded-full bg-accent px-2 py-0.5 text-[11px] font-bold text-white">
+                    <span className="absolute top-1.5 left-1.5 rounded-full bg-accent px-2 py-0.5 text-[13px] font-bold text-ink">
                       Main photo
                     </span>
                   )}
@@ -236,7 +236,7 @@ export function PackageImageField({ images, onChange, error }: Props) {
                   </button>
                 </div>
                 {img.status === "done" && (
-                  <div className="flex flex-wrap gap-x-4 px-3 py-1.5 text-[13px] font-semibold text-primary">
+                  <div className="flex flex-wrap gap-x-4 px-3 py-1.5 text-sm font-semibold text-primary">
                     <button type="button" onClick={() => adjust(img)} className="min-h-9 hover:underline">
                       Adjust crop
                     </button>
@@ -250,7 +250,7 @@ export function PackageImageField({ images, onChange, error }: Props) {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-[13px] text-muted">
+          <p className="mt-3 text-sm text-muted">
             The main photo is shown on package cards. Removing a photo here deletes it when you save.
           </p>
         </>

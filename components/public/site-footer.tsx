@@ -1,113 +1,159 @@
 import Link from "next/link";
-import { FacebookIcon, InstagramIcon, TikTokIcon, WhatsAppIcon } from "@/components/ui/icons";
+import type { ReactNode } from "react";
 import { LogoMark } from "@/components/ui/logo-mark";
 import { fmt } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/server";
 import { SITE } from "@/lib/site";
 import { lines, telHref, whatsappHref, type SiteContent } from "@/lib/site-content";
 
-const badge = "rounded-lg bg-white/10 px-3.5 py-2 text-[13px] font-semibold text-white/90";
+const link = "text-white underline decoration-white/40 underline-offset-[0.2em] hover:decoration-white";
+const legal = "underline decoration-white/40 underline-offset-[0.2em] hover:text-white";
+
+function Column({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div>
+      <h2 className="mb-3 text-body font-bold tracking-normal text-white">{title}</h2>
+      <ul className="space-y-1.5">{children}</ul>
+    </div>
+  );
+}
 
 export async function SiteFooter({ content }: { content: SiteContent }) {
   const t = await getDictionary();
-  // Only show social links that have been filled in (admin: Content pages).
+  // Only the social pages that have been filled in (admin: Content pages).
   const socialLinks = [
-    { href: content.facebook_url, label: "Facebook", Icon: FacebookIcon },
-    { href: content.instagram_url, label: "Instagram", Icon: InstagramIcon },
-    { href: content.tiktok_url, label: "TikTok", Icon: TikTokIcon },
-    { href: whatsappHref(content), label: "WhatsApp", Icon: WhatsAppIcon },
-  ].filter((link) => link.href);
+    { href: content.facebook_url, label: "Facebook" },
+    { href: content.instagram_url, label: "Instagram" },
+    { href: content.tiktok_url, label: "TikTok" },
+  ].filter((social) => social.href);
 
-  // Extra bottom padding keeps the floating WhatsApp button off the text.
+  const licences = [
+    fmt(t.footer.motac, { value: content.motac_license }),
+    content.matta_member && fmt(t.footer.matta, { value: content.matta_member }),
+    content.mita_member && fmt(t.footer.mita, { value: content.mita_member }),
+    content.papuh_member && fmt(t.footer.papuh, { value: content.papuh_member }),
+  ].filter(Boolean) as string[];
+
   return (
-    <footer className="bg-primary-dark px-4 pt-12 pb-24 text-white sm:px-8">
-      <div className="mx-auto mb-8 flex max-w-[1160px] flex-wrap justify-between gap-10">
-        <div className="flex flex-[1_1_260px] items-center gap-3.5">
-          <LogoMark className="h-14" />
-          <div className="font-heading text-lg font-bold">
-            {SITE.name}
-            <span className="block font-sans text-sm font-normal text-white/65">Sdn Bhd</span>
+    <footer className="on-dark bg-navy pt-16 pb-8 text-meta text-white/86">
+      <div className="wrap">
+        <div className="grid gap-7 sm:grid-cols-2 sm:gap-10 lg:grid-cols-[1.3fr_1.4fr_0.9fr_1fr]">
+          <div>
+            <div className="flex items-center gap-3.5">
+              <LogoMark className="h-16" />
+              <p translate="no">
+                <strong className="block text-lead text-white">{SITE.name}</strong>
+                Sdn Bhd · {content.company_reg}
+              </p>
+            </div>
+            <p className="mt-4 max-w-[38ch]">{t.footer.tagline}</p>
           </div>
-        </div>
 
-        <address className="flex-[1_1_300px] space-y-2 text-[15px] not-italic text-white/85">
-          <p>
-            <strong className="text-white">{t.footer.office}</strong>
-            {lines(content.address).map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))}
-          </p>
-          <p>
-            {t.footer.tel}:{" "}
-            <a href={telHref(content.phone)} className="underline-offset-4 hover:underline">
-              {content.phone}
-            </a>
-            {" · "}WhatsApp:{" "}
-            <a
-              href={whatsappHref(content)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline-offset-4 hover:underline"
-            >
-              {content.whatsapp}
-            </a>
-          </p>
-          <p>
-            <a href={`mailto:${content.email}`} className="underline-offset-4 hover:underline">
-              {content.email}
-            </a>
-            {content.alt_email && (
-              <>
-                {" · "}
-                <a href={`mailto:${content.alt_email}`} className="underline-offset-4 hover:underline">
-                  {content.alt_email}
-                </a>
-              </>
-            )}
-          </p>
-          <p>
-            {t.footer.officeHours}: {lines(content.office_hours).join(" · ")}
-          </p>
-          <ul className="flex gap-2.5 pt-2">
-            {socialLinks.map(({ href, label, Icon }) => (
-              <li key={label}>
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="flex size-11 items-center justify-center rounded-full bg-white/12 hover:bg-white/20"
-                >
-                  <Icon className="size-[18px]" />
-                </a>
+          <Column title={t.footer.contactHeading}>
+            <li>
+              <address className="not-italic">{lines(content.address).join(", ")}</address>
+            </li>
+            <li>
+              {t.footer.tel}{" "}
+              <a href={telHref(content.phone)} className={`${link} whitespace-nowrap`}>
+                {content.phone}
+              </a>
+            </li>
+            <li>
+              WhatsApp{" "}
+              <a
+                href={whatsappHref(content)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${link} whitespace-nowrap`}
+              >
+                {content.whatsapp}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${content.email}`} className={link}>
+                {content.email}
+              </a>
+              {content.alt_email && (
+                <>
+                  {" · "}
+                  <a href={`mailto:${content.alt_email}`} className={link}>
+                    {content.alt_email}
+                  </a>
+                </>
+              )}
+            </li>
+            <li>{lines(content.office_hours).join(" · ")}</li>
+          </Column>
+
+          <Column title={t.footer.pagesHeading}>
+            <li>
+              <Link href="/packages" className={link}>
+                {t.client.nav.packages}
+              </Link>
+            </li>
+            <li>
+              <Link href="/gallery" className={link}>
+                {t.client.nav.gallery}
+              </Link>
+            </li>
+            <li>
+              <Link href="/testimonials" className={link}>
+                {t.footer.reviewsLink}
+              </Link>
+            </li>
+            <li>
+              <Link href="/about" className={link}>
+                {t.client.nav.about}
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className={link}>
+                {t.footer.contactLink}
+              </Link>
+            </li>
+            {socialLinks.length > 0 && (
+              <li>
+                {socialLinks.map((social, i) => (
+                  <span key={social.label}>
+                    {i > 0 && " · "}
+                    <a href={social.href} target="_blank" rel="noopener noreferrer" className={link}>
+                      {social.label}
+                    </a>
+                  </span>
+                ))}
               </li>
+            )}
+          </Column>
+
+          <Column title={t.footer.licencesHeading}>
+            {licences.map((licence) => (
+              <li key={licence}>{licence}</li>
             ))}
-          </ul>
-        </address>
-
-        <div className="flex flex-[1_1_220px] flex-col items-start gap-2">
-          <span className={badge}>{fmt(t.footer.motac, { value: content.motac_license })}</span>
-          <span className={badge}>{fmt(t.footer.companyReg, { value: content.company_reg })}</span>
-          {content.matta_member && <span className={badge}>{fmt(t.footer.matta, { value: content.matta_member })}</span>}
-          {content.mita_member && <span className={badge}>{fmt(t.footer.mita, { value: content.mita_member })}</span>}
-          {content.papuh_member && <span className={badge}>{fmt(t.footer.papuh, { value: content.papuh_member })}</span>}
-          <Link href="/contact" className="mt-2 text-sm font-semibold text-white/85 underline-offset-4 hover:underline">
-            {t.footer.contactLink}
-          </Link>
-          <Link href="/testimonials" className="text-sm font-semibold text-white/85 underline-offset-4 hover:underline">
-            {t.footer.reviewsLink}
-          </Link>
+          </Column>
         </div>
-      </div>
 
-      <div className="mx-auto flex max-w-[1160px] flex-wrap justify-between gap-2.5 border-t border-white/15 pt-5 text-[13px] text-white/55">
-        {/* These two stay in English in both languages (owner's choice). */}
-        <span lang="en">
-          © {new Date().getFullYear()} {SITE.name}. All rights reserved.
-        </span>
-        <span lang="en">Developed by MNB</span>
+        <div className="mt-12 flex flex-wrap justify-between gap-x-6 gap-y-2 border-t border-white/16 pt-5 text-fine text-white/72">
+          {/* These stay in English in both languages (owner's choice). */}
+          <span lang="en">
+            © {new Date().getFullYear()} {SITE.name}. All rights reserved.
+          </span>
+          <span>
+            <Link href="/privacy" className={legal}>
+              {t.footer.privacy}
+            </Link>
+            {" · "}
+            <Link href="/terms" className={legal}>
+              {t.footer.terms}
+            </Link>
+            {" · "}
+            {/* Deliberately low-key: staff need it, visitors shouldn't be drawn to it. */}
+            <Link href="/admin/login" lang="en" className={legal}>
+              Admin login
+            </Link>
+          </span>
+          <span lang="en">Developed by MNB</span>
+        </div>
       </div>
     </footer>
   );

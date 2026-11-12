@@ -3,7 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { DeletePackageButton } from "@/components/admin/delete-package-button";
 import { Alert } from "@/components/ui/alert";
-import { EditIcon, ExternalIcon, PlusIcon } from "@/components/ui/icons";
+import { PageHeader, primaryButton, rowButton } from "@/components/admin/field";
+import { EditIcon, ExternalIcon, PlusIcon, SearchIcon } from "@/components/ui/icons";
+import { tabClass, tabCountClass } from "@/components/ui/tabs";
 import { requireAdmin } from "@/lib/auth";
 import { formatPrice, todayInMalaysia } from "@/lib/format";
 import { CATEGORY_LABEL, PACKAGE_AVAILABILITY } from "@/lib/package-labels";
@@ -16,15 +18,35 @@ function param(v: string | string[] | undefined) {
   return Array.isArray(v) ? v[0] : v;
 }
 
-/** AdminPackageListPage [PKG-MTT-002-003] — mockup 3.2.3. */
+/** AdminPackageListPage [PKG-MTT-002-003]: status tabs, a title search, then the table. */
 export default async function AdminPackagesPage({ searchParams }: PageProps<"/admin/packages">) {
   await requireAdmin();
   const params = await searchParams;
   const published = param(params.published);
   const saved = param(params.saved);
 
+  const query = param(params.q)?.trim() || undefined;
+  const show = param(params.show) === "published" ? "PUBLISHED" : param(params.show) === "drafts" ? "DRAFT" : undefined;
+
+  const counts = await prisma.package.groupBy({ by: ["status"], where: { deletedAt: null }, _count: { _all: true } });
+  const countOf = (status: "PUBLISHED" | "DRAFT") => counts.find((c) => c.status === status)?._count._all ?? 0;
+  const total = countOf("PUBLISHED") + countOf("DRAFT");
+  const tabs = [
+    { slug: undefined, label: "All", count: total, active: !show },
+    { slug: "published", label: "Published", count: countOf("PUBLISHED"), active: show === "PUBLISHED" },
+    { slug: "drafts", label: "Drafts", count: countOf("DRAFT"), active: show === "DRAFT" },
+  ];
+  const listHref = (slug?: string, q?: string) => {
+    const search = new URLSearchParams({ ...(slug && { show: slug }), ...(q && { q }) }).toString();
+    return search ? `/admin/packages?${search}` : "/admin/packages";
+  };
+
   const packages = await prisma.package.findMany({
-    where: { deletedAt: null },
+    where: {
+      deletedAt: null,
+      ...(show && { status: show }),
+      ...(query && { title: { contains: query, mode: "insensitive" } }),
+    },
     orderBy: [{ status: "desc" }, { updatedAt: "desc" }],
     select: {
       id: true,
@@ -42,19 +64,19 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
 
   return (
     <>
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="mb-1 text-[23px]">All packages</h2>
-          <p className="text-muted">Manage published and draft travel packages.</p>
-        </div>
-        <Link
-          href="/admin/packages/new"
-          className="flex min-h-12 items-center justify-center gap-2 self-start rounded-lg bg-accent px-5 font-bold whitespace-nowrap text-white hover:bg-accent-dark"
-        >
-          <PlusIcon className="size-[18px]" />
-          Add new package
-        </Link>
-      </div>
+      <PageHeader
+        subtitle={
+          total === 0
+            ? "Nothing here yet."
+            : `${countOf("PUBLISHED")} on the website, ${countOf("DRAFT")} ${countOf("DRAFT") === 1 ? "draft" : "drafts"}.`
+        }
+        action={
+          <Link href="/admin/packages/new" className={primaryButton}>
+            <PlusIcon className="size-[18px]" />
+            Add new package
+          </Link>
+        }
+      />
 
       {(published || saved) && (
         <div className="mb-5">
@@ -66,13 +88,60 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
         </div>
       )}
 
-      {packages.length === 0 ? (
+      {total > 0 && (
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 border-b border-line">
+          <nav aria-label="Filter by status" className="flex flex-wrap gap-x-7">
+            {tabs.map((tab) => (
+              <Link
+                key={tab.label}
+                href={listHref(tab.slug, query)}
+                aria-current={tab.active ? "page" : undefined}
+                className={tabClass(tab.active)}
+              >
+                {tab.label}
+                <span className={tabCountClass}>{tab.count}</span>
+              </Link>
+            ))}
+          </nav>
+          <form action="/admin/packages" role="search" className="flex w-full gap-2 pb-2 sm:w-auto">
+            {show && <input type="hidden" name="show" value={show === "PUBLISHED" ? "published" : "drafts"} />}
+            <label htmlFor="package-search" className="sr-only">
+              Search packages by title
+            </label>
+            <input
+              id="package-search"
+              name="q"
+              type="search"
+              defaultValue={query}
+              key={query ?? ""}
+              placeholder="Search by title"
+              className="min-h-10 w-full rounded-lg border-[1.5px] border-field bg-white px-3.5 text-meta sm:w-64"
+            />
+            <button type="submit" className={rowButton}>
+              <SearchIcon className="size-4" />
+              Search
+            </button>
+          </form>
+        </div>
+      )}
+
+      {packages.length === 0 && total > 0 ? (
+        <div className="rounded-xl border border-line bg-white px-6 py-12 text-center">
+          <h2 className="mb-2 text-lg">No packages match</h2>
+          <p className="mb-5 text-muted">
+            {query ? `Nothing has “${query}” in its title${show ? " in this list" : ""}.` : "This list is empty."}
+          </p>
+          <Link href="/admin/packages" className="text-sm font-bold text-primary hover:underline">
+            Show all packages
+          </Link>
+        </div>
+      ) : packages.length === 0 ? (
         <div className="rounded-xl border border-line bg-white px-6 py-14 text-center">
-          <h3 className="mb-2 text-lg">No packages yet</h3>
+          <h2 className="mb-2 text-lg">No packages yet</h2>
           <p className="mb-6 text-muted">Add your first package — it can stay a draft until it&apos;s ready.</p>
           <Link
             href="/admin/packages/new"
-            className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-accent px-5 font-bold text-white"
+            className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-accent px-5 font-bold text-ink"
           >
             <PlusIcon className="size-[18px]" />
             Add new package
@@ -82,7 +151,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
         <div className="overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[920px] border-collapse text-left">
             <thead>
-              <tr className="border-b border-line bg-canvas text-[13px] font-bold tracking-wide text-muted">
+              <tr className="border-b border-line bg-canvas text-sm font-bold tracking-wide text-muted">
                 <th scope="col" className="px-5 py-4">Package</th>
                 <th scope="col" className="px-5 py-4">Price</th>
                 <th scope="col" className="px-5 py-4">Status</th>
@@ -114,33 +183,33 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
                         </div>
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-sm text-muted">
+                    <td className="px-5 py-4 text-sm whitespace-nowrap text-muted">
                       {fromPrice !== null ? `From ${formatPrice(fromPrice)}` : "Not set"}
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-col items-start gap-1">
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-bold ${
+                          className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${
                             isDraft ? "bg-primary-pale text-primary" : "bg-success-pale text-success"
                           }`}
                         >
                           {isDraft ? "Draft" : "Published"}
                         </span>
                         {pkg.availability !== "OPEN" && (
-                          <span className={`rounded-full px-3 py-1 text-xs font-bold ${availability.className}`}>
+                          <span className={`rounded-full px-3 py-1 text-[13px] font-bold whitespace-nowrap ${availability.className}`}>
                             {availability.label}
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-5 py-4 text-sm text-muted">
+                    <td className="px-5 py-4 text-sm whitespace-nowrap text-muted">
                       {upcoming > 0 ? `${upcoming} upcoming` : "Not set"}
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-wrap gap-2">
                         <Link
                           href={`/admin/packages/${pkg.id}/edit`}
-                          className="flex min-h-9 items-center gap-1.5 rounded-[7px] border border-line px-3 text-[13.5px] font-semibold hover:border-primary"
+                          className={rowButton}
                         >
                           <EditIcon className="size-3.5" />
                           Edit
@@ -149,7 +218,7 @@ export default async function AdminPackagesPage({ searchParams }: PageProps<"/ad
                           <Link
                             href={`/packages/${pkg.slug}`}
                             target="_blank"
-                            className="flex min-h-9 items-center gap-1.5 rounded-[7px] border border-line px-3 text-[13.5px] font-semibold hover:border-primary"
+                            className={rowButton}
                           >
                             <ExternalIcon className="size-3.5" />
                             View

@@ -26,7 +26,7 @@ export function AdminShell({
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen text-[15px]">
+    <div className="admin flex min-h-screen bg-canvas text-meta">
       {drawerOpen && (
         <div
           className="fixed inset-0 z-30 bg-navy/55 lg:hidden"
@@ -37,15 +37,15 @@ export function AdminShell({
 
       <aside
         id="admin-sidebar"
-        className={`fixed inset-y-0 left-0 z-40 flex w-[250px] shrink-0 flex-col bg-navy py-6 text-white transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
+        className={`on-dark fixed inset-y-0 left-0 z-40 flex w-[264px] shrink-0 flex-col bg-navy py-6 text-white transition-transform duration-250 ease-smooth lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
           drawerOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="mb-[18px] flex items-center gap-2.5 border-b border-white/10 px-[22px] pb-[22px]">
           <LogoMark className="h-12" />
-          <div className="font-heading text-[15px] leading-snug font-bold">
+          <div className="leading-snug font-bold">
             {SITE.name}
-            <span className="block font-sans text-xs font-normal text-white/55">Admin portal</span>
+            <span className="block text-sm font-normal text-white/72">Admin portal</span>
           </div>
         </div>
 
@@ -58,7 +58,7 @@ export function AdminShell({
             if (items.length === 0) return null;
             return (
               <div key={group.label}>
-                <p className="px-[22px] pt-3.5 pb-2 text-xs font-bold tracking-wide text-white/40">
+                <p className="px-[22px] pt-3.5 pb-2 text-[13px] font-bold tracking-wide text-white/60">
                   {group.label}
                 </p>
                 <ul>
@@ -70,16 +70,16 @@ export function AdminShell({
                           href={href}
                           onClick={() => setDrawerOpen(false)}
                           aria-current={active ? "page" : undefined}
-                          className={`flex items-center gap-3 border-l-[3px] px-[22px] py-[11px] ${
+                          className={`mx-2.5 flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 transition-colors duration-150 ease-smooth ${
                             active
-                              ? "border-accent bg-white/8 font-semibold text-white"
-                              : "border-transparent font-medium text-white/82 hover:text-white"
+                              ? "bg-white/14 font-bold text-white"
+                              : "font-medium text-white/82 hover:bg-white/8 hover:text-white"
                           }`}
                         >
                           <Icon className="size-[19px] shrink-0" />
                           {label}
                           {href === "/admin/inquiries" && newInquiries > 0 && (
-                            <span className="ml-auto rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-white">
+                            <span className="ml-auto rounded-full bg-accent px-2 py-0.5 text-[13px] font-bold text-ink">
                               {newInquiries}
                               <span className="sr-only"> new</span>
                             </span>
@@ -97,7 +97,7 @@ export function AdminShell({
         <form action={signOut} className="mt-auto border-t border-white/10 px-[22px] pt-4">
           <button
             type="submit"
-            className="flex items-center gap-2.5 pt-2 font-semibold text-white/75 hover:text-white"
+            className="flex min-h-11 items-center gap-2.5 font-bold text-white/82 hover:text-white"
           >
             <LogoutIcon className="size-[18px]" />
             Log out
@@ -114,11 +114,11 @@ export function AdminShell({
               aria-expanded={drawerOpen}
               aria-controls="admin-sidebar"
               aria-label={drawerOpen ? "Close menu" : "Open menu"}
-              className="flex size-11 items-center justify-center rounded-lg border border-line text-primary-dark lg:hidden"
+              className="flex size-11 items-center justify-center rounded-lg border-[1.5px] border-field text-primary-dark lg:hidden"
             >
               {drawerOpen ? <CloseIcon className="size-5" /> : <MenuIcon className="size-5" />}
             </button>
-            <h1 className="text-xl text-primary-dark">{titleForPath(pathname)}</h1>
+            <h1 className="text-price font-extrabold text-primary-dark">{titleForPath(pathname)}</h1>
           </div>
 
           <Link
@@ -128,17 +128,17 @@ export function AdminShell({
           >
             <div className="hidden text-right leading-snug sm:block">
               <div className="font-bold">{admin.name}</div>
-              <span className="mt-0.5 inline-block rounded-full bg-accent-pale px-2.5 py-0.5 text-xs font-bold text-accent-dark">
+              <span className="mt-0.5 inline-block rounded-full bg-accent-pale px-2.5 py-0.5 text-[13px] font-bold text-accent-dark">
                 {roleLabel[admin.role]}
               </span>
             </div>
-            <span className="flex size-10 items-center justify-center rounded-full bg-primary-pale font-heading font-bold text-primary">
+            <span className="flex size-10 items-center justify-center rounded-full bg-primary-dark text-fine font-bold text-white">
               {initials(admin.name)}
             </span>
           </Link>
         </header>
 
-        <div className="p-4 sm:p-8">{children}</div>
+        <main className="p-4 sm:p-8">{children}</main>
       </div>
     </div>
   );

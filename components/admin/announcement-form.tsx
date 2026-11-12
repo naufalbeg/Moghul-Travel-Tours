@@ -48,8 +48,6 @@ export function AnnouncementForm({ id, initial }: { id: string | null; initial: 
       noValidate
       className={centeredPage}
     >
-      <h2 className="mb-6 text-[23px]">{id ? "Edit announcement" : "Post an announcement"}</h2>
-
       {banner && (
         <div className="mb-5">
           <Alert tone="error" title={banner} />
@@ -101,7 +99,7 @@ export function AnnouncementForm({ id, initial }: { id: string | null; initial: 
         {(values.title || values.body) && (
           <div>
             <p className="mb-2 text-sm font-semibold">Preview</p>
-            <div className="flex items-start justify-center gap-2.5 rounded-lg bg-accent px-4 py-2.5 text-center text-[15px] text-white">
+            <div className="flex items-start justify-center gap-2.5 rounded-lg bg-accent px-4 py-2.5 text-center text-meta text-ink">
               <MegaphoneIcon className="mt-0.5 size-[18px] shrink-0" />
               <p>
                 <strong>{values.title || "Headline"}</strong> — <span className="font-medium">{values.body || "Announcement text"}</span>

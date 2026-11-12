@@ -4,26 +4,21 @@ import { useState, useTransition } from "react";
 import { createBannerImageUploads, moveBannerImage, saveBannerImage } from "@/app/admin/(portal)/banners/actions";
 import { ImageCropDialog, type CropJob, type CropShape } from "@/components/admin/image-crop-dialog";
 import { AlertCircleIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "@/components/ui/icons";
-import {
-  BANNER_IMAGE_ASPECT,
-  BANNER_IMAGE_MAX_WIDTH,
-  IMAGE_BUCKETS,
-  MAX_BANNER_IMAGES,
-  ORIGINAL_IMAGE_MAX_BYTES,
-  isAllowedImageType,
-} from "@/lib/storage-config";
+import { bannerSlot } from "@/lib/banners";
+import { IMAGE_BUCKETS, ORIGINAL_IMAGE_MAX_BYTES, isAllowedImageType } from "@/lib/storage-config";
 import { createClient } from "@/lib/supabase/client";
 
-const BANNER_SHAPE: CropShape = {
-  aspect: BANNER_IMAGE_ASPECT,
-  maxWidth: BANNER_IMAGE_MAX_WIDTH,
-  hint: "Drag the photo and zoom with the slider. Keep the main subject near the middle: computers show the whole strip, phones show the centre.",
+const CROP_HINT = {
+  strip:
+    "Drag the photo and zoom with the slider. Keep the main subject near the middle: computers show the whole strip, phones show the centre.",
+  door: "Drag the photo and zoom with the slider. The whole frame is shown on the homepage, above the category's name.",
 };
 
 /**
- * "Add photos" for one banner: each chosen photo is cropped to the 3:1 banner
- * strip, uploaded straight to Storage, then recorded with saveBannerImage
- * (which refreshes the page).
+ * "Add photos" for one slot: each chosen photo is cropped to the slot's shape
+ * (a 3:1 strip for the listing banners, 3:2 for the homepage panels),
+ * uploaded straight to Storage, then recorded with saveBannerImage (which
+ * refreshes the page).
  */
 export function BannerPhotoAdder({ banner, room }: { banner: string; room: number }) {
   const [queue, setQueue] = useState<CropJob[]>([]);
@@ -31,6 +26,8 @@ export function BannerPhotoAdder({ banner, room }: { banner: string; room: numbe
   const [uploading, setUploading] = useState(0);
   const [notice, setNotice] = useState<string | null>(null);
   const inputId = `banner-photos-${banner}`;
+  const slot = bannerSlot(banner)!;
+  const shape: CropShape = { aspect: slot.aspect, maxWidth: slot.maxWidth, hint: CROP_HINT[slot.kind] };
 
   function addFiles(fileList: FileList | null) {
     if (!fileList?.length) return;
@@ -45,7 +42,11 @@ export function BannerPhotoAdder({ banner, room }: { banner: string; room: numbe
     const space = room - uploading;
     if (accepted.length > space) {
       const skipped = accepted.length - space;
-      problems.push(`A banner holds up to ${MAX_BANNER_IMAGES} photos — ${skipped} ${skipped === 1 ? "was" : "were"} skipped.`);
+      problems.push(
+        slot.max === 1
+          ? `This slot holds one photo — ${skipped} ${skipped === 1 ? "was" : "were"} skipped.`
+          : `A banner holds up to ${slot.max} photos — ${skipped} ${skipped === 1 ? "was" : "were"} skipped.`,
+      );
       accepted.length = Math.max(0, space);
     }
     if (problems.length) setNotice(problems.join(" "));
@@ -92,19 +93,27 @@ export function BannerPhotoAdder({ banner, room }: { banner: string; room: numbe
       <label
         htmlFor={inputId}
         aria-disabled={full}
-        className={`inline-flex min-h-11 items-center gap-2 rounded-lg border-[1.5px] px-4 text-[14.5px] font-semibold ${
+        className={`inline-flex min-h-11 items-center gap-2 rounded-lg border-[1.5px] px-4 text-fine font-bold ${
           full
             ? "cursor-not-allowed border-line text-muted"
-            : "cursor-pointer border-primary text-primary hover:bg-primary-pale has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-accent"
+            : "cursor-pointer border-field bg-white text-primary-dark hover:bg-canvas has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-primary-dark"
         }`}
       >
         <PlusIcon className="size-4" />
-        {uploading > 0 ? `Uploading ${uploading}…` : full ? `Banner is full (${MAX_BANNER_IMAGES} photos)` : "Add photos"}
+        {uploading > 0
+          ? `Uploading ${uploading}…`
+          : full
+            ? slot.max === 1
+              ? "Remove the photo to choose another"
+              : `Banner is full (${slot.max} photos)`
+            : slot.max === 1
+              ? "Add photo"
+              : "Add photos"}
         <input
           id={inputId}
           type="file"
           accept="image/jpeg,image/png,image/webp"
-          multiple
+          multiple={slot.max > 1}
           disabled={full}
           className="sr-only"
           onChange={(e) => {
@@ -114,7 +123,7 @@ export function BannerPhotoAdder({ banner, room }: { banner: string; room: numbe
         />
       </label>
       {notice && (
-        <p className="mt-2 flex items-start gap-1.5 text-[13.5px] font-semibold text-danger">
+        <p className="mt-2 flex items-start gap-1.5 text-sm font-semibold text-danger">
           <AlertCircleIcon className="mt-0.5 size-3.5 shrink-0" />
           {notice}
         </p>
@@ -122,7 +131,7 @@ export function BannerPhotoAdder({ banner, room }: { banner: string; room: numbe
       <ImageCropDialog
         job={queue[0] ?? null}
         position={{ index: batchSize - queue.length, total: batchSize }}
-        shape={BANNER_SHAPE}
+        shape={shape}
         onCropped={onCropped}
         onSkip={finishJob}
         onCancel={cancel}
@@ -139,7 +148,7 @@ export function BannerPhotoMove({ id, isFirst, isLast }: { id: string; isFirst: 
       await moveBannerImage(id, direction);
     });
   const button =
-    "flex size-9 items-center justify-center rounded-[7px] border border-line bg-white text-primary-dark hover:border-primary disabled:opacity-35";
+    "flex size-9 items-center justify-center rounded-lg border border-field bg-white text-primary-dark hover:border-primary disabled:opacity-35";
   return (
     <div className="flex gap-1.5">
       <button type="button" onClick={() => move("earlier")} disabled={isFirst || pending} aria-label="Show earlier" className={button}>

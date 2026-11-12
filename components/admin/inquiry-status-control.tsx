@@ -32,8 +32,8 @@ export function InquiryStatusControl({ id, status }: { id: string; status: Inqui
               aria-checked={active}
               disabled={pending}
               onClick={() => change(s)}
-              className={`min-h-11 rounded-lg border-[1.5px] px-4 text-[14.5px] font-bold disabled:opacity-60 ${
-                active ? "border-primary bg-primary text-white" : "border-line bg-white hover:border-primary"
+              className={`min-h-11 rounded-lg border-[1.5px] px-4 text-fine font-bold disabled:opacity-60 ${
+                active ? "border-primary-dark bg-primary-dark text-white" : "border-field bg-white hover:border-primary"
               }`}
             >
               {INQUIRY_STATUS[s].label}

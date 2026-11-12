@@ -1,4 +1,5 @@
 import { z } from "zod";
+import "@/lib/validation/zod-config";
 import { toIntlPhone, type SiteContentKey } from "@/lib/site-content";
 
 // Shared by the admin content editor and updateSiteContent (SRS 3.6 rules:
@@ -33,6 +34,7 @@ export const siteContentSchema = z.object({
   about_story: required(6000),
   price_note: required(300),
   office_hours: required(300),
+  search_destinations: z.string().trim().max(600, "Keep this under 600 characters."),
   hero_title_en: english(80),
   hero_message_en: english(250),
   about_summary_en: english(400),
