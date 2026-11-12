@@ -147,12 +147,12 @@ No multi-currency or seasonal variation, no payment gateway in this version —
 all bookings/payment happen manually offline (bank details shared privately
 by Admin after a confirmed booking, never published on the site).
 
-## Design system (the redesign — `redesign` branch, 2026-11-12)
+## Design system (the redesign, live since 2026-11-12)
 The whole site, public and admin, follows the approved homepage mockup
 `Web Mockups/moghul-homepage-mockup-v6.html`. The older `fig-*.html` mockups
 and `moghul-homepage-mockup-v2.html` are history: don't match them any more.
-`main` (the live site) still has the old look until this branch is merged.
-Everything below is defined once, in `app/globals.css`.
+It is merged into `main` and live. Everything below is defined once, in
+`app/globals.css`.
 - **Colours** (`@theme`): primary `#1B5FA8`, primary-dark `#123A66`
   (headings, dark buttons), navy `#0D2C4E` (hero, page banners,
   footer, admin sidebar), primary-pale `#EAF2FA`, canvas `#F3F7FB` (tinted
@@ -297,7 +297,10 @@ ambiguous — check there as a starting point for edge-case behavior.
 - Environment variables set on Vercel (see caveat above)
 - Live at https://moghul-travel-tours.vercel.app (the `…-moghul-dev.vercel.app`
   URL sits behind Vercel's team SSO protection — that's expected).
-- Deploys are manual: `git push` then `vercel --prod`. The project lives in
+- Deploys are manual: `git push` then `vercel --prod`. The CLI's sign-in
+  expires now and then (`vercel whoami` → "token is not valid"): run
+  `vercel login`, which prints a link Naufal approves in his browser as
+  `moghuldev`. The project lives in
   the `moghul-dev` Vercel team (Hobby) while commits are authored by GitHub
   user `naufalbeg`, a different Vercel account. Hobby blocks that for
   **private** repos ("commit author did not have contributing access"), so
@@ -356,15 +359,13 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 10. Remaining: verify moghultt.com in Resend (DNS records from the domain
     manager), then set EMAIL_FROM on Vercel so invite/reset emails reach any
     address. Later: point moghultt.com at Vercel.
-11. Redesign — Naufal approved mockup v6 on 2026-11-12 and asked for it
-    across the whole site, admin included, on its own branch. Built on
-    `redesign` (see "Redesign"); `main` and the live site are unchanged
-    until he reviews it and says to merge and deploy. Still to do there:
-    his look at the signed-in admin screens, and the open items listed in
-    that section.
-12. ~~Contrast fix~~ — done on the `redesign` branch (ink text on orange,
-    green #15803D); the live site keeps the failing white-on-orange until
-    that branch goes out.
+11. ~~Redesign~~ — done and live (2026-11-12): built on the `redesign`
+    branch, merged into `main` and deployed the same day when Naufal said
+    it was ready (see "Redesign"). Left over: his click-through of the
+    signed-in admin screens, the owner's confirmation of the privacy notice
+    and terms, and the other open items listed in that section.
+12. ~~Contrast fix~~ — done with the redesign (ink text on orange, green
+    #15803D).
 
 ## Languages (Malay-first, BM | EN switch)
 - Modelled on jomventures.my: Malay for every visitor by default (not
@@ -444,8 +445,9 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   /packages shows <BannerSlideshow> — fades every 3s (BANNER_SLIDE_MS),
   Pause button, no autoplay for reduced motion; no photos = the plain navy
   banner. The old "home" slot (photos behind the previous homepage hero) is
-  no longer listed; its rows and files are left in place because `main`
-  still shows them — remove them only after the redesign is live.
+  no longer listed. Its four rows and files are still in the database and
+  bucket, unused now that the redesign is live — delete them only when
+  Naufal says so (they are the only copy of those banner crops).
 - Shared admin UI: components/admin/field.tsx (Field, fieldClass,
   PageHeader, primaryButton, rowButton) and ConfirmActionButton (pass a
   server action bound with .bind(null, id)).
@@ -634,8 +636,9 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   (`<PhotoStrip>`, also on /about); never a made-up review.
 - /privacy and /terms: lib/legal.ts holds both documents in Malay and
   English; each page shows the visitor's language first and the other under
-  it. **Drafted by Claude from what the site actually does — the owner must
-  read and confirm them before the branch goes live.** They promise nothing
+  it. **Drafted by Claude from what the site actually does. They went live
+  with the redesign on 2026-11-12 on Naufal's decision, before the owner had
+  confirmed the wording — that confirmation is still owed.** They promise nothing
   about payment, cancellation or refunds. Both forms end with a line saying
   what the details are used for and a link to the notice.
 - `formatPrice` joins "RM" and the amount with a non-breaking space, so a
@@ -691,7 +694,7 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 - impeccable downloads its engine from github.com/pbakaus/impeccable releases
   on first use (checksum-verified, cached in ~/.impeccable).
 
-## Redesign (built on the `redesign` branch, 2026-11-12)
+## Redesign (built, merged and live, 2026-11-12)
 - Why: Naufal finds the current public site looks "AI-made / vibe-coded" —
   specifically the template layout (everything centred, hero → cards →
   gallery → about) and samey components (identical cards, outline buttons
@@ -700,9 +703,15 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   asked for it on the whole website, admin included, on its own GitHub
   branch. The `redesign` branch holds it: homepage built to the mockup, the
   other public pages and the admin portal moved onto the same design system
-  (see "Design system"). **`main` and the live site are untouched — merge
-  and deploy only when he says so.** `Web Mockups/moghul-homepage-mockup-
-  v6.html` stays as the reference (v3–v5 beside it are history).
+  (see "Design system"). That evening he said it was ready to replace the
+  old site: `redesign` was merged into `main` (merge commit 1c31389) and
+  deployed to production, and the live site was checked afterwards (every
+  page answers, nothing blocked by the security policy, hCaptcha and the
+  map load, slideshow runs, phone layout). The `redesign` branch is kept on
+  GitHub but is now the same as `main`; new work goes on `main` as before.
+  `Web Mockups/moghul-homepage-mockup-v6.html` stays as the reference
+  (v3–v5 beside it are history). moghultt.com still shows the old static
+  site at ServerFreak — pointing it at Vercel is a separate step.
 - Second pass, same day (he asked for the ten references, the 20 rules,
   the security and legal lists and the installed skills to be applied to
   every page and the admin): search on /packages, package-page jump links
@@ -972,7 +981,7 @@ asked for), this file wins. The "where this stands" notes are as checked on
   there is no `dangerouslySetInnerHTML` — never add one for admin-typed or
   visitor-typed text (the one JSON-LD data block in
   components/ui/json-ld.tsx is escaped and is not HTML). Since 2026-11-12
-  (`redesign` branch) every page carries a nonce-based
+  every page carries a nonce-based
   Content-Security-Policy and the usual security headers — see "Security
   model". File uploads were re-checked: type and size are validated when
   the signed URL is issued and again by the bucket.
@@ -1001,12 +1010,12 @@ asked for), this file wins. The "where this stands" notes are as checked on
 21. A way to request data deletion
 - Where this stands (Claude's reading, not legal advice — the owner should
   confirm anything that matters):
-  - Privacy notice and terms: drafted on the `redesign` branch
-    (2026-11-12) at /privacy and /terms, each in **both Malay and English**
+  - Privacy notice and terms: live since 2026-11-12 at /privacy and
+    /terms, each in **both Malay and English**
     as Malaysia's Personal Data Protection Act 2010 expects, linked from the
     footer and from both forms (which now each say what the details are used
     for). They are Claude's draft of what the site actually does — the owner
-    must confirm them. Still missing: a refund / cancellation policy, whose
+    has not confirmed them yet. Still missing: a refund / cancellation policy, whose
     wording is the owner's — never invent one.
   - Cookies: only functional ones (`lang`, the admin session, hCaptcha on
     the forms). No analytics or ad pixels, so no consent banner is needed
@@ -1020,8 +1029,7 @@ asked for), this file wins. The "where this stands" notes are as checked on
     footer, the booking form takes only head-counts for children (no
     child's personal details), emails are transactional only (no
     newsletter, so nothing to unsubscribe from).
-  - Open: white-on-orange button contrast is fixed on the `redesign`
-    branch but still on the live site until it is merged; alt text is thin (package cards are decorative `alt=""` next
+  - Open: alt text is thin (package cards are decorative `alt=""` next
     to their title, which is fine; gallery photos only have their tag);
     where the package photos come from and whether Moghul may use them
     (they are destination shots, not Moghul's own — this matters more once
