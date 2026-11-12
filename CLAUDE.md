@@ -23,10 +23,11 @@ label "Umrah & Ziarah", URL `/packages?category=umrah-ziarah` (`umrah` /
 
 Target audience skews older (40s–60s, families, Hajj/Umrah pilgrims, retired
 couples) — legibility and simplicity are design requirements, not nice-to-haves.
-Body text minimum 17–18px, large touch targets, no auto-advancing carousels
-(one owner-requested exception: the banner photo slideshows, which fade, have
-a Pause button and don't autoplay for prefers-reduced-motion),
-phone/WhatsApp contact always visible.
+Body text 18px (never under 15px), large touch targets, no auto-advancing
+carousels (the exceptions are the photo slideshows — the package-listing
+banners the owner asked for and the homepage hero — which fade, have a Pause
+button and don't autoplay for prefers-reduced-motion), phone/WhatsApp contact
+always visible.
 
 ## Tech stack (decided, do not deviate without discussion)
 - **Language:** TypeScript throughout
@@ -146,29 +147,51 @@ No multi-currency or seasonal variation, no payment gateway in this version —
 all bookings/payment happen manually offline (bank details shared privately
 by Admin after a confirmed booking, never published on the site).
 
-## Design system (from approved mockups — match these exactly)
-- **Colors:** Primary blue `#1B5FA8`, darker blue `#123A66`, admin sidebar blue
-  `#0D2C4E`, pale blue `#EAF2FA`, orange accent `#F07C1E` (dark `#C7630F`,
-  pale `#FDECDC`), background `#F5F9FC`, near-black text (not pure black)
-  `#1A2733`, muted text `#5B6B7A`, border `#DCE6EF`, green `#2E7D5B` / pale
-  `#E4F5EC`, danger `#C0392B` / pale `#FDEDEB`
-- **Fonts:** Poppins (headings, 600–700 weight), Inter (body/UI, 400–600
-  weight)
-- **Layout convention:** Centered logo + nav bar header (not side-by-side),
-  hero with search/filter bar overlapping its bottom edge, category pill
-  filters (not dropdowns) for package browsing, sticky price card on package
-  detail pages, admin dashboard uses a dark sidebar (`#0D2C4E`) + light content
-  area, table-based (not card-based) admin lists
-- Full HTML/CSS reference mockups are in `Web Mockups/` (`fig-*.html` plus
-  PNG screenshots, and `moghul-homepage-mockup-v2.html`) for: homepage, login,
-  admin dashboard, user management, add-admin modal, login error states,
-  package listing, package detail, admin package list, package form, form
-  validation errors — these are pixel-accurate references for matching
-  styling, not just inspiration. Mockups for modules 3–7 don't exist yet;
-  follow the same visual language.
-- A public-site redesign is being considered (see "Homepage redesign" near
-  the end). Until the owner approves it, everything above still holds.
-  Naufal's design / security / legal checklists are in "Quality checklists"
+## Design system (the redesign — `redesign` branch, 2026-11-12)
+The whole site, public and admin, follows the approved homepage mockup
+`Web Mockups/moghul-homepage-mockup-v6.html`. The older `fig-*.html` mockups
+and `moghul-homepage-mockup-v2.html` are history: don't match them any more.
+`main` (the live site) still has the old look until this branch is merged.
+Everything below is defined once, in `app/globals.css`.
+- **Colours** (`@theme`): primary `#1B5FA8`, primary-dark `#123A66`
+  (headings, dark buttons, chosen pills), navy `#0D2C4E` (hero, page banners,
+  footer, admin sidebar), primary-pale `#EAF2FA`, canvas `#F3F7FB` (tinted
+  sections, the admin's page background — the body itself is white), ink
+  `#1A2733`, muted `#4A5968`, line `#D9E3EC` (dividers, card borders), field
+  `#7F90A0` (borders of anything you type in or press: 3:1 on white), accent
+  `#F07C1E` with accent-hover `#E46F12`, accent-dark `#A8530C` (orange as
+  *text*), whatsapp `#15803D` / whatsapp-dark, success `#27704F`, danger
+  `#C0392B`.
+- **Contrast rules:** orange buttons and badges take **ink** text, never
+  white (white on the orange is 2.9:1); WhatsApp buttons use `bg-whatsapp`
+  (white text 5:1). On navy or photo surfaces add the `on-dark` class so the
+  focus ring turns white.
+- **Font:** Atkinson Hyperlegible Next for everything (next/font,
+  `--font-atkinson`; a variable font, 200–800). Headings are 700–800 with
+  tight tracking; `font-heading` still works but is the same family.
+- **Text sizes:** `text-fine` 15, `text-meta` 16, `text-body` 18 (public
+  default), `text-lead` 20, `text-title` 22, `text-price` 24, `text-display`
+  28; section headings use `.h-section`. Nothing public is under 15px. The
+  admin's base is 16px (`text-meta`) with `text-sm` (14) for secondary text.
+- **Corners:** `rounded-lg` 10px (controls), `rounded-xl` 14px (cards),
+  `rounded-2xl` 20px (big panels) — the Tailwind defaults are redefined, so
+  don't write `rounded-[14px]`.
+- **Shared classes:** `.wrap` (1280px content column), `.section`, `.btn` +
+  `.btn-wa` / `.btn-primary` / `.btn-accent` (the page's one main action) /
+  `.btn-outline` / `.btn-ghost` (on navy), `.btn-sm` / `.btn-lg`,
+  `.arrow-link` + `.nudge` (arrow steps forward on hover), `.text-link`,
+  `.spinner`, `.reveal`, `.rise`, `.search-bar` / `.seg`. Admin buttons keep
+  their utility strings (`primaryButton` in components/admin/field.tsx).
+- **Breakpoints:** `sm` 640, `mid` 900 (two-column sections stack below it),
+  `lg` 1024, `nav` 1240 (the top menu folds into a Menu button below it).
+- **Motion:** 150ms for colour/press, 250ms for movement, 400ms reveals, all
+  `ease-smooth`; one global `prefers-reduced-motion` rule turns it all off.
+- **Layout conventions:** one-line sticky header (logo, menu, BM | EN, green
+  WhatsApp number button); left-aligned navy hero and page banners (nothing
+  centred); sections alternate white and canvas; rules and spacing group
+  things rather than boxes; category pills (not dropdowns); sticky price
+  card on package pages; admin = navy sidebar + canvas content, table lists.
+- Naufal's design / security / legal checklists are in "Quality checklists"
   at the very end — use them when relevant.
 - SRS and SDD PDFs are in `Documentation MTT WEB/`
 
@@ -176,8 +199,9 @@ by Admin after a confirmed booking, never published on the site).
 ```
 app/
   (public)/           — public pages (URL has no prefix): home, packages,
-                         gallery, testimonials, about, contact. Layout = header,
-                         footer, floating WhatsApp button
+                         gallery, testimonials, about, contact. Layout = sticky
+                         header, footer, and on phones a WhatsApp | Telefon
+                         bar pinned to the bottom (no floating bubble)
   admin/
     login/            — /admin/login (no sidebar)
     (portal)/         — /admin/* behind requireAdmin(); layout = AdminShell
@@ -186,8 +210,10 @@ app/
   api/                — route handlers = Controllers (see SDD Section 3.2.1)
 components/
   ui/                 — primitives: icons.tsx (all SVG icons), logo-mark.tsx
-  public/             — site-header, nav-links, mobile-menu, site-footer,
-                         whatsapp-button
+  public/             — site-header (+ sticky-header), nav-links,
+                         mobile-menu, site-footer, contact-bar,
+                         hero-slideshow, package-search (+ search-submit),
+                         package-card, page-banner, pill, reveal-on-scroll
   admin/              — admin-shell, admin-nav (sidebar items + page titles)
 lib/
   site.ts             — fixed facts (name, legal name) + public nav
@@ -216,8 +242,9 @@ in `users` and be `isActive`. Every admin page calls `requireAdmin()` (or
 proxy.ts is only an optimistic redirect, never the real check.
 
 Styling: use the Tailwind tokens from `app/globals.css` (`bg-primary`,
-`text-ink`, `border-line`, `bg-navy`, `font-heading`, `bg-hero`, …) rather
-than raw hex values. Public body text is 17px; the admin shell uses 15px.
+`text-ink`, `border-line`, `border-field`, `bg-navy`, `bg-canvas`, …) and the
+shared classes (`.btn`, `.wrap`, …) rather than raw hex values — see "Design
+system". Public body text is 18px; the admin shell uses 16px.
 
 ## Modules (7, matching SRS use cases UC-MTT-001 to 007)
 1. User Access & Account Management — login, Master Admin invites/removes
@@ -309,12 +336,15 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 10. Remaining: verify moghultt.com in Resend (DNS records from the domain
     manager), then set EMAIL_FROM on Vercel so invite/reset emails reach any
     address. Later: point moghultt.com at Vercel.
-11. Homepage redesign — mockup v6 done 2026-11-11, waiting on a second
-    opinion before anything is built (see "Homepage redesign").
-12. Contrast fix on the live site, worth doing whatever happens to the
-    redesign: white text on the orange buttons (`bg-accent`, #F07C1E) is
-    2.9:1 and on the WhatsApp green (#1f9d55) 3.5:1 — both fail WCAG AA.
-    The mockup uses ink text on orange (5.5:1) and green #15803D (5.0:1).
+11. Redesign — Naufal approved mockup v6 on 2026-11-12 and asked for it
+    across the whole site, admin included, on its own branch. Built on
+    `redesign` (see "Redesign"); `main` and the live site are unchanged
+    until he reviews it and says to merge and deploy. Still to do there:
+    his look at the signed-in admin screens, and the open items listed in
+    that section.
+12. ~~Contrast fix~~ — done on the `redesign` branch (ink text on orange,
+    green #15803D); the live site keeps the failing white-on-orange until
+    that branch goes out.
 
 ## Languages (Malay-first, BM | EN switch)
 - Modelled on jomventures.my: Malay for every visitor by default (not
@@ -373,7 +403,7 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 
 ## Testimonials, Gallery, Announcements
 - Testimonials: /admin/testimonials (+ /new, /[id]/edit), public
-  /testimonials; homepage shows the newest one. Hard delete.
+  /testimonials; homepage shows the newest three. Hard delete.
 - Gallery: /admin/gallery — label (tag) + drag-and-drop upload via
   lib/image-uploads.ts (signed URLs, bucket `gallery-images`), then
   saveGalleryImages records rows. Public /gallery with tag pills and a
@@ -383,14 +413,19 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   in lib/announcements.ts. "Show until" date = end of that day in Malaysia
   (UTC+8). Public: <AnnouncementBar> at the top of the public layout, hidden
   when nothing is live. Turn off/on = status EXPIRED/ACTIVE.
-- Banners: /admin/banners — up to 5 photos for each of six banners (keys in
-  lib/banners.ts: "home", "packages", "packages-<category slug>"), stored in
-  `banner_images` + bucket `banner-images`. Photos are cropped to a 3:1 strip
-  (≤2400×800) with the shared ImageCropDialog (`shape` prop); add/remove/
-  reorder save immediately (app/admin/(portal)/banners/actions.ts). Public:
-  <BannerSlideshow> behind the homepage hero and <PageBanner images> on
-  /packages — fades every 3s (BANNER_SLIDE_MS), Pause button, no autoplay
-  for reduced motion; no photos = the plain blue banner.
+- Banners: /admin/banners — photo "slots" defined in lib/banners.ts (key,
+  label, shape, how many photos), stored in `banner_images` + bucket
+  `banner-images`. Two kinds: the five package-listing banners ("packages",
+  "packages-<category slug>": up to 5 photos, cropped to a 3:1 strip,
+  ≤2400×800) and the homepage's two category photos ("door-umrah-ziarah",
+  "door-outbound": one photo each, 3:2, ≤1600 wide). Cropping uses the
+  shared ImageCropDialog (`shape` prop); add/remove/reorder save immediately
+  (app/admin/(portal)/banners/actions.ts). Public: <PageBanner images> on
+  /packages shows <BannerSlideshow> — fades every 3s (BANNER_SLIDE_MS),
+  Pause button, no autoplay for reduced motion; no photos = the plain navy
+  banner. The old "home" slot (photos behind the previous homepage hero) is
+  no longer listed; its rows and files are left in place because `main`
+  still shows them — remove them only after the redesign is live.
 - Shared admin UI: components/admin/field.tsx (Field, fieldClass,
   PageHeader, primaryButton) and ConfirmActionButton (pass a server action
   bound with .bind(null, id)).
@@ -519,7 +554,8 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   `inbound`, `cruise`; aliases `umrah` / `ziarah` / `group-tour` /
   `domestic` still resolve — lib/package-labels.ts.
 - The top nav has a single "Packages" link (owner's request); categories
-  are only the pills on /packages and the homepage, plus the hero search.
+  are the pills on /packages, the homepage's two category photos and link
+  rows, and the homepage search.
 - "Other Packages" / "Pakej Lain" (after Packages; owner's request
   2026-10-06) opens Moghul's agent page on Muslim Travel Bug's booking
   portal — `OTHER_PACKAGES_URL` in lib/site.ts
@@ -573,7 +609,7 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   `ui-ux-pro-max-skill-main` download; its other five sub-skills (ui-styling
   = shadcn, slides, design, brand, design-system) were left out on purpose.
 - This file wins over their generic advice: the mockups and design tokens,
-  the older-audience rules (17px body, large targets, no auto-advance), the
+  the older-audience rules (18px body, large targets, no auto-advance), the
   ~350ms page slide, and the security model — RLS on with NO policies and
   all data through Prisma, so don't add policies or use the Data API because
   a Supabase skill suggests it. impeccable reads PRODUCT.md (product truth
@@ -589,19 +625,65 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 - impeccable downloads its engine from github.com/pbakaus/impeccable releases
   on first use (checksum-verified, cached in ~/.impeccable).
 
-## Homepage redesign (in progress, 2026-11-11)
+## Redesign (built on the `redesign` branch, 2026-11-12)
 - Why: Naufal finds the current public site looks "AI-made / vibe-coded" —
   specifically the template layout (everything centred, hero → cards →
   gallery → about) and samey components (identical cards, outline buttons
   and pills everywhere). Not the colours.
-- Status: `Web Mockups/moghul-homepage-mockup-v6.html` is the current
-  mockup (open it from inside the repo; the logo loads from
-  `../public/brand/`). v3, v4 and v5 are kept beside it for comparison —
-  he said he "really likes how v5 looks", so v6 keeps that look and v5 is
-  the fallback if any v6 change isn't wanted. He is still iterating on the
-  mockup — **don't build it into the Next.js app until he says go.** Other
-  pages (listing, detail, gallery, about, contact) get the same treatment
-  only after the homepage is approved.
+- Status: on 2026-11-12 he approved mockup v6 ("i like this design") and
+  asked for it on the whole website, admin included, on its own GitHub
+  branch. The `redesign` branch holds it: homepage built to the mockup, the
+  other public pages and the admin portal moved onto the same design system
+  (see "Design system"). **`main` and the live site are untouched — merge
+  and deploy only when he says so.** `Web Mockups/moghul-homepage-mockup-
+  v6.html` stays as the reference (v3–v5 beside it are history).
+- What was checked on the branch (local production build, 2026-11-12):
+  type-check, lint, `next build`; 41 browser checks (hero slideshow,
+  scroll reveals and their no-script / reduced-motion fallbacks, search,
+  header, phone menu and contact bar, language switch); axe WCAG 2.2 on
+  every public page plus the sign-in pages at 1440 and 390px (0
+  violations); screenshots at 1440 / 1024 / 768 / 390 in both languages.
+  **Not checked in a browser: the signed-in admin screens** — that needs
+  an admin sign-in, which Claude doesn't have and must not create (a
+  temporary account on the live auth system was rightly blocked). Their
+  shell, tables and package form were checked in a throwaway preview with
+  made-up data; Naufal should look through the real ones after signing in.
+- How the homepage is wired (app/(public)/page.tsx): one query for all
+  published packages feeds the hero slideshow (covers, shuffled per request,
+  at most 12), the six featured cards, the category counts and the
+  departures list (each package's next non-full date, soonest first).
+  `splitHeadline()` puts what follows the first dash or comma of
+  `hero_title` in orange. Reviews render only when the testimonials table
+  has rows; the customer-photo band shows the five newest gallery photos.
+- How the open decisions were settled when building (all easy to change):
+  - Hero photos: cover photos only, 12 per visit.
+  - Door photos: the admin's own photo if one is set in /admin/banners
+    (new 3:2 slots), else a package cover from that category, else — for
+    Umrah & Ziarah only — `public/home/umrah-ziarah.jpg`, a 3:2 copy of the
+    gallery's Kaabah photo.
+  - Search suggestions: a new editable text, `search_destinations`
+    (Content pages → Homepage banner), a comma-separated list; its default
+    is the 21 places in today's packages, so it needs keeping in step.
+  - Search button: real now — `next/form` + `useFormStatus` show "Mencari…"
+    until the results arrive.
+  - Footer: no "Dasar privasi" / "Terma & syarat" links until those pages
+    exist; "Admin login" sits in the footer's bottom row.
+  - About block: no placeholder photo — the summary beside the licence
+    list; an owner/team/office photo can take the left side once supplied.
+  - Package cards show only each highlight's name (the text before a colon
+    or dash), since real highlights are full sentences.
+  - Scroll reveals need no inline script: `RevealOnScroll` (in the public
+    template) hides only blocks still below the screen when a page opens.
+- Still open: the wording of the three booking steps (Claude's — owner to
+  confirm); privacy / terms / refund pages; the live hero title and message
+  both say "dirancang dengan teliti" (owner's copy edit); owner photos and
+  real reviews to collect (never invent one); a destination field on
+  packages if the suggestions list becomes a chore; the old "home" banner
+  photos to delete once this is live.
+- Seen while testing, not caused by the redesign (the live site does it
+  too): on /gallery the browser's background preload of the first tag pill
+  sometimes never finishes. Harmless to visitors as far as seen; worth a
+  separate look.
 - v3 → v4 (his feedback, 2026-11-11: "pretty good but missing some oomph
   and refinement"): Pakej pilihan now sits above Berlepas tidak lama lagi;
   the hero photo became a slideshow of every gallery photo with no "Gambar
@@ -700,22 +782,10 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   decoration; orange buttons take ink text; the homepage's admin-managed
   banner slideshow is replaced by the package-cover slideshow; "Admin login"
   moves to the footer.
-- Open decisions before building: whether the hero should stay on cover
-  photos only (v5) or draw on more of each package's photos (111 today, but
-  some are weak for a homepage — a teddy-bear museum, a mall interior — and
-  15 are under 800px wide); how many covers one visit should load once
-  ~50 packages are in; what happens to the "home" banner photos in
-  /admin/banners; where the two door photos come from when built (the
-  admin's per-category banner photos are 3:1 strips, the doors are 3:2);
-  where the Destinasi suggestions come from (packages have no destination
-  field — today they'd have to be derived from titles); the wording of the
-  three booking steps; the privacy and terms pages the footer links to; the
-  live hero title and message both say "dirancang dengan teliti"
-  (copy edit in /admin/content, owner's call); owner/team/office photos to
-  supply; real reviews to collect (the testimonials table is empty — never
-  invent one); the Umrah door says dates are being finalised because no
-  Umrah package is published — when built, it should switch to the package
-  count once there is one.
+- The decisions that were open before building are answered above ("How
+  the open decisions were settled"). The Umrah door switches by itself from
+  "dates are being finalised" to the package count once an Umrah package is
+  published.
 - Everything in the mockups is real data from the live site (2026-11-11):
   14 published packages (111 package photos, all 16:9), all Luar Negara,
   next departure 20 Nov 2026; 49 gallery photos. Placeholders (owner photo,
@@ -852,8 +922,8 @@ asked for), this file wins. The "where this stands" notes are as checked on
     footer, the booking form takes only head-counts for children (no
     child's personal details), emails are transactional only (no
     newsletter, so nothing to unsubscribe from).
-  - Open: white-on-orange button contrast on the live site (What's next,
-    item 12); alt text is thin (package cards are decorative `alt=""` next
+  - Open: white-on-orange button contrast is fixed on the `redesign`
+    branch but still on the live site until it is merged; alt text is thin (package cards are decorative `alt=""` next
     to their title, which is fine; gallery photos only have their tag);
     where the package photos come from and whether Moghul may use them
     (they are destination shots, not Moghul's own — this matters more once
