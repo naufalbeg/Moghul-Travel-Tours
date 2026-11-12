@@ -154,7 +154,7 @@ and `moghul-homepage-mockup-v2.html` are history: don't match them any more.
 `main` (the live site) still has the old look until this branch is merged.
 Everything below is defined once, in `app/globals.css`.
 - **Colours** (`@theme`): primary `#1B5FA8`, primary-dark `#123A66`
-  (headings, dark buttons, chosen pills), navy `#0D2C4E` (hero, page banners,
+  (headings, dark buttons), navy `#0D2C4E` (hero, page banners,
   footer, admin sidebar), primary-pale `#EAF2FA`, canvas `#F3F7FB` (tinted
   sections, the admin's page background — the body itself is white), ink
   `#1A2733`, muted `#4A5968`, line `#D9E3EC` (dividers, card borders), field
@@ -186,10 +186,30 @@ Everything below is defined once, in `app/globals.css`.
   `lg` 1024, `nav` 1240 (the top menu folds into a Menu button below it).
 - **Motion:** 150ms for colour/press, 250ms for movement, 400ms reveals, all
   `ease-smooth`; one global `prefers-reduced-motion` rule turns it all off.
+- **Icons:** one family in components/ui/icons.tsx, one stroke weight (2) at
+  every size. No text glyphs standing in for icons: star ratings are
+  `<Stars>` (components/ui/stars.tsx), arrows are ArrowLeft/ArrowRight icons.
+- **Feedback and loading:** `.appear` (a saved / sent / error message
+  settles in), `.spinner` on busy buttons, `.skeleton` blocks
+  (app/admin/(portal)/loading.tsx), and for a clicked link whose page is
+  still loading `<PendingDim>` / `<PendingSpinner>`
+  (components/public/link-pending.tsx — menu links and package cards).
+  Placeholder text is #5D6B78 (5.4:1); tables use tabular numerals.
+- **Admin specifics:** type scale 24 (top-bar title, the page's only h1) /
+  22 / 18 / 16; a page never repeats its top-bar title — `PageHeader` takes
+  one line saying what is in the list, plus the main action; shared button
+  strings `primaryButton` and `rowButton` in components/admin/field.tsx; the
+  current sidebar item is a filled row (no coloured edge); table rows tint
+  under the pointer (`.admin tbody tr:hover`).
+- **Reading measure:** long text is `max-w-[60ch]`, which in this typeface
+  is about 75 characters a line.
 - **Layout conventions:** one-line sticky header (logo, menu, BM | EN, green
   WhatsApp number button); left-aligned navy hero and page banners (nothing
   centred); sections alternate white and canvas; rules and spacing group
-  things rather than boxes; category pills (not dropdowns); sticky price
+  things rather than boxes; filters are underlined text tabs with counts
+  (`tabClass` in components/ui/tabs.ts — **not pills**: Naufal called pill
+  buttons an "AI slop" element on 2026-11-12, and not dropdowns either); in
+  forms, a choice between a few options is a row of squared buttons; sticky price
   card on package pages; admin = navy sidebar + canvas content, table lists.
 - Naufal's design / security / legal checklists are in "Quality checklists"
   at the very end — use them when relevant.
@@ -406,8 +426,8 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   /testimonials; homepage shows the newest three. Hard delete.
 - Gallery: /admin/gallery — label (tag) + drag-and-drop upload via
   lib/image-uploads.ts (signed URLs, bucket `gallery-images`), then
-  saveGalleryImages records rows. Public /gallery with tag pills and a
-  manual-only lightbox. Delete removes the Storage file and the row.
+  saveGalleryImages records rows. Public /gallery with label tabs (with
+  photo counts) and a manual-only lightbox. Delete removes the Storage file and the row.
 - Announcements: /admin/announcements (+ /new, /[id]/edit). Live = status
   ACTIVE and (expires_at null or in the future) — `liveAnnouncementWhere`
   in lib/announcements.ts. "Show until" date = end of that day in Malaysia
@@ -427,8 +447,8 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   no longer listed; its rows and files are left in place because `main`
   still shows them — remove them only after the redesign is live.
 - Shared admin UI: components/admin/field.tsx (Field, fieldClass,
-  PageHeader, primaryButton) and ConfirmActionButton (pass a server action
-  bound with .bind(null, id)).
+  PageHeader, primaryButton, rowButton) and ConfirmActionButton (pass a
+  server action bound with .bind(null, id)).
 - "use server" files may only export async functions — keep constants in
   lib/ (e.g. MAX_GALLERY_BATCH in lib/storage-config.ts).
 
@@ -481,9 +501,19 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   with the inquiry form (`FormErrorCode` → dictionary `client.formErrors`).
 
 ## SEO
-- app/sitemap.ts (dynamic, includes published packages), app/robots.ts
-  (disallows /admin, /api), app/opengraph-image.png (logo share card).
-  Absolute URLs come from lib/site-url.ts (VERCEL_PROJECT_PRODUCTION_URL).
+- app/sitemap.ts (dynamic, includes published packages and the two legal
+  pages), app/robots.ts (disallows /admin, /api). Absolute URLs come from
+  lib/site-url.ts (VERCEL_PROJECT_PRODUCTION_URL).
+- Every public page sets `alternates.canonical` (search filters on
+  /packages all point at /packages).
+- Structured data (lib/structured-data.ts, rendered with `<JsonLd>`):
+  TravelAgency on the homepage; Product with a MYR "starts from" offer plus
+  BreadcrumbList on each package page. Only facts already on the page.
+- app/opengraph-image.png is the link-preview card (what WhatsApp shows):
+  logo on white over a navy band with the headline and the four categories,
+  1200×630, with app/opengraph-image.alt.txt. It was rendered from a small
+  HTML file with the installed Chrome; redo it the same way if the headline
+  or categories change (it is a static image, not generated from content).
 
 ## Security model (important)
 - Migration `20260926000000_lock_down_public_data_api` enables RLS (no
@@ -497,6 +527,22 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   No storage RLS policies: uploads only via signed upload URLs that a server
   action issues after `authorize()` (see createPackageImageUploads). The
   browser uploads straight to Storage; only the object path is saved.
+- Browser security headers (2026-11-12): proxy.ts now runs on every page
+  and gives each response a Content-Security-Policy with a one-time nonce
+  (lib/security-headers.ts — Next.js puts the nonce on its own scripts);
+  under /admin it also does the session check as before. The policy allows
+  scripts only from this site, images from Supabase Storage, connections to
+  Supabase and hCaptcha, and frames for hCaptcha and the Google map.
+  **Adding any outside service (analytics, a video embed, a font host)
+  means adding its address there, or the browser blocks it.** The fixed
+  headers (nosniff, Referrer-Policy, X-Frame-Options, Permissions-Policy,
+  HSTS) are set in next.config.ts.
+- The policy forbids eval, so Zod runs "jitless"
+  (lib/validation/zod-config.ts, imported by every file in lib/validation —
+  keep that import in any new validation file).
+- `dangerouslySetInnerHTML` is used in exactly one place,
+  components/ui/json-ld.tsx (structured data: a JSON block with every "<"
+  escaped, never run as script). Never use it for anything rendered as HTML.
 
 ## Admin package module
 - Server actions in app/admin/(portal)/packages/actions.ts:
@@ -554,7 +600,8 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   `inbound`, `cruise`; aliases `umrah` / `ziarah` / `group-tour` /
   `domestic` still resolve — lib/package-labels.ts.
 - The top nav has a single "Packages" link (owner's request); categories
-  are the pills on /packages, the homepage's two category photos and link
+  are the tabs on /packages (`<CategoryTabs>`, each with its package count
+  for the current search), the homepage's two category photos and link
   rows, and the homepage search.
 - "Other Packages" / "Pakej Lain" (after Packages; owner's request
   2026-10-06) opens Moghul's agent page on Muslim Travel Bug's booking
@@ -563,10 +610,9 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   Muslim Travel Bug agent). PUBLIC_NAV items with `external: true` render
   as a plain `<a target="_blank">` with an external-link icon and a
   screen-reader "(opens in a new tab)", and never slide.
-- Page slides: top-menu links and category pills carry `transitionTypes`
+- Page slides: top-menu links and category tabs carry `transitionTypes`
   nav-forward / nav-back (item right / left of the current one —
-  components/public/nav-links.tsx, category-pills.tsx; homepage pills always
-  forward). `<SlideTransition>` (components/public/slide-transition.tsx,
+  components/public/nav-links.tsx, category-tabs.tsx). `<SlideTransition>` (components/public/slide-transition.tsx,
   React `<ViewTransition>`) wraps every page via app/(public)/template.tsx,
   and on /packages the banner and results are wrapped again with
   `key={category}` so a same-route category change slides too. Slide CSS is
@@ -574,6 +620,26 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   Other links and browser back don't animate. New public pages under
   (public)/ get it automatically.
 - Package URLs are `/packages/<slug>`.
+- /packages: the banner says how many packages there are and what they
+  start from; the search bar sits across its lower edge with destination
+  and month, filled in with the current search (the category stays with the
+  tabs and travels as a hidden field; the tabs in turn keep the search); a
+  result line appears only while searching.
+- Package page: jump links under the title (Tarikan, Termasuk, Itinerari,
+  Harga, Borang Tempahan), sections ease in as they are scrolled to, the
+  booking form is an open form under a rule with two groups ("Butiran
+  anda", "Perjalanan anda"), and up to three other packages of the same
+  category follow at the bottom.
+- /testimonials with no reviews says so and shows customer photos
+  (`<PhotoStrip>`, also on /about); never a made-up review.
+- /privacy and /terms: lib/legal.ts holds both documents in Malay and
+  English; each page shows the visitor's language first and the other under
+  it. **Drafted by Claude from what the site actually does — the owner must
+  read and confirm them before the branch goes live.** They promise nothing
+  about payment, cancellation or refunds. Both forms end with a line saying
+  what the details are used for and a link to the notice.
+- `formatPrice` joins "RM" and the amount with a non-breaking space, so a
+  price never splits across lines.
 - Gallery/testimonial sections on the homepage only render when data exists.
 - `npm run sample-packages` adds mockup packages (slugs `sample-*`) for
   testing; **`-- --remove` deletes them. Dev and prod share one database, so
@@ -637,12 +703,30 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   (see "Design system"). **`main` and the live site are untouched — merge
   and deploy only when he says so.** `Web Mockups/moghul-homepage-mockup-
   v6.html` stays as the reference (v3–v5 beside it are history).
+- Second pass, same day (he asked for the ten references, the 20 rules,
+  the security and legal lists and the installed skills to be applied to
+  every page and the admin): search on /packages, package-page jump links
+  and related packages, privacy and terms pages, form consent lines,
+  structured data and canonical addresses, a new link-preview card, one
+  icon weight and drawn stars, loading and pending feedback, security
+  headers with a per-request Content-Security-Policy, and in the admin a
+  to-do-style dashboard (components/admin/dashboard-view.tsx: what needs
+  attention, latest inquiries, the site's state, shortcuts — no counter
+  cards), status tabs and a title search on the package list, password
+  rules that tick off as you type, a loading skeleton, and no page title
+  said twice. impeccable's detector was run once; its findings (stranded
+  phone number in the footer, over-long lines, a card inside a card, the
+  admin's heading sizes) were fixed.
 - What was checked on the branch (local production build, 2026-11-12):
-  type-check, lint, `next build`; 41 browser checks (hero slideshow,
-  scroll reveals and their no-script / reduced-motion fallbacks, search,
-  header, phone menu and contact bar, language switch); axe WCAG 2.2 on
-  every public page plus the sign-in pages at 1440 and 390px (0
-  violations); screenshots at 1440 / 1024 / 768 / 390 in both languages.
+  type-check, lint, `next build`; 68 browser checks in two suites (hero
+  slideshow, scroll reveals and their no-script / reduced-motion fallbacks,
+  both search bars, jump links, keyboard order and focus rings, legal
+  pages, structured data, phone menu and contact bar, language switch);
+  nothing blocked by the security policy on any page, with hCaptcha, the
+  map and the photo cropper working under it; the forms' in-browser checks
+  still working; axe WCAG 2.2 on every public page plus the sign-in pages
+  at 1440 and 390px (0 violations); screenshots at 1440 / 1024 / 768 / 390
+  in both languages.
   **Not checked in a browser: the signed-in admin screens** — that needs
   an admin sign-in, which Claude doesn't have and must not create (a
   temporary account on the live auth system was rightly blocked). Their
@@ -666,16 +750,26 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
     is the 21 places in today's packages, so it needs keeping in step.
   - Search button: real now — `next/form` + `useFormStatus` show "Mencari…"
     until the results arrive.
-  - Footer: no "Dasar privasi" / "Terma & syarat" links until those pages
-    exist; "Admin login" sits in the footer's bottom row.
+  - Footer: "Notis privasi" and "Terma penggunaan" now link to real pages
+    (second pass); "Admin login" sits beside them in the bottom row.
   - About block: no placeholder photo — the summary beside the licence
     list; an owner/team/office photo can take the left side once supplied.
   - Package cards show only each highlight's name (the text before a colon
     or dash), since real highlights are full sentences.
   - Scroll reveals need no inline script: `RevealOnScroll` (in the public
     template) hides only blocks still below the screen when a page opens.
+- Naufal's follow-up the same day: don't tell visitors up front that Moghul
+  is a certified Muslim Travel Bug agent — the "Ejen bertauliah" line was
+  removed from the homepage and About licence lists (the "Pakej Lain" link
+  and the terms page still name the portal it opens); and replace the pill
+  filters with something more modern — now text tabs with counts, on the
+  public site and in the admin lists.
 - Still open: the wording of the three booking steps (Claude's — owner to
-  confirm); privacy / terms / refund pages; the live hero title and message
+  confirm); the privacy notice and terms (Claude's draft — owner to
+  confirm) and a refund / cancellation policy (the owner's to write; the
+  terms only tell visitors to ask); signed-in admin flows under the new
+  security policy (photo upload and crop, sign-in) need one click-through
+  by Naufal, since Claude cannot sign in; the live hero title and message
   both say "dirancang dengan teliti" (owner's copy edit); owner photos and
   real reviews to collect (never invent one); a destination field on
   packages if the suggestions list becomes a chore; the old "home" banner
@@ -876,8 +970,12 @@ asked for), this file wins. The "where this stands" notes are as checked on
   URLs issued after `authorize()`, and the buckets enforce JPG/PNG/WEBP
   ≤5MB (see "Security model"). React escapes everything it renders and
   there is no `dangerouslySetInnerHTML` — never add one for admin-typed or
-  visitor-typed text. Not done yet: no Content-Security-Policy or other
-  security headers in next.config.ts.
+  visitor-typed text (the one JSON-LD data block in
+  components/ui/json-ld.tsx is escaped and is not HTML). Since 2026-11-12
+  (`redesign` branch) every page carries a nonce-based
+  Content-Security-Policy and the usual security headers — see "Security
+  model". File uploads were re-checked: type and size are validated when
+  the signed URL is issued and again by the bucket.
 
 ### Not getting sued (his list has 21 points)
 1. Check local laws
@@ -903,13 +1001,13 @@ asked for), this file wins. The "where this stands" notes are as checked on
 21. A way to request data deletion
 - Where this stands (Claude's reading, not legal advice — the owner should
   confirm anything that matters):
-  - Missing: there is no privacy policy, terms or refund/cancellation page.
-    The local law is Malaysia's Personal Data Protection Act 2010; the
-    inquiry and booking forms collect names, phone numbers and emails, and
-    the Act expects a written privacy notice in **both Malay and English**.
-    The inquiry form has a one-line note ("Kami hanya akan menggunakan
-    maklumat anda untuk membalas pertanyaan ini"); the booking form has
-    none. The wording of a refund policy is the owner's — never invent one.
+  - Privacy notice and terms: drafted on the `redesign` branch
+    (2026-11-12) at /privacy and /terms, each in **both Malay and English**
+    as Malaysia's Personal Data Protection Act 2010 expects, linked from the
+    footer and from both forms (which now each say what the details are used
+    for). They are Claude's draft of what the site actually does — the owner
+    must confirm them. Still missing: a refund / cancellation policy, whose
+    wording is the owner's — never invent one.
   - Cookies: only functional ones (`lang`, the admin session, hCaptcha on
     the forms). No analytics or ad pixels, so no consent banner is needed
     today; adding analytics or a pixel changes that.
@@ -927,6 +1025,6 @@ asked for), this file wins. The "where this stands" notes are as checked on
     to their title, which is fine; gallery photos only have their tag);
     where the package photos come from and whether Moghul may use them
     (they are destination shots, not Moghul's own — this matters more once
-    they lead the homepage); no public way to ask for one's data to be
-    deleted (admins can delete an inquiry once it is resolved) — a privacy
-    page should give a contact for that.
+    they lead the homepage); asking for one's data to be deleted now has a
+    public route: the privacy notice gives the email, WhatsApp and office
+    contacts for it (admins can delete an inquiry once it is resolved).
