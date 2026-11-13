@@ -584,8 +584,10 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 - Server actions in app/admin/(portal)/packages/actions.ts:
   `createPackageImageUploads`, `savePackage(id, input, "draft"|"publish")`,
   `deletePackage` (soft delete). Validation shared with the form:
-  lib/validation/package.ts — drafts need only a title; publishing needs
-  description, at least one adult price and ≥1 image.
+  lib/validation/package.ts — drafts need only a title (photos can come
+  later; the form's "Photos" section says so); publishing needs
+  description, at least one adult price and ≥1 photo. savePackage is the
+  only way to publish, and it re-checks on the server.
 - Package photos are 16:9 everywhere (`aspect-video`; PACKAGE_IMAGE_ASPECT in
   lib/storage-config.ts). Every upload goes through ImageCropDialog
   (components/admin/image-crop-dialog.tsx, react-easy-crop): the admin drags

@@ -713,7 +713,7 @@ export function PackageForm({
             </button>
           </Section>
 
-          <Section title="Images" hint="At least one image is required before this package can be published.">
+          <Section title="Photos" hint="Optional while the package is a draft — you can save it now and add photos later. Publishing needs at least one.">
             <PackageImageField
               images={state.images}
               onChange={(fn) => {

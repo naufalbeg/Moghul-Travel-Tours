@@ -101,7 +101,8 @@ export function validatePackage(input: PackageInput, intent: SaveIntent) {
     if (startingPrice(listToItems((input.prices ?? {}) as PriceList)) === null) {
       errors.prices ??= "Enter at least one adult price (Adult Twin, Adult Triple or Single) before publishing.";
     }
-    if (!input.images?.length) errors.images ??= "At least one image is required.";
+    // Photos are optional for a draft; a published package needs at least one.
+    if (!input.images?.length) errors.images ??= "Add at least one photo before publishing.";
   }
 
   return Object.keys(errors).length > 0 || !result.success
