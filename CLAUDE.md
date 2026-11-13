@@ -295,8 +295,26 @@ ambiguous — check there as a starting point for edge-case behavior.
 - Deployed to Vercel (`moghul-travel-tours.vercel.app`), project name
   `moghul-dev/moghul-travel-tours`
 - Environment variables set on Vercel (see caveat above)
-- Live at https://moghul-travel-tours.vercel.app (the `…-moghul-dev.vercel.app`
-  URL sits behind Vercel's team SSO protection — that's expected).
+- Live at **https://moghultt.com** since 2026-11-13 (www.moghultt.com and
+  plain http forward to it). https://moghul-travel-tours.vercel.app still
+  works too; the `…-moghul-dev.vercel.app` URL sits behind Vercel's team SSO
+  protection — that's expected.
+- **Domain and DNS (2026-11-13):** moghultt.com is registered through
+  ServerFreak (WebNic, expires 2027-07-19) and its DNS is edited in the old
+  host's cPanel → Zone Editor — log in at **https://cpanel.moghultt.com**
+  (moghultt.com/cpanel now opens the website). Records that matter:
+  apex **A 216.198.79.1 and A 64.29.17.1** (Vercel), **www CNAME
+  b30bd7f640a2d29e.vercel-dns-017.com**, **mail A 185.93.164.203** and
+  **MX → mail.moghultt.com** (mail stays on ServerFreak), plus the old
+  host's own subdomains (cpanel, webmail, ftp, autodiscover…, all A
+  185.93.164.203) and TXT records (SPF, DKIM, Facebook verification) — leave
+  those alone. Mailboxes on ServerFreak: info@moghultt.com and
+  raziq@moghultt.com. **Keep the ServerFreak hosting plan**: the DNS zone and
+  the mailboxes live in it. Vercel issues and renews the https certificates
+  itself. The www → moghultt.com forward is a redirect in next.config.ts;
+  siteUrl() (lib/site-url.ts) picks moghultt.com up automatically from
+  VERCEL_PROJECT_PRODUCTION_URL — after any domain change, redeploy so
+  links, sitemap and structured data follow.
 - Deploys are manual: `git push` then `vercel --prod`. The CLI's sign-in
   expires now and then (`vercel whoami` → "token is not valid"): run
   `vercel login`, which prints a link Naufal approves in his browser as
@@ -356,9 +374,10 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 7. ~~Testimonials, Gallery, Announcements (Modules 5, 4, 7)~~ — done.
 8. ~~Inquiries (Module 3)~~ — done.
 9. ~~User management + forgot password (Module 1)~~ — done.
-10. Remaining: verify moghultt.com in Resend (DNS records from the domain
-    manager), then set EMAIL_FROM on Vercel so invite/reset emails reach any
-    address. Later: point moghultt.com at Vercel.
+10. Remaining: verify moghultt.com in Resend (its records go on a `send.`
+    subdomain in cPanel → Zone Editor; never touch the root MX), then set
+    EMAIL_FROM on Vercel so invite/reset emails reach any address.
+    ~~Point moghultt.com at Vercel~~ — done 2026-11-13.
 11. ~~Redesign~~ — done and live (2026-11-12): built on the `redesign`
     branch, merged into `main` and deployed the same day when Naufal said
     it was ready (see "Redesign"). Left over: his click-through of the
@@ -710,8 +729,8 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   map load, slideshow runs, phone layout). The `redesign` branch is kept on
   GitHub but is now the same as `main`; new work goes on `main` as before.
   `Web Mockups/moghul-homepage-mockup-v6.html` stays as the reference
-  (v3–v5 beside it are history). moghultt.com still shows the old static
-  site at ServerFreak — pointing it at Vercel is a separate step.
+  (v3–v5 beside it are history). On 2026-11-13 moghultt.com itself was
+  switched to the new site (see "Domain and DNS").
 - Second pass, same day (he asked for the ten references, the 20 rules,
   the security and legal lists and the installed skills to be applied to
   every page and the admin): search on /packages, package-page jump links
