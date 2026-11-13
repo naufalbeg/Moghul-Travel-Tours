@@ -7,6 +7,18 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: SECURITY_HEADERS }];
   },
+  // One address for the site: www.moghultt.com forwards to moghultt.com
+  // (same page, same search), permanently, so search engines merge the two.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.moghultt.com" }],
+        destination: "https://moghultt.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     // Serve photos as-is instead of through Vercel's image optimizer: the
     // Hobby plan's monthly optimization quota ran out and Vercel then answers
