@@ -6,12 +6,13 @@ import { siteUrl } from "@/lib/site-url";
 /**
  * ResendEmail middleware (SDD PKG-MTT-010-003).
  *
- * Until moghultt.com is verified in Resend, mail can only be sent from
- * onboarding@resend.dev to the Resend account's own address. Set EMAIL_FROM
- * (e.g. "Moghul Travel & Tours <noreply@moghultt.com>") once the domain is
- * verified.
+ * moghultt.com is verified in Resend (Tokyo region, 2026-11-14; its records
+ * live in the ServerFreak DNS zone), so mail goes out as noreply@moghultt.com
+ * and can reach any address. There is no noreply mailbox: inquiry alerts set
+ * Reply-To to the visitor, and bounces go to Resend (send.moghultt.com).
+ * EMAIL_FROM, if set, overrides the sender.
  */
-const FROM = process.env.EMAIL_FROM || `${SITE.name} <onboarding@resend.dev>`;
+const FROM = process.env.EMAIL_FROM || `${SITE.name} <noreply@moghultt.com>`;
 
 
 const escape = (s: string) =>
@@ -61,7 +62,7 @@ export async function sendInquiryNotification(to: string, inquiry: InquiryEmail)
         ${row(messageLabel, inquiry.message ? escape(inquiry.message).replace(/\n/g, "<br>") : `<em>No ${messageLabel.toLowerCase()}</em>`)}
       </table>
       <p style="margin:20px 0">
-        <a href="${adminLink}" style="background:#f07c1e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">Open in the admin dashboard</a>
+        <a href="${adminLink}" style="background:#f07c1e;color:#1a2733;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold">Open in the admin dashboard</a>
       </p>
       <p style="color:#5b6b7a;font-size:13px">Reply to this email to answer ${escape(inquiry.fullName)} directly.</p>
     </div>`;
@@ -121,7 +122,7 @@ async function send(message: { to: string; subject: string; html: string; text: 
 }
 
 const button = (href: string, label: string) =>
-  `<p style="margin:24px 0"><a href="${href}" style="background:#f07c1e;color:#fff;padding:13px 22px;border-radius:8px;text-decoration:none;font-weight:bold">${label}</a></p>`;
+  `<p style="margin:24px 0"><a href="${href}" style="background:#f07c1e;color:#1a2733;padding:13px 22px;border-radius:8px;text-decoration:none;font-weight:bold">${label}</a></p>`;
 
 const wrap = (body: string) =>
   `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.55;color:#1a2733;max-width:560px">${body}</div>`;

@@ -247,7 +247,7 @@ lib/
                          proxy.ts (session refresh)
   auth.ts             — getCurrentAdmin / requireAdmin (pages) /
                          authorize (API routes) RBAC helpers
-  email.ts            — Resend helpers (not yet written)
+  email.ts            — Resend helpers (inquiry alert, invite, reset)
 proxy.ts              — Next 16 "middleware": refreshes admin sessions and
                          redirects signed-out users away from /admin
 prisma/
@@ -308,13 +308,22 @@ ambiguous — check there as a starting point for edge-case behavior.
   **MX → mail.moghultt.com** (mail stays on ServerFreak), plus the old
   host's own subdomains (cpanel, webmail, ftp, autodiscover…, all A
   185.93.164.203) and TXT records (SPF, DKIM, Facebook verification) — leave
-  those alone. Mailboxes on ServerFreak: info@moghultt.com and
+  those alone — and Resend's five records (2026-11-14; listed under
+  "Inquiries"). Mailboxes on ServerFreak: info@moghultt.com and
   raziq@moghultt.com. **Keep the ServerFreak hosting plan**: the DNS zone and
   the mailboxes live in it. Vercel issues and renews the https certificates
   itself. The www → moghultt.com forward is a redirect in next.config.ts;
   siteUrl() (lib/site-url.ts) picks moghultt.com up automatically from
   VERCEL_PROJECT_PRODUCTION_URL — after any domain change, redeploy so
   links, sitemap and structured data follow.
+- **Don't make moghul-travel-tours.vercel.app forward to moghultt.com.**
+  Before the switch, the old ServerFreak site sent moghultt.com/ (the
+  homepage only) to moghul-travel-tours.vercel.app with a permanent 301 and
+  no expiry, so browsers that saw it remember it and still jump from
+  moghultt.com to the vercel.app address. A forward back would send those
+  browsers round in a loop ("too many redirects"). The vercel.app address
+  keeps serving the site; its pages already name moghultt.com as the real
+  address (canonical), so search engines move over by themselves.
 - Deploys are manual: `git push` then `vercel --prod`. The CLI's sign-in
   expires now and then (`vercel whoami` → "token is not valid"): run
   `vercel login`, which prints a link Naufal approves in his browser as
@@ -348,9 +357,9 @@ ambiguous — check there as a starting point for edge-case behavior.
   FK references then removes the users row and auth user. The Master Admin
   row can never be modified.
 - /admin/forgot-password emails a 1h reset link; same response for unknown
-  emails. Until the Resend domain is verified, reset emails only reach
-  moghultt@gmail.com — which is the Master Admin's address, so his reset
-  works; other staff still need the Master Admin (or the copy-link invite).
+  emails. Since moghultt.com was verified in Resend (2026-11-14) invite and
+  reset emails reach any address; the invite dialog's copy-link fallback
+  stays for when an email fails.
 - proxy.ts treats /admin/login, /admin/forgot-password, /admin/set-password
   as public.
 
@@ -374,9 +383,7 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
 7. ~~Testimonials, Gallery, Announcements (Modules 5, 4, 7)~~ — done.
 8. ~~Inquiries (Module 3)~~ — done.
 9. ~~User management + forgot password (Module 1)~~ — done.
-10. Remaining: verify moghultt.com in Resend (its records go on a `send.`
-    subdomain in cPanel → Zone Editor; never touch the root MX), then set
-    EMAIL_FROM on Vercel so invite/reset emails reach any address.
+10. ~~Verify moghultt.com in Resend~~ — done 2026-11-14 (see "Inquiries").
     ~~Point moghultt.com at Vercel~~ — done 2026-11-13.
 11. ~~Redesign~~ — done and live (2026-11-12): built on the `redesign`
     branch, merged into `main` and deployed the same day when Naufal said
@@ -480,10 +487,18 @@ No. 1273862-K, MOTAC licence KPK/LN 9109.
   (lib/captcha.ts) → save NEW → Resend alert (lib/email.ts) to site_config
   `inquiry_notify_email`. Email failure never blocks: `notified_at` stays
   null and the admin detail page shows "Not sent".
-- Resend has NO verified domain yet: sender is onboarding@resend.dev and it
-  can only deliver to the account owner, **moghultt@gmail.com**. After
-  verifying moghultt.com set EMAIL_FROM (e.g. "Moghul Travel & Tours
-  <noreply@moghultt.com>").
+- Resend: moghultt.com is a verified domain (2026-11-14, region Tokyo
+  ap-northeast-1 — nearest to Malaysia). Sender is "Moghul Travel & Tours
+  <noreply@moghultt.com>", the default in lib/email.ts (EMAIL_FROM
+  overrides it; not set anywhere). There is no noreply mailbox: inquiry
+  alerts carry Reply-To = the visitor. Its DNS records sit in the
+  ServerFreak zone (cPanel → Zone Editor) and must stay: TXT
+  `resend._domainkey` (DKIM key), MX `send` → feedback-smtp.ap-northeast-1.
+  amazonses.com (priority 10), TXT `send` "v=spf1 include:amazonses.com
+  ~all", CNAME `rsend` → send.forge.rmta.net (Resend's own sending
+  servers), and TXT `_dmarc` "v=DMARC1; p=none;" (reports nothing, blocks
+  nothing). The root SPF / MX are ServerFreak's mail — never add Resend to
+  them. Resend's free plan caps sending at 100 emails a day.
 - Env: NEXT_PUBLIC_HCAPTCHA_SITE_KEY (public by design), HCAPTCHA_SECRET_KEY,
   RESEND_API_KEY — in .env and on Vercel (production + development).
 - Testing: build/start with hCaptcha test keys (site
